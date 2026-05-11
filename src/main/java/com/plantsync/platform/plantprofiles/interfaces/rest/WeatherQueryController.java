@@ -18,7 +18,7 @@ public class WeatherQueryController {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    @Value("${openweather.api.key}")
+    @Value("${weather.api.key}")
     private String apiKey;
 
     @GetMapping("/city")

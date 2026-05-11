@@ -1,6 +1,7 @@
 package com.plantsync.platform.plantprofiles.interfaces.rest;
 
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantByIdQuery;
+import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantHistoryByIdQuery;
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantHistoryByPlantIdQuery;
 import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryCommandService;
 import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryQueryService;
@@ -49,11 +50,12 @@ public class PlantHistoryCommandController {
         var createPlantHistoryCommand = CreatePlantHistoryCommandFromResourceAssembler.toCommandFromResource(resource);
         var plantHistoryId = plantHistoryCommandService.handle(createPlantHistoryCommand);
         if (plantHistoryId == null || plantHistoryId == 0L) return ResponseEntity.badRequest().build();
-        var getPlantHistoryByPlantIdQuery = new GetPlantHistoryByPlantIdQuery(plantHistoryId);
-        var plantHistory = plantHistoryQueryService.handle(getPlantHistoryByPlantIdQuery);
+
+
+        var getPlantHistoryByIdQuery = new GetPlantHistoryByIdQuery(plantHistoryId);
+        var plantHistory = plantHistoryQueryService.handle(getPlantHistoryByIdQuery);
         if (plantHistory.isEmpty()) return ResponseEntity.notFound().build();
-        var plantHistoryEntity = plantHistory.get();
-        var plantHistoryResource = PlantHistoryResourceFromEntityAssembler.toResourceFromEntity(plantHistoryEntity);
+        var plantHistoryResource = PlantHistoryResourceFromEntityAssembler.toResourceFromEntity(plantHistory.get());
         return new ResponseEntity<>(plantHistoryResource, HttpStatus.CREATED);
     }
 

@@ -38,6 +38,16 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        boolean skip = path.startsWith("/api/v1/authentication/") ||
+                path.startsWith("/v3/api-docs/") ||
+                path.startsWith("/swagger-ui/") ||
+                path.equals("/swagger-ui.html");
+        LOGGER.info("shouldNotFilter path: {} -> skip: {}", path, skip);
+        return skip;
+    }
     /**
      * This method is responsible for filtering requests and setting the user authentication.
      * @param request The request object.
@@ -46,6 +56,7 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        LOGGER.info("Filter hit: {}", request.getServletPath());
         try {
             String token = tokenService.getBearerTokenFrom(request);
             LOGGER.info("Token: {}", token);
