@@ -1,6 +1,5 @@
 package com.plantsync.platform.plantprofiles.application.internal.queryservices;
 
-import com.plantsync.platform.plantprofiles.domain.exceptions.PlantHistoryNotFoundException;
 import com.plantsync.platform.plantprofiles.domain.model.aggregates.PlantHistory;
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantHistoryCommand;
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetAllPlantHistoriesByPlantIdQuery;
@@ -20,9 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,8 +37,8 @@ class PlantHistoryQueryServiceImplTest {
         // Arrange
         var query = new GetPlantHistoryByPlantIdQuery(1L);
         var plantHistory = createPlantHistory();
-        when(plantHistoryRepository.existsById(query.plantId())).thenReturn(true);
-        when(plantHistoryRepository.findById(query.plantId())).thenReturn(Optional.of(plantHistory));
+        var plantId = new PlantId(query.plantId());
+        when(plantHistoryRepository.findFirstByPlantId(plantId)).thenReturn(Optional.of(plantHistory));
 
         // Act
         var result = plantHistoryQueryService.handle(query);
@@ -49,22 +46,22 @@ class PlantHistoryQueryServiceImplTest {
         // Assert
         assertTrue(result.isPresent());
         assertSame(plantHistory, result.get());
-        verify(plantHistoryRepository).existsById(query.plantId());
-        verify(plantHistoryRepository).findById(query.plantId());
+        verify(plantHistoryRepository).findFirstByPlantId(plantId);
     }
 
     @Test
-    void handleGetPlantHistoryByPlantIdQueryShouldThrowWhenHistoryDoesNotExist() {
+    void handleGetPlantHistoryByPlantIdQueryShouldReturnEmptyWhenHistoryDoesNotExist() {
         // Arrange
         var query = new GetPlantHistoryByPlantIdQuery(99L);
-        when(plantHistoryRepository.existsById(query.plantId())).thenReturn(false);
+        var plantId = new PlantId(query.plantId());
+        when(plantHistoryRepository.findFirstByPlantId(plantId)).thenReturn(Optional.empty());
 
         // Act
-        var exception = assertThrows(PlantHistoryNotFoundException.class, () -> plantHistoryQueryService.handle(query));
+        var result = plantHistoryQueryService.handle(query);
 
         // Assert
-        assertEquals("Plant history with plant ID 99 not found.", exception.getMessage());
-        verify(plantHistoryRepository, never()).findById(query.plantId());
+        assertTrue(result.isEmpty());
+        verify(plantHistoryRepository).findFirstByPlantId(plantId);
     }
 
     @Test

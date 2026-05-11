@@ -148,16 +148,16 @@ class PlantCommandServiceImplTest {
     }
 
     @Test
-    void handleUpdatePlantCommandShouldThrowWhenPlantDoesNotExist() {
+    void handleUpdatePlantCommandShouldReturnEmptyWhenPlantDoesNotExist() {
         // Arrange
         var command = createUpdatePlantCommand();
         when(plantRepository.findById(command.plantId())).thenReturn(Optional.empty());
 
         // Act
-        var exception = assertThrows(PlantNotFoundException.class, () -> plantCommandService.handle(command));
+        var result = plantCommandService.handle(command);
 
         // Assert
-        assertEquals("Plant with ID 1 not found.", exception.getMessage());
+        assertTrue(result.isEmpty());
         verify(plantRepository, never()).save(any(Plant.class));
     }
 

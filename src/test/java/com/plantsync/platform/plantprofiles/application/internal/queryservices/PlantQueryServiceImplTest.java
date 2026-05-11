@@ -1,6 +1,5 @@
 package com.plantsync.platform.plantprofiles.application.internal.queryservices;
 
-import com.plantsync.platform.plantprofiles.domain.exceptions.PlantNotFoundException;
 import com.plantsync.platform.plantprofiles.domain.model.aggregates.Plant;
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantCommand;
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetAllPlantsByProfileIdQuery;
@@ -23,7 +22,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -90,16 +88,16 @@ class PlantQueryServiceImplTest {
     }
 
     @Test
-    void handleGetPlantByIdQueryShouldThrowWhenPlantDoesNotExist() {
+    void handleGetPlantByIdQueryShouldReturnEmptyWhenPlantDoesNotExist() {
         // Arrange
         var query = new GetPlantByIdQuery(99L);
         when(plantRepository.existsById(query.plantId())).thenReturn(false);
 
         // Act
-        var exception = assertThrows(PlantNotFoundException.class, () -> plantQueryService.handle(query));
+        var result = plantQueryService.handle(query);
 
         // Assert
-        assertEquals("Plant with ID 99 not found.", exception.getMessage());
+        assertTrue(result.isEmpty());
         verify(plantRepository, never()).findById(query.plantId());
     }
 

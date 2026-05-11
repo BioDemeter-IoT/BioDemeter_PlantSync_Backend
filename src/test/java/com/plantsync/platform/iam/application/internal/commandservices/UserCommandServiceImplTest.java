@@ -197,16 +197,16 @@ class UserCommandServiceImplTest {
     }
 
     @Test
-    void handleUpdateUserCommandShouldThrowWhenUserDoesNotExist() {
+    void handleUpdateUserCommandShouldReturnEmptyWhenUserDoesNotExist() {
         // Arrange
         var command = new UpdateUserCommand(99L, "updated@plantsync.com");
         when(userRepository.findById(command.id())).thenReturn(Optional.empty());
 
         // Act
-        var exception = assertThrows(IllegalArgumentException.class, () -> userCommandService.handle(command));
+        var result = userCommandService.handle(command);
 
         // Assert
-        assertEquals("User with ID 99 not found", exception.getMessage());
+        assertTrue(result.isEmpty());
         verify(userRepository, never()).save(any(User.class));
     }
 }
