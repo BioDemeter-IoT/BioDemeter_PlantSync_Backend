@@ -1,8 +1,8 @@
 pipeline {
   agent any
   tools {
-    maven 'MAVEN_3_9_15' // Asegúrate de que este ID coincida con tu configuración global en Jenkins
-    jdk 'JDK_21'         // Cambiado a Java 21 (Debes configurar un JDK 21 en Jenkins con este nombre)
+    maven 'MAVEN_3_9_15'
+    jdk 'JDK_21'
   }
 
   stages {
