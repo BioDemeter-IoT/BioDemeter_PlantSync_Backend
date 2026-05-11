@@ -40,7 +40,7 @@ public class PlantQueryServiceImpl implements PlantQueryService {
 
     @Override
     public Optional<Plant> handle(GetPlantByIdQuery query) {
-        if (!plantRepository.existsById(query.plantId())) throw new PlantNotFoundException(query.plantId());
+        if (!plantRepository.existsById(query.plantId())) return Optional.empty();
         return plantRepository.findById(query.plantId());
     }
 

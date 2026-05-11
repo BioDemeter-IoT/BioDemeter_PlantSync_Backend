@@ -58,7 +58,7 @@ public class PlantCommandServiceImpl implements PlantCommandService {
     public Optional<Plant> handle(UpdatePlantCommand command) {
         var result = plantRepository.findById(command.plantId());
         if (result.isEmpty())
-            throw new PlantNotFoundException(command.plantId());
+            return Optional.empty();
 
         var plantToUpdate = result.get();
 
