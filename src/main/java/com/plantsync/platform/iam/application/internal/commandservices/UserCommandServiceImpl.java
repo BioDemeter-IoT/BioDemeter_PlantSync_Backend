@@ -94,7 +94,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     public Optional<User> handle(UpdateUserCommand command) {
         var optionalUser = userRepository.findById(command.id());
         if (optionalUser.isEmpty()) {
-            throw new IllegalArgumentException("User with ID " + command.id() + " not found");
+            return Optional.empty();
         }
 
         var user = optionalUser.get();
