@@ -175,11 +175,19 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/plantsync/platform/**/domain/**</exclude>
+                        <exclude>**/*Application.*</exclude>
+
+                        <exclude>com/plantsync/platform/**/domain/model/**</exclude>
+                        <exclude>com/plantsync/platform/**/domain/exceptions/**</exclude>
+
                         <exclude>com/plantsync/platform/**/infrastructure/**</exclude>
+
                         <exclude>com/plantsync/platform/**/interfaces/rest/resources/**</exclude>
-                        <exclude>com/plantsync/platform/**/interfaces/rest/controllers/**</exclude>
-                        <exclude>**/*Application*</exclude>
+                        <exclude>com/plantsync/platform/**/interfaces/rest/assemblers/**</exclude>
+                        <exclude>com/plantsync/platform/**/interfaces/rest/transform/**</exclude>
+                        <exclude>com/plantsync/platform/**/interfaces/rest/*Controller.*</exclude>
+
+                        <exclude>com/plantsync/platform/shared/**</exclude>
                     </excludes>
                     <rules>
                         <rule>
@@ -188,7 +196,8 @@
                                 <limit>
                                     <counter>INSTRUCTION</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>0.8</minimum> </limit>
+                                    <minimum>0.8</minimum>
+                                </limit>
                             </limits>
                         </rule>
                     </rules>
