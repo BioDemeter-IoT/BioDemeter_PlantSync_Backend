@@ -52,8 +52,7 @@ pipeline {
     stage ('Package Project') {
         steps {
             withMaven(maven : 'MAVEN_3_9_15') {
-                // Se agrega -DskipTests porque los tests ya corrieron y pasaron en los stages anteriores
-                bat 'mvn package -DskipTests'
+                bat 'mvn package'
             }
         }
     }

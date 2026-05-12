@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.jpa.show-sql=false",
         "spring.flyway.enabled=false"
 })
-class GuideServiceIntegrationTest {
+class PlantGuidesIntegrationTest {
 
     @Autowired
     private GuideCommandService guideCommandService;
