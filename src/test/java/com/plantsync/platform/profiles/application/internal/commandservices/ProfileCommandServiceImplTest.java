@@ -84,16 +84,16 @@ class ProfileCommandServiceImplTest {
     }
 
     @Test
-    void handleUpdateProfileCommandShouldThrowWhenProfileDoesNotExist() {
+    void handleUpdateProfileCommandShouldReturnEmptyWhenProfileDoesNotExist() {
         // Arrange
         var command = new UpdateProfileCommand(99L, "Updated Owner", "premium");
         when(profileRepository.findById(command.id())).thenReturn(Optional.empty());
 
         // Act
-        var exception = assertThrows(IllegalArgumentException.class, () -> profileCommandService.handle(command));
+        var result = profileCommandService.handle(command);
 
         // Assert
-        assertEquals("Profile is empty", exception.getMessage());
+        assertTrue(result.isEmpty());
         verify(profileRepository, never()).save(any(Profile.class));
     }
 
