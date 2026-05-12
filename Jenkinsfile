@@ -9,7 +9,7 @@ pipeline {
     stage ('Compile Project') {
       steps {
         withMaven(maven : 'MAVEN_3_9_15') {
-            sh 'mvn clean compile'
+            bat 'mvn clean compile'
         }
       }
     }
@@ -17,7 +17,7 @@ pipeline {
     /* stage('Validate Checkstyle') {
       steps {
         withMaven(maven: 'MAVEN_3_9_15') {
-          sh 'mvn checkstyle:check'
+          bat 'mvn checkstyle:check'
         }
       }
     }
@@ -26,7 +26,7 @@ pipeline {
     stage('Validate Unit Tests') {
       steps {
         withMaven(maven: 'MAVEN_3_9_15') {
-          sh 'mvn test'
+          bat 'mvn test'
         }
       }
     }
@@ -34,8 +34,8 @@ pipeline {
     stage('Validate Test Coverage') {
       steps {
         withMaven(maven: 'MAVEN_3_9_15') {
-          sh 'mvn clean verify jacoco:report'
-          sh 'mvn jacoco:check'
+          bat 'mvn clean verify jacoco:report'
+          bat 'mvn jacoco:check'
         }
       }
     }
@@ -43,8 +43,7 @@ pipeline {
     /* stage ('SonarQube Analysis') {
         steps {
             withSonarQubeEnv('sonarLocal') {
-                sh 'mvn verify sonar:sonar -Dsonar.projectKey=plantsync_backend'
-                // Nota: se usa 'sh' para Linux o 'bat' si Jenkins corre sobre Windows
+                bat 'mvn verify sonar:sonar -Dsonar.projectKey=plantsync_backend'
             }
         }
      }
@@ -54,7 +53,7 @@ pipeline {
         steps {
             withMaven(maven : 'MAVEN_3_9_15') {
                 // Se agrega -DskipTests porque los tests ya corrieron y pasaron en los stages anteriores
-                sh 'mvn package -DskipTests'
+                bat 'mvn package -DskipTests'
             }
         }
     }
