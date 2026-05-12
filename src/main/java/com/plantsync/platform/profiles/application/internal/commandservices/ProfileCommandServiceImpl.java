@@ -42,7 +42,7 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
         var result = profileRepository.findById(command.id());
 
         if (result.isEmpty())
-            throw new IllegalArgumentException("Profile is empty");
+            return Optional.empty();
         var profileToUpdate = result.get();
 
         try {
