@@ -1,7 +1,8 @@
 package com.plantsync.platform.plantguides.domain.model.aggregates;
 
 import com.plantsync.platform.plantguides.domain.model.commands.CreateGuideCommand;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

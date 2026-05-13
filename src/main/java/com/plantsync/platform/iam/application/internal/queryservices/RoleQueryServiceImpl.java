@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * RoleQueryServiceImpl class
- * This class is used to handle the role queries
+ * RoleQueryServiceImpl class.
+ * This class is used to handle the role queries.
  */
 @Service
 public class RoleQueryServiceImpl implements RoleQueryService {
     private final RoleRepository roleRepository;
 
     /**
-     * RoleQueryServiceImpl constructor
+     * RoleQueryServiceImpl constructor.
      * @param roleRepository the role repository
      */
     public RoleQueryServiceImpl(RoleRepository roleRepository) {
@@ -27,7 +27,7 @@ public class RoleQueryServiceImpl implements RoleQueryService {
     }
 
     /**
-     * Handle the get all roles query
+     * Handle the get all roles query.
      * @param query the get all roles query
      * @return List<Role> the list of roles
      */
@@ -37,7 +37,7 @@ public class RoleQueryServiceImpl implements RoleQueryService {
     }
 
     /**
-     * Handle the get role by name query
+     * Handle the get role by name query.
      * @param query the get role by name query
      * @return Optional<Role> the role
      */

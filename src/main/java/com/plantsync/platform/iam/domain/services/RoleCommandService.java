@@ -4,9 +4,8 @@ import com.plantsync.platform.iam.domain.model.commands.SeedRolesCommand;
 
 public interface RoleCommandService {
     /**
-     * Handle seed roles command
-     * @param command the {@link SeedRolesCommand} command
-     *
+     * Handle seed roles command.
+     * @param command the {@link SeedRolesCommand} command.
      */
     void handle(SeedRolesCommand command);
 }

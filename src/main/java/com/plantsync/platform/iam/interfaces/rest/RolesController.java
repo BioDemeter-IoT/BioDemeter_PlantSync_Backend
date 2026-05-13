@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- *  Roles Controller
- *  This controller is responsible for handling all the requests related to roles
+ * Roles Controller.
+ * This controller is responsible for handling all the requests related to roles.
  */
 @RestController
 @RequestMapping(value = "/api/v1/roles", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,7 +32,7 @@ public class RolesController {
     }
 
     /**
-     * Get all roles
+     * Get all roles.
      * @return List of role resources
      * @see RoleResource
      */

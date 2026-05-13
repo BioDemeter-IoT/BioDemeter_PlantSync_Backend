@@ -7,10 +7,10 @@ import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import static io.github.encryptorcode.pluralize.Pluralize.pluralize;
 
 /**
- * Snake Case With Pluralized Table Physical Naming Strategy
- * @summary
+ * Snake Case With Pluralized Table Physical Naming Strategy.
+ * <p>
  * PhysicalNamingStrategy implementation that converts entity names to snake_case and table names to pluralized snake_case.
- *
+ * </p>
  */
 public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements PhysicalNamingStrategy {
     @Override
@@ -39,7 +39,7 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
     }
 
     /**
-     * Convert identifier to snake case
+     * Convert identifier to snake case.
      * @param identifier Identifier
      * @return Identifier
      */
@@ -56,7 +56,7 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
     }
 
     /**
-     * Convert identifier to plural
+     * Convert identifier to plural.
      * @param identifier Identifier
      * @return Identifier
      */

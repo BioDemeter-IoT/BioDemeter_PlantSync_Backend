@@ -3,7 +3,11 @@ package com.plantsync.platform.iam.infrastructure.tokens.jwt.services;
 
 import com.plantsync.platform.iam.infrastructure.tokens.jwt.BearerTokenService;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +31,7 @@ import java.util.function.Function;
  */
 @Service
 public class TokenServiceImpl implements BearerTokenService {
-    private final Logger LOGGER = LoggerFactory.getLogger(TokenServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenServiceImpl.class);
 
     private static final String AUTHORIZATION_PARAMETER_NAME = "Authorization";
     private static final String BEARER_TOKEN_PREFIX = "Bearer ";
@@ -42,7 +46,7 @@ public class TokenServiceImpl implements BearerTokenService {
     private int expirationDays;
 
     /**
-     * This method generates a JWT token from an authentication object
+     * This method generates a JWT token from an authentication object.
      * @param authentication the authentication object
      * @return String the JWT token
      * @see Authentication
@@ -53,7 +57,7 @@ public class TokenServiceImpl implements BearerTokenService {
     }
 
     /**
-     * This method generates a JWT token from a email
+     * This method generates a JWT token from a email.
      * @param username the email
      * @return String the JWT token
      */
@@ -80,7 +84,7 @@ public class TokenServiceImpl implements BearerTokenService {
     }
 
     /**
-     * This method extracts the email from a JWT token
+     * This method extracts the email from a JWT token.
      * @param token the token
      * @return String the email
      */
@@ -90,7 +94,7 @@ public class TokenServiceImpl implements BearerTokenService {
     }
 
     /**
-     * This method validates a JWT token
+     * This method validates a JWT token.
      * @param token the token
      * @return boolean true if the token is valid, false otherwise
      */
@@ -115,7 +119,7 @@ public class TokenServiceImpl implements BearerTokenService {
     }
 
     /**
-     * Extract a claim from a token
+     * Extract a claim from a token.
      * @param token the token
      * @param claimsResolvers the claims resolver
      * @param <T> the type of the claim
@@ -127,7 +131,7 @@ public class TokenServiceImpl implements BearerTokenService {
     }
 
     /**
-     * Extract all claims from a token
+     * Extract all claims from a token.
      * @param token the token
      * @return Claims the claims
      */
@@ -136,7 +140,7 @@ public class TokenServiceImpl implements BearerTokenService {
     }
 
     /**
-     * Get the signing key
+     * Get the signing key.
      * @return SecretKey the signing key
      */
     private SecretKey getSigningKey() {

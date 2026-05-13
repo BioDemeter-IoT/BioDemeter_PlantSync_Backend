@@ -1,6 +1,5 @@
 package com.plantsync.platform.profiles.application.acl;
 
-
 import com.plantsync.platform.profiles.domain.model.aggregates.Profile;
 import com.plantsync.platform.profiles.domain.model.commands.CreateProfileCommand;
 import com.plantsync.platform.profiles.domain.model.valueobjects.PersonName;
@@ -16,7 +15,8 @@ public class ProfilesContextFacadeImpl implements ProfilesContextFacade {
     private final ProfileCommandService profileCommandService;
     private final ProfileQueryService profileQueryService;
 
-    public ProfilesContextFacadeImpl(ProfileCommandService profileCommandService, ProfileQueryService profileQueryService) {
+    public ProfilesContextFacadeImpl(ProfileCommandService profileCommandService,
+            ProfileQueryService profileQueryService) {
         this.profileCommandService = profileCommandService;
         this.profileQueryService = profileQueryService;
     }
@@ -26,12 +26,9 @@ public class ProfilesContextFacadeImpl implements ProfilesContextFacade {
         var command = new CreateProfileCommand(
                 new PersonName(name),
                 SubscriptionPlan.fromString(subscriptionPlan),
-                new UserId(userId)
-        );
+                new UserId(userId));
         var profile = profileCommandService.handle(command);
         return profile.map(Profile::getId).orElse(0L);
     }
-
-
 
 }

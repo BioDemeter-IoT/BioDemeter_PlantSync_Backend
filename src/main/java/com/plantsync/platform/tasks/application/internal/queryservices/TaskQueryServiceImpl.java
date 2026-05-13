@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TaskQueryServiceImpl implements TaskQueryService
-{
+public class TaskQueryServiceImpl implements TaskQueryService {
 
 
     private final TaskRepository taskRepository;
