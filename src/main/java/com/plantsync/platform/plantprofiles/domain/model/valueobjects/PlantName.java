@@ -7,14 +7,14 @@ import jakarta.persistence.Embeddable;
 public record PlantName(String value) {
 
     /**
-     * Default constructor for JPA
+     * Default constructor for JPA.
      */
     public PlantName() {
         this(null);
     }
 
     /**
-     * Canonical constructor with validation
+     * Canonical constructor with validation.
      */
     public PlantName {
         if (value == null || value.isBlank()) {

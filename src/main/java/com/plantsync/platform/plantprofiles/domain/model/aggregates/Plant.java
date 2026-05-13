@@ -6,7 +6,12 @@ import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAg
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
 
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -92,32 +97,32 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
     /**
      * Updates the plant's information.
      *
-     * @param name the new name
-     * @param species the new species
-     * @param acquisitionDate the new acquisition date
-     * @param humidity the new humidity preference
-     * @param nextWateringDate the new watering schedule
-     * @param imageUrl the new image
-     * @param notificationsEnabled whether notifications are enabled
-     * @param profileId the owner profile ID
+     * @param newName the new name
+     * @param newSpecies the new species
+     * @param newAcquisitionDate the new acquisition date
+     * @param newHumidity the new humidity preference
+     * @param newNextWateringDate the new watering schedule
+     * @param newImageUrl the new image
+     * @param newNotificationsEnabled whether notifications are enabled
+     * @param newProfileId the owner profile ID
      * @return the updated plant instance
      */
-    public Plant updateInformation(PlantName name,
-                                   String species,
-                                   LocalDate acquisitionDate,
-                                   HumidityLevel humidity,
-                                   LocalDate nextWateringDate,
-                                   String imageUrl,
-                                   Boolean notificationsEnabled,
-                                   ProfileId profileId) {
-        this.name = name;
-        this.species = species;
-        this.acquisitionDate = acquisitionDate;
-        this.humidity = humidity;
-        this.nextWateringDate = nextWateringDate;
-        this.imageUrl = imageUrl;
-        this.notificationsEnabled = notificationsEnabled;
-        this.profileId = profileId;
+    public Plant updateInformation(PlantName newName,
+                                   String newSpecies,
+                                   LocalDate newAcquisitionDate,
+                                   HumidityLevel newHumidity,
+                                   LocalDate newNextWateringDate,
+                                   String newImageUrl,
+                                   Boolean newNotificationsEnabled,
+                                   ProfileId newProfileId) {
+        this.name = newName;
+        this.species = newSpecies;
+        this.acquisitionDate = newAcquisitionDate;
+        this.humidity = newHumidity;
+        this.nextWateringDate = newNextWateringDate;
+        this.imageUrl = newImageUrl;
+        this.notificationsEnabled = newNotificationsEnabled;
+        this.profileId = newProfileId;
 
         return this;
     }

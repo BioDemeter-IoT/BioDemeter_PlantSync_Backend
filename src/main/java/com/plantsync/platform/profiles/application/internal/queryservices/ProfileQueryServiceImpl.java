@@ -16,7 +16,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
     private final ProfileRepository profileRepository;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param profileRepository The {@link ProfileRepository} instance
      */

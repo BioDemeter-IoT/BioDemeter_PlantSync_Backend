@@ -53,21 +53,17 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
 
 
     public Task updateInformation(
-
-    String action,
-    LocalDate date,
-    PlantId plantId,
-    ProfileId profileId,
-    Boolean completed
+            String newAction,
+            LocalDate newDate,
+            PlantId newPlantId,
+            ProfileId newProfileId,
+            Boolean newCompleted
     ) {
-
-        this.action = action;
-        this.date = date;
-        this.plantId = plantId;
-        this.profileId = profileId;
-        this.completed = completed;
-
-
+        this.action = newAction;
+        this.date = newDate;
+        this.plantId = newPlantId;
+        this.profileId = newProfileId;
+        this.completed = newCompleted;
 
         return this;
     }

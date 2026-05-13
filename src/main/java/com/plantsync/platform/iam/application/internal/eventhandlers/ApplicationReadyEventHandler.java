@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 
 /**
- * ApplicationReadyEventHandler class
- * This class is used to handle the ApplicationReadyEvent
+ * ApplicationReadyEventHandler class.
+ * This class is used to handle the ApplicationReadyEvent.
  */
 @Service
 public class ApplicationReadyEventHandler {
@@ -24,8 +24,8 @@ public class ApplicationReadyEventHandler {
     }
 
     /**
-     * Handle the ApplicationReadyEvent
-     * This method is used to seed the roles
+     * Handle the ApplicationReadyEvent.
+     * This method is used to seed the roles.
      * @param event the ApplicationReadyEvent the event to handle
      */
     @EventListener

@@ -1,6 +1,11 @@
 package com.plantsync.platform.shared.domain.model.aggregates;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,7 +18,6 @@ import java.util.Date;
  * Base class for all aggregate roots that require auditing.
  *
  * @param <T> the type of the aggregate root
- * @summary The class is an abstract class that extends the {@link AbstractAggregateRoot} class and adds auditing fields to the class.
  */
 @Getter
 @EntityListeners(AuditingEntityListener.class)
