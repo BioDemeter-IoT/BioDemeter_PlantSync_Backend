@@ -1,8 +1,6 @@
 package com.plantsync.platform.profiles.domain.model.aggregates;
 
-
 import com.plantsync.platform.profiles.domain.model.commands.CreateProfileCommand;
-import com.plantsync.platform.profiles.domain.model.commands.UpdateProfileCommand;
 import com.plantsync.platform.profiles.domain.model.valueobjects.PaymentStatus;
 import com.plantsync.platform.profiles.domain.model.valueobjects.PersonName;
 import com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPlan;
@@ -17,11 +15,10 @@ import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Optional;
-
 /**
  * Aggregate root representing a user profile in the system.
- * A profile is linked to a user and contains subscription and payment status information.
+ * A profile is linked to a user and contains subscription and payment status
+ * information.
  */
 @Getter
 @Setter
@@ -73,12 +70,13 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     }
 
     /**
-     * Constructs a profile with explicit values, used for internal instantiation or testing.
+     * Constructs a profile with explicit values, used for internal instantiation or
+     * testing.
      *
-     * @param name the person's name
+     * @param name             the person's name
      * @param subscriptionPlan the user's subscription plan
-     * @param userId the associated user ID
-     * @param paymentStatus the current payment status
+     * @param userId           the associated user ID
+     * @param paymentStatus    the current payment status
      */
     public Profile(PersonName name, SubscriptionPlan subscriptionPlan, UserId userId, PaymentStatus paymentStatus) {
         this.personName = name;
@@ -92,8 +90,5 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
         this.subscriptionPlan = newSubscriptionPlan;
         return this;
     }
-
-
-
 
 }

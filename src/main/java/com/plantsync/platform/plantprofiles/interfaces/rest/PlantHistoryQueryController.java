@@ -1,14 +1,10 @@
 package com.plantsync.platform.plantprofiles.interfaces.rest;
 
-import com.plantsync.platform.plantprofiles.domain.model.aggregates.Plant;
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetAllPlantHistoriesByPlantIdQuery;
-import com.plantsync.platform.plantprofiles.domain.model.queries.GetAllPlantsByProfileIdQuery;
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantHistoryByPlantIdQuery;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantId;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryQueryService;
 import com.plantsync.platform.plantprofiles.interfaces.rest.assemblers.PlantHistoryResourceFromEntityAssembler;
-import com.plantsync.platform.plantprofiles.interfaces.rest.assemblers.PlantResourceFromEntityAssembler;
 import com.plantsync.platform.plantprofiles.interfaces.rest.resources.PlantHistoryResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +31,6 @@ public class PlantHistoryQueryController {
         this.plantHistoryQueryService = plantHistoryQueryService;
     }
 
-
     @GetMapping("/by-plant/plantId")
     @Operation(summary = "Get plant history by Plant ID")
     @ApiResponses({
@@ -46,17 +41,13 @@ public class PlantHistoryQueryController {
 
         var getPlantHistoryByPlantIdQuery = new GetPlantHistoryByPlantIdQuery(plantId);
         var plantHistory = plantHistoryQueryService.handle(getPlantHistoryByPlantIdQuery);
-        if (plantHistory.isEmpty()) return ResponseEntity.notFound().build();
+        if (plantHistory.isEmpty())
+            return ResponseEntity.notFound().build();
         var plantHistoryEntity = plantHistory.get();
         var plantHistoryResource = PlantHistoryResourceFromEntityAssembler.toResourceFromEntity(plantHistoryEntity);
         return ResponseEntity.ok(plantHistoryResource);
 
-
-
     }
-
-
-
 
     @GetMapping("/plantId")
     @Operation(summary = "Get plant histories by plant ID")
@@ -65,9 +56,11 @@ public class PlantHistoryQueryController {
             @ApiResponse(responseCode = "404", description = "No plant histories found for the specifiend plantid")
     })
     public ResponseEntity<List<PlantHistoryResource>> getAllPlantsByProfileId(@RequestParam Long plantId) {
-        var plantHistories = plantHistoryQueryService.handle(new GetAllPlantHistoriesByPlantIdQuery(new PlantId(plantId)));
+        var plantHistories = plantHistoryQueryService
+                .handle(new GetAllPlantHistoriesByPlantIdQuery(new PlantId(plantId)));
 
-        if (plantHistories.isEmpty()) return ResponseEntity.notFound().build();
+        if (plantHistories.isEmpty())
+            return ResponseEntity.notFound().build();
 
         var resources = plantHistories.stream()
                 .map(PlantHistoryResourceFromEntityAssembler::toResourceFromEntity)
@@ -75,6 +68,5 @@ public class PlantHistoryQueryController {
 
         return ResponseEntity.ok(resources);
     }
-
 
 }

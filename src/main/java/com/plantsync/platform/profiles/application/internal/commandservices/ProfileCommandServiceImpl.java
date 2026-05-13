@@ -1,7 +1,5 @@
 package com.plantsync.platform.profiles.application.internal.commandservices;
 
-
-import com.plantsync.platform.profiles.domain.exceptions.ProfileNotFoundException;
 import com.plantsync.platform.profiles.domain.exceptions.ProfileUpdateException;
 import com.plantsync.platform.profiles.domain.model.aggregates.Profile;
 import com.plantsync.platform.profiles.domain.model.commands.CreateProfileCommand;
@@ -36,7 +34,6 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
         return Optional.of(profile);
     }
 
-
     @Override
     public Optional<Profile> handle(UpdateProfileCommand command) {
         var result = profileRepository.findById(command.id());
@@ -49,14 +46,11 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
             var updatedProfile = profileRepository.save(
                     profileToUpdate.updateInformation(
                             new PersonName(command.personName()),
-                            SubscriptionPlan.valueOf(command.subscriptionPlan().toUpperCase())
-                    )
-            );
+                            SubscriptionPlan.valueOf(command.subscriptionPlan().toUpperCase())));
             return Optional.of(updatedProfile);
         } catch (Exception e) {
             throw new ProfileUpdateException(e.getMessage());
         }
     }
-
 
 }

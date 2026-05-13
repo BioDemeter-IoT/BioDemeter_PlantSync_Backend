@@ -1,6 +1,5 @@
 package com.plantsync.platform.plantprofiles.domain.model.aggregates;
 
-import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantCommand;
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantHistoryCommand;
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantId;
@@ -13,6 +12,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 /**
  * Aggregate root representing a historical record of plant care or sensor data.
  * Tracks actions such as watering, fertilizing, and humidity changes over time.
@@ -30,7 +30,8 @@ public class PlantHistory extends AuditableAbstractAggregateRoot<PlantHistory> {
     private PlantId plantId;
 
     /**
-     * The type of action or event recorded (e.g., "WATERED", "FERTILIZED", "SENSOR_READING").
+     * The type of action or event recorded (e.g., "WATERED", "FERTILIZED",
+     * "SENSOR_READING").
      */
     private String type;
 
@@ -59,7 +60,8 @@ public class PlantHistory extends AuditableAbstractAggregateRoot<PlantHistory> {
     /**
      * Constructs a new {@link PlantHistory} record based on the given command.
      *
-     * @param command the command containing all necessary information to create the record
+     * @param command the command containing all necessary information to create the
+     *                record
      */
     public PlantHistory(CreatePlantHistoryCommand command) {
         this.plantId = command.plantId();
