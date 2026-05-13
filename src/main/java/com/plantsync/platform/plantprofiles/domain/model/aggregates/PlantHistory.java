@@ -4,7 +4,10 @@ import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantCom
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantHistoryCommand;
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantId;
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
