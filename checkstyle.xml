@@ -57,5 +57,19 @@
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
         <module name="UpperEll"/>
+
+        <!-- Javadoc Validation -->
+        <module name="JavadocMethod">
+            <property name="accessModifiers" value="public, protected"/>
+            <property name="allowMissingParamTags" value="false"/>
+            <property name="allowMissingReturnTag" value="false"/>
+        </module>
+        <module name="JavadocType">
+            <property name="scope" value="public"/>
+        </module>
+        <module name="JavadocStyle">
+            <property name="checkFirstSentence" value="true"/>
+            <property name="endOfSentenceFormat" value="([.?!][ \t\n\r\f&lt;])|([.?!]$)" />
+        </module>
     </module>
 </module>
