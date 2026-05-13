@@ -17,7 +17,7 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
     private final ProfileRepository profileRepository;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param profileRepository The {@link ProfileRepository} instance
      */

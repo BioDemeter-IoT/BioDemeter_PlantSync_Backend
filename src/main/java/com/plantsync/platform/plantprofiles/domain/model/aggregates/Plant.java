@@ -97,14 +97,14 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
     /**
      * Updates the plant's information.
      *
-     * @param name the new name
-     * @param species the new species
-     * @param acquisitionDate the new acquisition date
-     * @param humidity the new humidity preference
-     * @param nextWateringDate the new watering schedule
-     * @param imageUrl the new image
-     * @param notificationsEnabled whether notifications are enabled
-     * @param profileId the owner profile ID
+     * @param newName the new name
+     * @param newSpecies the new species
+     * @param newAcquisitionDate the new acquisition date
+     * @param newHumidity the new humidity preference
+     * @param newNextWateringDate the new watering schedule
+     * @param newImageUrl the new image
+     * @param newNotificationsEnabled whether notifications are enabled
+     * @param newProfileId the owner profile ID
      * @return the updated plant instance
      */
     public Plant updateInformation(PlantName newName,

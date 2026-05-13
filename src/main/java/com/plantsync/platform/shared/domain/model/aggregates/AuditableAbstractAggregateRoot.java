@@ -18,7 +18,6 @@ import java.util.Date;
  * Base class for all aggregate roots that require auditing.
  *
  * @param <T> the type of the aggregate root
- * @summary The class is an abstract class that extends the {@link AbstractAggregateRoot} class and adds auditing fields to the class.
  */
 @Getter
 @EntityListeners(AuditingEntityListener.class)

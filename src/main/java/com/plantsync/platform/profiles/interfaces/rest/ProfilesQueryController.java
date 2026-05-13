@@ -48,7 +48,7 @@ public class ProfilesQueryController {
     }
 
     /**
-     * Get all profiles
+     * Get all profiles.
      * @return A list of {@link ProfileResource} resources for all profiles, or a not found response if no profiles are found.
      */
     @GetMapping

@@ -1,7 +1,7 @@
 package com.plantsync.platform.profiles.interfaces.acl;
 
 /**
- * ProfilesContextFacade
+ * ProfilesContextFacade.
  */
 public interface ProfilesContextFacade {
 

@@ -9,21 +9,21 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * User query service
+ * User query service.
  * <p>
  *     This interface represents the service to handle user queries.
  * </p>
  */
 public interface UserQueryService {
     /**
-     * Handle get all users query
+     * Handle get all users query.
      * @param query the {@link GetAllUsersQuery} query
      * @return a list of {@link User} entities
      */
     List<User> handle(GetAllUsersQuery query);
 
     /**
-     * Handle get user by id query
+     * Handle get user by id query.
      * @param query the {@link GetUserByIdQuery} query
      * @return an {@link Optional} of {@link User} entity
      */

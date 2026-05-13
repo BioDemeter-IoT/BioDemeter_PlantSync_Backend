@@ -3,14 +3,14 @@ package com.plantsync.platform.iam.application.internal.outboundservices.hashing
 
 public interface HashingService {
     /**
-     * Encode a password
+     * Encode a password.
      * @param rawPassword the password to encode
      * @return String the encoded password
      */
     String encode(CharSequence rawPassword);
 
     /**
-     * Match a raw password with an encoded password
+     * Match a raw password with an encoded password.
      * @param rawPassword the raw password
      * @param encodedPassword the encoded password
      * @return boolean true if the raw password matches the encoded password, false otherwise

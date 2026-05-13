@@ -36,7 +36,7 @@ public class ProfilesCommandController {
     }
 
     /**
-     * Create a new profile
+     * Create a new profile.
      *
      * @param resource The {@link CreateProfileResource} instance
      * @return A {@link ProfileResource} resource for the created profile, or a bad request response if the profile could not be created.
