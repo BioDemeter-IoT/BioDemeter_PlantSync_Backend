@@ -15,13 +15,13 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfiguration {
     // Properties
     @Value("${spring.application.name}")
-    String applicationName;
+    private String applicationName;
 
     @Value("${documentation.application.description}")
-    String applicationDescription;
+    private String applicationDescription;
 
     @Value("${documentation.application.version}")
-    String applicationVersion;
+    private String applicationVersion;
 
     // Methods
 
