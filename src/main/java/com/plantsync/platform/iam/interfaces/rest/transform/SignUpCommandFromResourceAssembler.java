@@ -6,7 +6,7 @@ import com.plantsync.platform.iam.domain.model.entities.Role;
 import com.plantsync.platform.iam.domain.model.valueobjects.Roles;
 import com.plantsync.platform.iam.interfaces.rest.resources.SignUpResource;
 
-import java.util.*;
+import java.util.List;
 
 public class SignUpCommandFromResourceAssembler {
     public static SignUpCommand toCommandFromResource(SignUpResource resource) {
