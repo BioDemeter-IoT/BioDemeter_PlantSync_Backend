@@ -8,7 +8,12 @@ import com.plantsync.platform.profiles.domain.model.valueobjects.PersonName;
 import com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPlan;
 import com.plantsync.platform.profiles.domain.model.valueobjects.UserId;
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -82,9 +87,9 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
         this.paymentStatus = paymentStatus;
     }
 
-    public Profile updateInformation(PersonName personName, SubscriptionPlan subscriptionPlan) {
-        this.personName = personName;
-        this.subscriptionPlan = subscriptionPlan;
+    public Profile updateInformation(PersonName newPersonName, SubscriptionPlan newSubscriptionPlan) {
+        this.personName = newPersonName;
+        this.subscriptionPlan = newSubscriptionPlan;
         return this;
     }
 
