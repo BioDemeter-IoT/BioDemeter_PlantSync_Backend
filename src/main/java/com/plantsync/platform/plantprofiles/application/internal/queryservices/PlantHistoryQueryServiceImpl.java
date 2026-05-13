@@ -14,8 +14,7 @@ import java.util.Optional;
 
 
 @Service
-public class PlantHistoryQueryServiceImpl implements PlantHistoryQueryService
-{
+public class PlantHistoryQueryServiceImpl implements PlantHistoryQueryService {
 
     private final PlantHistoryRepository plantHistoryRepository;
 
