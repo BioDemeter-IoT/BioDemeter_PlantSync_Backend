@@ -4,6 +4,6 @@ import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantHis
 
 public interface PlantHistoryCommandService {
 
-    Long handle(CreatePlantHistoryCommand command);
+  Long handle(CreatePlantHistoryCommand command);
 
 }

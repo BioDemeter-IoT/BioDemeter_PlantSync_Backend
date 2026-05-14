@@ -5,10 +5,10 @@ public record PersonName(String name) {
 
 
 
-    public PersonName {
+  public PersonName {
 
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("name must not be null or blank");
-        }
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("name must not be null or blank");
     }
+  }
 }

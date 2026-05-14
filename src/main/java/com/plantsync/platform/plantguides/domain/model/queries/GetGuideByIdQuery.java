@@ -7,12 +7,12 @@ package com.plantsync.platform.plantguides.domain.model.queries;
  */
 public record GetGuideByIdQuery(Long guideId) {
 
-    /**
-     * Compact constructor to validate the guide ID.
-     */
-    public GetGuideByIdQuery {
-        if (guideId == null || guideId <= 0) {
-            throw new IllegalArgumentException("Guide id is required.");
-        }
+  /**
+   * Compact constructor to validate the guide ID.
+   */
+  public GetGuideByIdQuery {
+    if (guideId == null || guideId <= 0) {
+      throw new IllegalArgumentException("Guide id is required.");
     }
+  }
 }

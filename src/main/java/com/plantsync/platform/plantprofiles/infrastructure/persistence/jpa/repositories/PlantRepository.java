@@ -11,7 +11,7 @@ import java.util.List;
 public interface PlantRepository extends JpaRepository<Plant,Long> {
 
 
-    List<Plant> findByProfileId(ProfileId profileId);
+  List<Plant> findByProfileId(ProfileId profileId);
 
 
 }

@@ -10,17 +10,17 @@ import java.time.LocalDate;
 public record CreateTaskCommandFromResourceAssembler() {
 
 
-    public static CreateTaskCommand toCommandFromResource(CreateTaskResource resource) {
+  public static CreateTaskCommand toCommandFromResource(CreateTaskResource resource) {
 
-        return new CreateTaskCommand(
-                LocalDate.parse(resource.date()),
-                resource.action(),
-                resource.completed(),
-                new PlantId(resource.plantId()),
-                new ProfileId(resource.profileId())
+    return new CreateTaskCommand(
+        LocalDate.parse(resource.date()),
+        resource.action(),
+        resource.completed(),
+        new PlantId(resource.plantId()),
+        new ProfileId(resource.profileId())
 
 
-        );
-    }
+    );
+  }
 
 }

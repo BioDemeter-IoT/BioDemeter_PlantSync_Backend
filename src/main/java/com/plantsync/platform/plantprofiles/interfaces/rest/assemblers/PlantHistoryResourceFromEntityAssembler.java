@@ -7,18 +7,18 @@ import com.plantsync.platform.plantprofiles.interfaces.rest.resources.PlantHisto
 
 public class PlantHistoryResourceFromEntityAssembler{
 
-public static PlantHistoryResource toResourceFromEntity(PlantHistory entity){
+  public static PlantHistoryResource toResourceFromEntity(PlantHistory entity){
 
     return new PlantHistoryResource(
-            entity.getId(),
-            entity.getPlantId().value(),
-            entity.getType(),
-            entity.getDate().toString(),
-            entity.getTime().toString(),
-            entity.getHumidity()
+        entity.getId(),
+        entity.getPlantId().value(),
+        entity.getType(),
+        entity.getDate().toString(),
+        entity.getTime().toString(),
+        entity.getHumidity()
 
     );
-}
+  }
 
 
 

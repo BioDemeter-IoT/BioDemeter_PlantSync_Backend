@@ -15,9 +15,9 @@ public record CreatePlantResource(
 
 ) {
 
-    public CreatePlantResource{
+  public CreatePlantResource{
 
 
-        }
+  }
 
 }

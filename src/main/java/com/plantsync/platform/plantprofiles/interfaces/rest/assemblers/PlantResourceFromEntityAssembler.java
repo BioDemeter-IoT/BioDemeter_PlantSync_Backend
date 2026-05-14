@@ -5,20 +5,20 @@ import com.plantsync.platform.plantprofiles.interfaces.rest.resources.PlantResou
 
 public class PlantResourceFromEntityAssembler{
 
-public static PlantResource toResourceFromEntity(Plant entity){
+  public static PlantResource toResourceFromEntity(Plant entity){
 
- return new PlantResource(
-         entity.getId(),
-         entity.getName().value(),
-         entity.getSpecies(),
-         entity.getAcquisitionDate().toString(),
-         entity.getHumidity().name(),
-         entity.getNextWateringDate().toString(),
-         entity.getImageUrl(),
-         entity.getNotificationsEnabled(),
-         entity.getProfileId().value()
- );
-}
+    return new PlantResource(
+        entity.getId(),
+        entity.getName().value(),
+        entity.getSpecies(),
+        entity.getAcquisitionDate().toString(),
+        entity.getHumidity().name(),
+        entity.getNextWateringDate().toString(),
+        entity.getImageUrl(),
+        entity.getNotificationsEnabled(),
+        entity.getProfileId().value()
+    );
+  }
 
 
 

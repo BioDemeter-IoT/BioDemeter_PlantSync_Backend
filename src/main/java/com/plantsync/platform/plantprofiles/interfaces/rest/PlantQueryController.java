@@ -28,66 +28,66 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Tag(name = "Plants", description = "Plant Management Endpoints")
 public class PlantQueryController {
 
-    private final PlantQueryService plantQueryService;
+  private final PlantQueryService plantQueryService;
 
-    public PlantQueryController(PlantQueryService plantQueryService) {
-        this.plantQueryService = plantQueryService;
-    }
+  public PlantQueryController(PlantQueryService plantQueryService) {
+    this.plantQueryService = plantQueryService;
+  }
 
-    @GetMapping
-    @Operation(summary = "Get all plants")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Plants found"),
-            @ApiResponse(responseCode = "404", description = "No plants found")
-    })
-    public ResponseEntity<List<PlantResource>> getAllPlants() {
-        var plants = plantQueryService.handle(new GetAllPlantsQuery());
+  @GetMapping
+  @Operation(summary = "Get all plants")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Plants found"),
+      @ApiResponse(responseCode = "404", description = "No plants found")
+  })
+  public ResponseEntity<List<PlantResource>> getAllPlants() {
+    var plants = plantQueryService.handle(new GetAllPlantsQuery());
 
-        if (plants.isEmpty()) return ResponseEntity.notFound().build();
+    if (plants.isEmpty()) return ResponseEntity.notFound().build();
 
-        var resources = plants.stream()
-                .map(PlantResourceFromEntityAssembler::toResourceFromEntity)
-                .toList();
+    var resources = plants.stream()
+        .map(PlantResourceFromEntityAssembler::toResourceFromEntity)
+        .toList();
 
-        return ResponseEntity.ok(resources);
-    }
+    return ResponseEntity.ok(resources);
+  }
 
-    @GetMapping("/by-profile/{profileId}")
-    @Operation(summary = "Get plants by profile ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Plants found for the user"),
-            @ApiResponse(responseCode = "404", description = "No plants found for the user")
-    })
-    public ResponseEntity<List<PlantResource>> getAllPlantsByProfileId(@PathVariable Long profileId) {
-        var plants = plantQueryService.handle(new GetAllPlantsByProfileIdQuery(new ProfileId(profileId)));
+  @GetMapping("/by-profile/{profileId}")
+  @Operation(summary = "Get plants by profile ID")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Plants found for the user"),
+      @ApiResponse(responseCode = "404", description = "No plants found for the user")
+  })
+  public ResponseEntity<List<PlantResource>> getAllPlantsByProfileId(@PathVariable Long profileId) {
+    var plants = plantQueryService.handle(new GetAllPlantsByProfileIdQuery(new ProfileId(profileId)));
 
-        if (plants.isEmpty()) return ResponseEntity.notFound().build();
+    if (plants.isEmpty()) return ResponseEntity.notFound().build();
 
-        var resources = plants.stream()
-                .map(PlantResourceFromEntityAssembler::toResourceFromEntity)
-                .toList();
+    var resources = plants.stream()
+        .map(PlantResourceFromEntityAssembler::toResourceFromEntity)
+        .toList();
 
-        return ResponseEntity.ok(resources);
-    }
+    return ResponseEntity.ok(resources);
+  }
 
-    @GetMapping("/{plantId}")
-    @Operation(summary = "Get plant by ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Plant found for the user"),
-            @ApiResponse(responseCode = "404", description = "No plant found for the user")
-    })
-    public ResponseEntity<PlantResource> getPlantById( @PathVariable Long plantId) {
+  @GetMapping("/{plantId}")
+  @Operation(summary = "Get plant by ID")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Plant found for the user"),
+      @ApiResponse(responseCode = "404", description = "No plant found for the user")
+  })
+  public ResponseEntity<PlantResource> getPlantById( @PathVariable Long plantId) {
 
-        var getPlantByIdQuery = new GetPlantByIdQuery(plantId);
-        var plant = plantQueryService.handle(getPlantByIdQuery);
-        if (plant.isEmpty()) return ResponseEntity.notFound().build();
-        var plantEntity = plant.get();
-        var plantResource = PlantResourceFromEntityAssembler.toResourceFromEntity(plantEntity);
-        return ResponseEntity.ok(plantResource);
+    var getPlantByIdQuery = new GetPlantByIdQuery(plantId);
+    var plant = plantQueryService.handle(getPlantByIdQuery);
+    if (plant.isEmpty()) return ResponseEntity.notFound().build();
+    var plantEntity = plant.get();
+    var plantResource = PlantResourceFromEntityAssembler.toResourceFromEntity(plantEntity);
+    return ResponseEntity.ok(plantResource);
 
 
 
-    }
+  }
 
 
 

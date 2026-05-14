@@ -26,52 +26,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/v1/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Profiles", description = "Available Profile Endpoints")
 public class ProfilesCommandController {
-    private final ProfileCommandService profileCommandService;
+  private final ProfileCommandService profileCommandService;
 
 
 
-    public ProfilesCommandController(ProfileCommandService profileCommandService) {
-        this.profileCommandService = profileCommandService;
+  public ProfilesCommandController(ProfileCommandService profileCommandService) {
+    this.profileCommandService = profileCommandService;
 
-    }
+  }
 
-    /**
-     * Create a new profile.
-     *
-     * @param resource The {@link CreateProfileResource} instance
-     * @return A {@link ProfileResource} resource for the created profile, or a bad request response if the profile could not be created.
-     */
-    @PostMapping
-    @Operation(summary = "Create a new profile")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Profile created"),
-            @ApiResponse(responseCode = "400", description = "Bad request")})
-    public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource) {
-        var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource);
-        var profile = profileCommandService.handle(createProfileCommand);
-        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
-        var createdProfile = profile.get();
-        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(createdProfile);
-        return new ResponseEntity<>(profileResource, HttpStatus.CREATED);
-    }
+  /**
+   * Create a new profile.
+   *
+   * @param resource The {@link CreateProfileResource} instance
+   * @return A {@link ProfileResource} resource for the created profile, or a bad request response if the profile could not be created.
+   */
+  @PostMapping
+  @Operation(summary = "Create a new profile")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Profile created"),
+      @ApiResponse(responseCode = "400", description = "Bad request")})
+  public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource) {
+    var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource);
+    var profile = profileCommandService.handle(createProfileCommand);
+    if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+    var createdProfile = profile.get();
+    var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(createdProfile);
+    return new ResponseEntity<>(profileResource, HttpStatus.CREATED);
+  }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Update a profile by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Profile updated"),
-            @ApiResponse(responseCode = "404", description = "Profile not found")
-    })
-    public ResponseEntity<ProfileResource> updateProfile(
-            @PathVariable Long id,
-            @RequestBody UpdateProfileResource resource) {
+  @PutMapping("/{id}")
+  @Operation(summary = "Update a profile by ID")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Profile updated"),
+      @ApiResponse(responseCode = "404", description = "Profile not found")
+  })
+  public ResponseEntity<ProfileResource> updateProfile(
+      @PathVariable Long id,
+      @RequestBody UpdateProfileResource resource) {
 
-        var command = UpdateProfileCommandFromResourceAssembler.toCommandFromResource(id, resource);
-        var profile = profileCommandService.handle(command);
-        if (profile.isEmpty()) return ResponseEntity.notFound().build();
+    var command = UpdateProfileCommandFromResourceAssembler.toCommandFromResource(id, resource);
+    var profile = profileCommandService.handle(command);
+    if (profile.isEmpty()) return ResponseEntity.notFound().build();
 
-        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
-        return ResponseEntity.ok(profileResource);
-    }
+    var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+    return ResponseEntity.ok(profileResource);
+  }
 
 
 }

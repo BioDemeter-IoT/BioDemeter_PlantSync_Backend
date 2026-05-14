@@ -15,27 +15,27 @@ import java.util.Optional;
 @Service
 public class PlantQueryServiceImpl implements PlantQueryService {
 
-    private final PlantRepository plantRepository;
+  private final PlantRepository plantRepository;
 
-    public PlantQueryServiceImpl(PlantRepository plantRepository, PlantHistoryRepository plantHistoryRepository) {
-        this.plantRepository = plantRepository;
-    }
+  public PlantQueryServiceImpl(PlantRepository plantRepository, PlantHistoryRepository plantHistoryRepository) {
+    this.plantRepository = plantRepository;
+  }
 
-    @Override
-    public List<Plant> handle(GetAllPlantsQuery query) {
-        return plantRepository.findAll();
-    }
+  @Override
+  public List<Plant> handle(GetAllPlantsQuery query) {
+    return plantRepository.findAll();
+  }
 
-    @Override
-    public List<Plant> handle(GetAllPlantsByProfileIdQuery query) {
-        return plantRepository.findByProfileId(query.profileId());
-    }
+  @Override
+  public List<Plant> handle(GetAllPlantsByProfileIdQuery query) {
+    return plantRepository.findByProfileId(query.profileId());
+  }
 
-    @Override
-    public Optional<Plant> handle(GetPlantByIdQuery query) {
-        if (!plantRepository.existsById(query.plantId()))
-            return Optional.empty();
-        return plantRepository.findById(query.plantId());
-    }
+  @Override
+  public Optional<Plant> handle(GetPlantByIdQuery query) {
+    if (!plantRepository.existsById(query.plantId()))
+      return Optional.empty();
+    return plantRepository.findById(query.plantId());
+  }
 
 }

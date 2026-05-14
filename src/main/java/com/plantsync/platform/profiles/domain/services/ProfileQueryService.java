@@ -9,16 +9,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProfileQueryService {
-    /**
-     * Handle Get Profile By ID Query.
-     *
-     * @param query The {@link GetProfileByIdQuery} Query
-     * @return A {@link Profile} instance if the query is valid, otherwise empty
-     */
-    Optional<Profile> handle(GetProfileByIdQuery query);
-    Optional<Profile> handle(GetProfileByUserIdQuery query);
+  /**
+   * Handle Get Profile By ID Query.
+   *
+   * @param query The {@link GetProfileByIdQuery} Query
+   * @return A {@link Profile} instance if the query is valid, otherwise empty
+   */
+  Optional<Profile> handle(GetProfileByIdQuery query);
+  Optional<Profile> handle(GetProfileByUserIdQuery query);
 
 
-    List<Profile> handle(GetAllProfilesQuery query);
+  List<Profile> handle(GetAllProfilesQuery query);
 
 }

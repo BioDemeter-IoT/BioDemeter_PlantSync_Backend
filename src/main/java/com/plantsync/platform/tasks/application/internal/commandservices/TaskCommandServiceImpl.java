@@ -14,35 +14,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskCommandServiceImpl implements TaskCommandService {
 
-    private final TaskRepository taskRepository;
+  private final TaskRepository taskRepository;
 
-    public TaskCommandServiceImpl(TaskRepository taskRepository) {
+  public TaskCommandServiceImpl(TaskRepository taskRepository) {
 
-        this.taskRepository = taskRepository;
+    this.taskRepository = taskRepository;
+  }
+
+
+  @Override
+  public Long handle(CreateTaskCommand command) {
+    var task = new Task(command);
+    try {
+      taskRepository.save(task);
+    } catch (Exception e) {
+      throw new TaskCreationException(e.getMessage());
     }
+    return task.getId();
 
 
-    @Override
-    public Long handle(CreateTaskCommand command) {
-        var task = new Task(command);
-        try {
-            taskRepository.save(task);
-        } catch (Exception e) {
-            throw new TaskCreationException(e.getMessage());
-        }
-        return task.getId();
+  }
 
 
+  @Override
+  public void handle(DeleteTaskCommand command) {
+
+    try {
+      taskRepository.deleteById(command.taskId());
+    } catch (Exception e) {
+      throw new TaskDeletionException(e.getMessage());
     }
-
-
-    @Override
-    public void handle(DeleteTaskCommand command) {
-
-        try {
-            taskRepository.deleteById(command.taskId());
-        } catch (Exception e) {
-            throw new TaskDeletionException(e.getMessage());
-        }
-    }
+  }
 }

@@ -8,26 +8,26 @@ import java.time.LocalDate;
 
 public record CreatePlantCommand (
 
-         PlantName name,
+    PlantName name,
 
-         String species,
+    String species,
 
-         LocalDate acquisitionDate,
+    LocalDate acquisitionDate,
 
-         HumidityLevel humidity,
+    HumidityLevel humidity,
 
-        LocalDate nextWateringDate,
+    LocalDate nextWateringDate,
 
-        String imageUrl,
+    String imageUrl,
 
-        Boolean notificationsEnabled,
+    Boolean notificationsEnabled,
 
-        ProfileId profileId
+    ProfileId profileId
 
 
 ) {
 
-    public CreatePlantCommand {
+  public CreatePlantCommand {
 
-    }
+  }
 }
