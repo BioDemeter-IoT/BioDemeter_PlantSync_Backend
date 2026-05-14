@@ -11,7 +11,6 @@ import com.plantsync.platform.profiles.domain.model.valueobjects.UserId;
 import com.plantsync.platform.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
