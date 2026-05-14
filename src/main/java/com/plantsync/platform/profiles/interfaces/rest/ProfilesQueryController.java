@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * The type Profiles query controller.
+ */
 @RestController
 @RequestMapping(value = "/api/v1/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Profiles", description = "Available Profile Endpoints")
@@ -29,10 +32,21 @@ public class ProfilesQueryController {
 
   private final ProfileQueryService profileQueryService;
 
+  /**
+   * Instantiates a new Profiles query controller.
+   *
+   * @param profileQueryService the profile query service
+   */
   public ProfilesQueryController(ProfileQueryService profileQueryService) {
     this.profileQueryService = profileQueryService;
   }
 
+  /**
+   * Gets profile by id.
+   *
+   * @param profileId the profile id
+   * @return the profile by id
+   */
   @GetMapping("/{profileId}")
   @Operation(summary = "Get a profile by ID")
   @ApiResponses(value = {

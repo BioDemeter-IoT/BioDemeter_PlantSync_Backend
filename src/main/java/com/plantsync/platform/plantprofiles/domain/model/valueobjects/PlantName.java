@@ -2,7 +2,9 @@ package com.plantsync.platform.plantprofiles.domain.model.valueobjects;
 
 import jakarta.persistence.Embeddable;
 
-
+/**
+ * The type Plant name.
+ */
 @Embeddable
 public record PlantName(String value) {
 
@@ -15,6 +17,8 @@ public record PlantName(String value) {
 
   /**
    * Canonical constructor with validation.
+   *
+   * @param value the value
    */
   public PlantName {
     if (value == null || value.isBlank()) {
@@ -24,6 +28,5 @@ public record PlantName(String value) {
       throw new IllegalArgumentException("Plant name must not exceed 100 characters");
     }
   }
-
 
 }

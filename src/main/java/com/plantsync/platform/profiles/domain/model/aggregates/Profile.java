@@ -78,13 +78,21 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
    * @param userId           the associated user ID
    * @param paymentStatus    the current payment status
    */
-  public Profile(PersonName name, SubscriptionPlan subscriptionPlan, UserId userId, PaymentStatus paymentStatus) {
+  public Profile(PersonName name, SubscriptionPlan subscriptionPlan, UserId userId,
+                 PaymentStatus paymentStatus) {
     this.personName = name;
     this.subscriptionPlan = subscriptionPlan;
     this.userId = userId;
     this.paymentStatus = paymentStatus;
   }
 
+  /**
+   * Update information profile.
+   *
+   * @param newPersonName       the new person name
+   * @param newSubscriptionPlan the new subscription plan
+   * @return the profile
+   */
   public Profile updateInformation(PersonName newPersonName, SubscriptionPlan newSubscriptionPlan) {
     this.personName = newPersonName;
     this.subscriptionPlan = newSubscriptionPlan;

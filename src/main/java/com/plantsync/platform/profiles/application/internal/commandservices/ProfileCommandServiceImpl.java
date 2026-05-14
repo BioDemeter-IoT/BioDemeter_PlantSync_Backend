@@ -9,9 +9,11 @@ import com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPla
 import com.plantsync.platform.profiles.domain.services.ProfileCommandService;
 import com.plantsync.platform.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
+/**
+ * The type Profile command service.
+ */
 @Service
 public class ProfileCommandServiceImpl implements ProfileCommandService {
   private final ProfileRepository profileRepository;
@@ -38,8 +40,9 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
   public Optional<Profile> handle(UpdateProfileCommand command) {
     var result = profileRepository.findById(command.id());
 
-    if (result.isEmpty())
+    if (result.isEmpty()) {
       throw new IllegalArgumentException("Profile is empty");
+    }
     var profileToUpdate = result.get();
 
     try {

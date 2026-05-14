@@ -1,21 +1,19 @@
 package com.plantsync.platform.plantprofiles.domain.model.aggregates;
 
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantCommand;
+import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
+import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 /**
  * Aggregate root representing a Plant entity in the system.
@@ -59,7 +57,6 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
    */
   @Column(name = "image_url", columnDefinition = "LONGTEXT")
   private String imageUrl;
-
 
   /**
    * Indicates whether notifications are enabled for this plant.

@@ -1,17 +1,16 @@
 package com.plantsync.platform.plantprofiles.domain.model.aggregates;
 
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantHistoryCommand;
-import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantId;
+import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Aggregate root representing a historical record of plant care or sensor data.

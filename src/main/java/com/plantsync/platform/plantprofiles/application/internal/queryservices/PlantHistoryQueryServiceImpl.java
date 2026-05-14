@@ -7,25 +7,30 @@ import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantHistory
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantId;
 import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryQueryService;
 import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantHistoryRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
+/**
+ * Service implementation for querying plant history records.
+ */
 
 @Service
 public class PlantHistoryQueryServiceImpl implements PlantHistoryQueryService {
 
   private final PlantHistoryRepository plantHistoryRepository;
 
+  /**
+   * Constructor for PlantHistoryQueryServiceImpl.
+   *
+   * @param plantHistoryRepository The plant history repository.
+   */
   public PlantHistoryQueryServiceImpl(PlantHistoryRepository plantHistoryRepository) {
     this.plantHistoryRepository = plantHistoryRepository;
   }
 
-
   @Override
   public Optional<PlantHistory> handle(GetPlantHistoryByPlantIdQuery query) {
-
     return plantHistoryRepository.findFirstByPlantId(new PlantId(query.plantId()));
   }
 
@@ -38,6 +43,4 @@ public class PlantHistoryQueryServiceImpl implements PlantHistoryQueryService {
   public List<PlantHistory> handle(GetAllPlantHistoriesByPlantIdQuery query) {
     return plantHistoryRepository.findByPlantId(query.plantId());
   }
-
-
 }

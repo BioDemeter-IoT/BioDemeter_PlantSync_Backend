@@ -17,6 +17,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+/**
+ * The type Task.
+ */
 @Getter
 @Setter
 @Entity
@@ -39,10 +42,18 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
   @AttributeOverride(name = "value", column = @Column(name = "profile_id"))
   private ProfileId profileId;
 
+  /**
+   * Instantiates a new Task.
+   */
   public Task() {
   }
 
 
+  /**
+   * Instantiates a new Task.
+   *
+   * @param command the command
+   */
   public Task(CreateTaskCommand command) {
     this.date = command.date();
     this.action = command.action();
@@ -53,6 +64,16 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
   }
 
 
+  /**
+   * Update information task.
+   *
+   * @param newAction    the new action
+   * @param newDate      the new date
+   * @param newPlantId   the new plant id
+   * @param newProfileId the new profile id
+   * @param newCompleted the new completed
+   * @return the task
+   */
   public Task updateInformation(
       String newAction,
       LocalDate newDate,

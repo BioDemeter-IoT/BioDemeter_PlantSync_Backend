@@ -1,5 +1,8 @@
 package com.plantsync.platform.plantprofiles.interfaces.rest.resources;
 
+/**
+ * The type Plant resource.
+ */
 public record PlantResource(
     Long id,
     String name,

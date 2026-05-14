@@ -27,6 +27,11 @@ import java.util.List;
 public class RolesController {
   private final RoleQueryService roleQueryService;
 
+  /**
+   * Instantiates a new Roles controller.
+   *
+   * @param roleQueryService the role query service
+   */
   public RolesController(RoleQueryService roleQueryService) {
     this.roleQueryService = roleQueryService;
   }

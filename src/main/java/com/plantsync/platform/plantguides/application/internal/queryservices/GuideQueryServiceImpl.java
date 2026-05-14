@@ -1,15 +1,13 @@
 package com.plantsync.platform.plantguides.application.internal.queryservices;
 
+import com.plantsync.platform.plantguides.domain.model.aggregates.Guide;
 import com.plantsync.platform.plantguides.domain.model.queries.GetAllGuidesQuery;
 import com.plantsync.platform.plantguides.domain.model.queries.GetGuideByIdQuery;
 import com.plantsync.platform.plantguides.domain.services.GuideQueryService;
 import com.plantsync.platform.plantguides.infrastructure.persistence.jpa.repositories.GuideRepository;
-import com.plantsync.platform.plantguides.domain.model.aggregates.Guide;
-import org.springframework.stereotype.Service;
-
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Service implementation for handling guide-related queries.

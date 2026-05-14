@@ -10,20 +10,26 @@ import com.plantsync.platform.plantprofiles.domain.model.commands.DeletePlantCom
 import com.plantsync.platform.plantprofiles.domain.model.commands.UpdatePlantCommand;
 import com.plantsync.platform.plantprofiles.domain.services.PlantCommandService;
 import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantRepository;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
+/**
+ * Service implementation for handling plant-related commands.
+ * Provides methods for creating, deleting, and updating plants.
+ */
 @Service
 public class PlantCommandServiceImpl implements PlantCommandService {
 
   private final PlantRepository plantRepository;
 
+  /**
+   * Constructor for PlantCommandServiceImpl.
+   *
+   * @param plantRepository The plant repository.
+   */
   public PlantCommandServiceImpl(PlantRepository plantRepository) {
-
     this.plantRepository = plantRepository;
   }
-
 
   @Override
   public Long handle(CreatePlantCommand command) {
@@ -34,10 +40,7 @@ public class PlantCommandServiceImpl implements PlantCommandService {
       throw new PlantCreationException(e.getMessage());
     }
     return plant.getId();
-
-
   }
-
 
   @Override
   public void handle(DeletePlantCommand command) {
@@ -51,15 +54,13 @@ public class PlantCommandServiceImpl implements PlantCommandService {
     }
   }
 
-
   @Override
   public Optional<Plant> handle(UpdatePlantCommand command) {
     var result = plantRepository.findById(command.plantId());
-    if (result.isEmpty())
+    if (result.isEmpty()) {
       return Optional.empty();
-
+    }
     var plantToUpdate = result.get();
-
     try {
       var updatedPlant = plantRepository.save(
           plantToUpdate.updateInformation(
@@ -78,6 +79,4 @@ public class PlantCommandServiceImpl implements PlantCommandService {
       throw new PlantUpdateException(e.getMessage());
     }
   }
-
-
 }

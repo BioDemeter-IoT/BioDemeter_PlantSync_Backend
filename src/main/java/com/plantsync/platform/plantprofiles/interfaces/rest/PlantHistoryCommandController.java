@@ -1,5 +1,7 @@
 package com.plantsync.platform.plantprofiles.interfaces.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantHistoryByIdQuery;
 import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryCommandService;
 import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryQueryService;
@@ -19,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
+/**
+ * REST controller for handling plant history related commands.
+ * Provides endpoints to create plant history records.
+ */
 @RestController
 @RequestMapping(value = "/api/v1/plantHistories", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Plant Histories", description = "Available Plant Histories Endpoints")
@@ -29,13 +33,24 @@ public class PlantHistoryCommandController {
   private final PlantHistoryCommandService plantHistoryCommandService;
   private final PlantHistoryQueryService plantHistoryQueryService;
 
+  /**
+   * Instantiates a new Plant history command controller.
+   *
+   * @param plantHistoryCommandService the plant history command service
+   * @param plantHistoryQueryService   the plant history query service
+   */
   public PlantHistoryCommandController(PlantHistoryCommandService plantHistoryCommandService,
                                        PlantHistoryQueryService plantHistoryQueryService) {
     this.plantHistoryCommandService = plantHistoryCommandService;
     this.plantHistoryQueryService = plantHistoryQueryService;
-
   }
 
+  /**
+   * Creates a new plant history record.
+   *
+   * @param resource the resource containing the history record data
+   * @return the created plant history resource
+   */
   @PostMapping
   @Operation(summary = "Create a new plant history", description = "Create a new plant history")
   @ApiResponses(value = {
@@ -44,16 +59,20 @@ public class PlantHistoryCommandController {
       @ApiResponse(responseCode = "404", description = "Plant not found")})
   public ResponseEntity<PlantHistoryResource> createPlantHistory(
       @Valid @RequestBody CreatePlantHistoryResource resource) {
-    var createPlantHistoryCommand = CreatePlantHistoryCommandFromResourceAssembler.toCommandFromResource(resource);
+    var createPlantHistoryCommand = CreatePlantHistoryCommandFromResourceAssembler
+        .toCommandFromResource(resource);
     var plantHistoryId = plantHistoryCommandService.handle(createPlantHistoryCommand);
-    if (plantHistoryId == null || plantHistoryId == 0L)
+    if (plantHistoryId == null || plantHistoryId == 0L) {
       return ResponseEntity.badRequest().build();
+    }
 
     var getPlantHistoryByIdQuery = new GetPlantHistoryByIdQuery(plantHistoryId);
     var plantHistory = plantHistoryQueryService.handle(getPlantHistoryByIdQuery);
-    if (plantHistory.isEmpty())
+    if (plantHistory.isEmpty()) {
       return ResponseEntity.notFound().build();
-    var plantHistoryResource = PlantHistoryResourceFromEntityAssembler.toResourceFromEntity(plantHistory.get());
+    }
+    var plantHistoryResource = PlantHistoryResourceFromEntityAssembler
+        .toResourceFromEntity(plantHistory.get());
     return new ResponseEntity<>(plantHistoryResource, HttpStatus.CREATED);
   }
 

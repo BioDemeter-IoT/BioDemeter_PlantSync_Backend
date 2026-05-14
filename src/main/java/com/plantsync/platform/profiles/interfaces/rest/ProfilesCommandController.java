@@ -1,6 +1,5 @@
 package com.plantsync.platform.profiles.interfaces.rest;
 
-
 import com.plantsync.platform.profiles.domain.services.ProfileCommandService;
 import com.plantsync.platform.profiles.interfaces.rest.resources.CreateProfileResource;
 import com.plantsync.platform.profiles.interfaces.rest.resources.ProfileResource;
@@ -22,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The type Profiles command controller.
+ */
 @RestController
 @RequestMapping(value = "/api/v1/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Profiles", description = "Available Profile Endpoints")
@@ -29,6 +31,11 @@ public class ProfilesCommandController {
   private final ProfileCommandService profileCommandService;
 
 
+  /**
+   * Instantiates a new Profiles command controller.
+   *
+   * @param profileCommandService the profile command service
+   */
   public ProfilesCommandController(ProfileCommandService profileCommandService) {
     this.profileCommandService = profileCommandService;
 
@@ -54,6 +61,13 @@ public class ProfilesCommandController {
     return new ResponseEntity<>(profileResource, HttpStatus.CREATED);
   }
 
+  /**
+   * Update profile response entity.
+   *
+   * @param id       the id
+   * @param resource the resource
+   * @return the response entity
+   */
   @PutMapping("/{id}")
   @Operation(summary = "Update a profile by ID")
   @ApiResponses(value = {

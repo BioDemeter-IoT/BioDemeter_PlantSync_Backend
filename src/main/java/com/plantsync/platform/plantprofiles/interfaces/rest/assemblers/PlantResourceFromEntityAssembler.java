@@ -3,8 +3,17 @@ package com.plantsync.platform.plantprofiles.interfaces.rest.assemblers;
 import com.plantsync.platform.plantprofiles.domain.model.aggregates.Plant;
 import com.plantsync.platform.plantprofiles.interfaces.rest.resources.PlantResource;
 
+/**
+ * The type Plant resource from entity assembler.
+ */
 public class PlantResourceFromEntityAssembler {
 
+  /**
+   * To resource from entity plant resource.
+   *
+   * @param entity the entity
+   * @return the plant resource
+   */
   public static PlantResource toResourceFromEntity(Plant entity) {
 
     return new PlantResource(
@@ -19,6 +28,4 @@ public class PlantResourceFromEntityAssembler {
         entity.getProfileId().value()
     );
   }
-
-
 }

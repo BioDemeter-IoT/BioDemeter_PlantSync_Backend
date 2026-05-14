@@ -7,17 +7,26 @@ import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantByIdQue
 import com.plantsync.platform.plantprofiles.domain.services.PlantQueryService;
 import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantHistoryRepository;
 import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
+/**
+ * Service implementation for querying plant entities.
+ */
 @Service
 public class PlantQueryServiceImpl implements PlantQueryService {
 
   private final PlantRepository plantRepository;
 
-  public PlantQueryServiceImpl(PlantRepository plantRepository, PlantHistoryRepository plantHistoryRepository) {
+  /**
+   * Constructor for PlantQueryServiceImpl.
+   *
+   * @param plantRepository        The plant repository.
+   * @param plantHistoryRepository The plant history repository.
+   */
+  public PlantQueryServiceImpl(PlantRepository plantRepository,
+                               PlantHistoryRepository plantHistoryRepository) {
     this.plantRepository = plantRepository;
   }
 
@@ -33,9 +42,9 @@ public class PlantQueryServiceImpl implements PlantQueryService {
 
   @Override
   public Optional<Plant> handle(GetPlantByIdQuery query) {
-    if (!plantRepository.existsById(query.plantId()))
+    if (!plantRepository.existsById(query.plantId())) {
       return Optional.empty();
+    }
     return plantRepository.findById(query.plantId());
   }
-
 }

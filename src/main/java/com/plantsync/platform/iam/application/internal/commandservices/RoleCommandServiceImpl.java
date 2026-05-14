@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.application.internal.commandservices;
 
-
 import com.plantsync.platform.iam.domain.model.commands.SeedRolesCommand;
 import com.plantsync.platform.iam.domain.model.entities.Role;
 import com.plantsync.platform.iam.domain.model.valueobjects.Roles;

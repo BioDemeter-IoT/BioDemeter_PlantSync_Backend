@@ -49,6 +49,7 @@ public class GuideCommandController {
    * @param resource The guide resource.
    * @return The created guide resource.
    */
+
   @PostMapping
   @Operation(summary = "Create a new guide", description = "Create a new guide")
   @ApiResponses(value = {
