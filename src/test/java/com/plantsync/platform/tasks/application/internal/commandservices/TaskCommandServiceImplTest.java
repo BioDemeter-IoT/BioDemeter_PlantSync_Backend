@@ -28,79 +28,79 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TaskCommandServiceImplTest {
 
-    @Mock
-    private TaskRepository taskRepository;
+  @Mock
+  private TaskRepository taskRepository;
 
-    @InjectMocks
-    private TaskCommandServiceImpl taskCommandService;
+  @InjectMocks
+  private TaskCommandServiceImpl taskCommandService;
 
-    @Test
-    void handleCreateTaskCommandShouldSaveTaskAndReturnGeneratedId() {
-        // Arrange
-        var command = createTaskCommand();
-        var taskCaptor = ArgumentCaptor.forClass(Task.class);
+  @Test
+  void handleCreateTaskCommandShouldSaveTaskAndReturnGeneratedId() {
+    // Arrange
+    var command = createTaskCommand();
+    var taskCaptor = ArgumentCaptor.forClass(Task.class);
 
-        // Act
-        var result = taskCommandService.handle(command);
+    // Act
+    var result = taskCommandService.handle(command);
 
-        // Assert
-        verify(taskRepository).save(taskCaptor.capture());
-        var savedTask = taskCaptor.getValue();
-        assertEquals(command.date(), savedTask.getDate());
-        assertEquals(command.action(), savedTask.getAction());
-        assertEquals(command.completed(), savedTask.getCompleted());
-        assertEquals(command.plantId(), savedTask.getPlantId());
-        assertEquals(command.profileId(), savedTask.getProfileId());
-        assertNull(result);
-    }
+    // Assert
+    verify(taskRepository).save(taskCaptor.capture());
+    var savedTask = taskCaptor.getValue();
+    assertEquals(command.date(), savedTask.getDate());
+    assertEquals(command.action(), savedTask.getAction());
+    assertEquals(command.completed(), savedTask.getCompleted());
+    assertEquals(command.plantId(), savedTask.getPlantId());
+    assertEquals(command.profileId(), savedTask.getProfileId());
+    assertNull(result);
+  }
 
-    @Test
-    void handleCreateTaskCommandShouldThrowTaskCreationExceptionWhenSaveFails() {
-        // Arrange
-        var command = createTaskCommand();
-        when(taskRepository.save(any(Task.class))).thenThrow(new RuntimeException("database unavailable"));
+  @Test
+  void handleCreateTaskCommandShouldThrowTaskCreationExceptionWhenSaveFails() {
+    // Arrange
+    var command = createTaskCommand();
+    when(taskRepository.save(any(Task.class))).thenThrow(new RuntimeException("database unavailable"));
 
-        // Act
-        var exception = assertThrows(TaskCreationException.class, () -> taskCommandService.handle(command));
+    // Act
+    var exception = assertThrows(TaskCreationException.class, () -> taskCommandService.handle(command));
 
-        // Assert
-        assertEquals("Error saving task: database unavailable", exception.getMessage());
-        verify(taskRepository).save(any(Task.class));
-    }
+    // Assert
+    assertEquals("Error saving task: database unavailable", exception.getMessage());
+    verify(taskRepository).save(any(Task.class));
+  }
 
-    @Test
-    void handleDeleteTaskCommandShouldDeleteTaskById() {
-        // Arrange
-        var command = new DeleteTaskCommand(1L);
+  @Test
+  void handleDeleteTaskCommandShouldDeleteTaskById() {
+    // Arrange
+    var command = new DeleteTaskCommand(1L);
 
-        // Act
-        taskCommandService.handle(command);
+    // Act
+    taskCommandService.handle(command);
 
-        // Assert
-        verify(taskRepository).deleteById(command.taskId());
-    }
+    // Assert
+    verify(taskRepository).deleteById(command.taskId());
+  }
 
-    @Test
-    void handleDeleteTaskCommandShouldThrowTaskDeletionExceptionWhenDeleteFails() {
-        // Arrange
-        var command = new DeleteTaskCommand(1L);
-        doThrow(new RuntimeException("delete failed")).when(taskRepository).deleteById(command.taskId());
+  @Test
+  void handleDeleteTaskCommandShouldThrowTaskDeletionExceptionWhenDeleteFails() {
+    // Arrange
+    var command = new DeleteTaskCommand(1L);
+    doThrow(new RuntimeException("delete failed")).when(taskRepository).deleteById(command.taskId());
 
-        // Act
-        var exception = assertThrows(TaskDeletionException.class, () -> taskCommandService.handle(command));
+    // Act
+    var exception = assertThrows(TaskDeletionException.class, () -> taskCommandService.handle(command));
 
-        // Assert
-        assertEquals("Error while deleting task: delete failed", exception.getMessage());
-        verify(taskRepository).deleteById(command.taskId());
-    }
+    // Assert
+    assertEquals("Error while deleting task: delete failed", exception.getMessage());
+    verify(taskRepository).deleteById(command.taskId());
+  }
 
-    private CreateTaskCommand createTaskCommand() {
-        return new CreateTaskCommand(
-                LocalDate.of(2026, 1, 17),
-                "Water plant",
-                false,
-                new PlantId(1L),
-                new ProfileId(1L)
-        );
-    }
+  private CreateTaskCommand createTaskCommand() {
+    return new CreateTaskCommand(
+        LocalDate.of(2026, 1, 17),
+        "Water plant",
+        false,
+        new PlantId(1L),
+        new ProfileId(1L)
+    );
+  }
 }

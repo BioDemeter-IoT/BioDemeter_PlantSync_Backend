@@ -24,69 +24,69 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class TaskIntegrationTests {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-    @Autowired
-    private TaskRepository taskRepository;
+  @Autowired
+  private TaskRepository taskRepository;
 
-    @BeforeEach
-    void setUp() {
-        taskRepository.deleteAll();
-    }
+  @BeforeEach
+  void setUp() {
+    taskRepository.deleteAll();
+  }
 
-    @Test
-    @WithMockUser
-    public void createTask_ShouldReturnCreatedAndPersistInDatabase() throws Exception {
-        // Arrange
-        CreateTaskResource resource = new CreateTaskResource(
-                "Watering",
-                "2025-07-03",
-                1L,
-                1L,
-                false
-        );
+  @Test
+  @WithMockUser
+  public void createTask_ShouldReturnCreatedAndPersistInDatabase() throws Exception {
+    // Arrange
+    CreateTaskResource resource = new CreateTaskResource(
+        "Watering",
+        "2025-07-03",
+        1L,
+        1L,
+        false
+    );
 
-        // Act & Assert
-        mockMvc.perform(post("/api/v1/tasks")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(resource)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.action").value("Watering"))
-                .andExpect(jsonPath("$.completed").value(false));
+    // Act & Assert
+    mockMvc.perform(post("/api/v1/tasks")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(resource)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.action").value("Watering"))
+        .andExpect(jsonPath("$.completed").value(false));
 
-        // Verify database state
-        assertThat(taskRepository.count()).isEqualTo(1);
-        var task = taskRepository.findAll().get(0);
-        assertThat(task.getAction()).isEqualTo("Watering");
-    }
+    // Verify database state
+    assertThat(taskRepository.count()).isEqualTo(1);
+    var task = taskRepository.findAll().get(0);
+    assertThat(task.getAction()).isEqualTo("Watering");
+  }
 
-    @Test
-    @WithMockUser
-    public void getAllTasks_ShouldReturnTasksList() throws Exception {
-        // Arrange
-        CreateTaskResource resource = new CreateTaskResource(
-                "Fertilizing",
-                "2025-08-03",
-                1L,
-                1L,
-                false
-        );
-        
-        // Create a task first
-        mockMvc.perform(post("/api/v1/tasks")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(resource)))
-                .andExpect(status().isCreated());
+  @Test
+  @WithMockUser
+  public void getAllTasks_ShouldReturnTasksList() throws Exception {
+    // Arrange
+    CreateTaskResource resource = new CreateTaskResource(
+        "Fertilizing",
+        "2025-08-03",
+        1L,
+        1L,
+        false
+    );
 
-        // Act & Assert
-        mockMvc.perform(get("/api/v1/tasks"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].action").value("Fertilizing"));
-    }
+    // Create a task first
+    mockMvc.perform(post("/api/v1/tasks")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(resource)))
+        .andExpect(status().isCreated());
+
+    // Act & Assert
+    mockMvc.perform(get("/api/v1/tasks"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0].action").value("Fertilizing"));
+  }
 
 }

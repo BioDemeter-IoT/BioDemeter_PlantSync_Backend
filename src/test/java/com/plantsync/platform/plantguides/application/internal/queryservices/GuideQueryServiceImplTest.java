@@ -22,51 +22,51 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GuideQueryServiceImplTest {
 
-    @Mock
-    private GuideRepository guideRepository;
+  @Mock
+  private GuideRepository guideRepository;
 
-    @InjectMocks
-    private GuideQueryServiceImpl guideQueryService;
+  @InjectMocks
+  private GuideQueryServiceImpl guideQueryService;
 
-    @Test
-    void handleGetAllGuidesQueryShouldReturnAllGuides() {
-        // Arrange
-        var query = new GetAllGuidesQuery();
-        var guides = List.of(createGuide());
-        when(guideRepository.findAll()).thenReturn(guides);
+  @Test
+  void handleGetAllGuidesQueryShouldReturnAllGuides() {
+    // Arrange
+    var query = new GetAllGuidesQuery();
+    var guides = List.of(createGuide());
+    when(guideRepository.findAll()).thenReturn(guides);
 
-        // Act
-        var result = guideQueryService.handle(query);
+    // Act
+    var result = guideQueryService.handle(query);
 
-        // Assert
-        assertEquals(guides, result);
-        verify(guideRepository).findAll();
-    }
+    // Assert
+    assertEquals(guides, result);
+    verify(guideRepository).findAll();
+  }
 
-    @Test
-    void handleGetGuideByIdQueryShouldReturnGuideWhenItExists() {
-        // Arrange
-        var query = new GetGuideByIdQuery(1L);
-        var guide = createGuide();
-        when(guideRepository.findById(query.guideId())).thenReturn(Optional.of(guide));
+  @Test
+  void handleGetGuideByIdQueryShouldReturnGuideWhenItExists() {
+    // Arrange
+    var query = new GetGuideByIdQuery(1L);
+    var guide = createGuide();
+    when(guideRepository.findById(query.guideId())).thenReturn(Optional.of(guide));
 
-        // Act
-        var result = guideQueryService.handle(query);
+    // Act
+    var result = guideQueryService.handle(query);
 
-        // Assert
-        assertTrue(result.isPresent());
-        assertSame(guide, result.get());
-        verify(guideRepository).findById(query.guideId());
-    }
+    // Assert
+    assertTrue(result.isPresent());
+    assertSame(guide, result.get());
+    verify(guideRepository).findById(query.guideId());
+  }
 
-    private Guide createGuide() {
-        return new Guide(
-                "Watering Basics",
-                "PlantSync",
-                "A practical guide for watering indoor plants.",
-                "Care",
-                "Article",
-                "https://example.com/watering-basics.jpg"
-        );
-    }
+  private Guide createGuide() {
+    return new Guide(
+        "Watering Basics",
+        "PlantSync",
+        "A practical guide for watering indoor plants.",
+        "Care",
+        "Article",
+        "https://example.com/watering-basics.jpg"
+    );
+  }
 }

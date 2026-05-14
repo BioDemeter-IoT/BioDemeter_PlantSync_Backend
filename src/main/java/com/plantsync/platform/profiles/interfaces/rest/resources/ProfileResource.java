@@ -1,9 +1,9 @@
 package com.plantsync.platform.profiles.interfaces.rest.resources;
 
-public record ProfileResource (
+public record ProfileResource(
 
-Long id,
+    Long id,
     String personName,
     String subscriptionPlan,
-    Long userId){
+    Long userId) {
 }

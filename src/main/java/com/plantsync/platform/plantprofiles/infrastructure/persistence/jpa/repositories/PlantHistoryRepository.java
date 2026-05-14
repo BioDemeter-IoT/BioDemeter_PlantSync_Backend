@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlantHistoryRepository extends JpaRepository<PlantHistory, Long> {
-    List<PlantHistory> findByPlantId(PlantId plantId);
-    Optional<PlantHistory> findFirstByPlantId(PlantId plantId);
+  List<PlantHistory> findByPlantId(PlantId plantId);
+
+  Optional<PlantHistory> findFirstByPlantId(PlantId plantId);
 }

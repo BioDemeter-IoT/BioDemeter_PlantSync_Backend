@@ -15,23 +15,21 @@ import java.util.Optional;
 public class TaskQueryServiceImpl implements TaskQueryService {
 
 
-    private final TaskRepository taskRepository;
+  private final TaskRepository taskRepository;
 
-    public TaskQueryServiceImpl(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+  public TaskQueryServiceImpl(TaskRepository taskRepository) {
+    this.taskRepository = taskRepository;
+  }
 
-    @Override
-    public List<Task> handle(GetAllTasksQuery query) {
-        return taskRepository.findAll();
-    }
+  @Override
+  public List<Task> handle(GetAllTasksQuery query) {
+    return taskRepository.findAll();
+  }
 
-    @Override
-    public Optional<Task> handle(GetTaskByIdQuery query) {
-        return taskRepository.findById(query.taskId());
-    }
-
-
+  @Override
+  public Optional<Task> handle(GetTaskByIdQuery query) {
+    return taskRepository.findById(query.taskId());
+  }
 
 
 }

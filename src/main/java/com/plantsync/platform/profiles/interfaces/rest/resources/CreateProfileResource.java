@@ -1,13 +1,13 @@
 package com.plantsync.platform.profiles.interfaces.rest.resources;
 
-public record CreateProfileResource (
+public record CreateProfileResource(
 
-        String personName,
-        String subscriptionPlan,
-        Long userId
+    String personName,
+    String subscriptionPlan,
+    Long userId
 
 ) {
-public CreateProfileResource{
+  public CreateProfileResource {
 
-}
+  }
 }

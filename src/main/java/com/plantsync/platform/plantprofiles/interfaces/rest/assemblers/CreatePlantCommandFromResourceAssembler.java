@@ -11,18 +11,18 @@ import java.time.LocalDate;
 public class CreatePlantCommandFromResourceAssembler {
 
 
-        public static CreatePlantCommand toCommandFromResource(CreatePlantResource resource) {
+  public static CreatePlantCommand toCommandFromResource(CreatePlantResource resource) {
 
-            return new CreatePlantCommand(
-                    new PlantName(resource.name()),
-                    resource.species(),
-                    LocalDate.parse(resource.acquisitionDate()),
-                    HumidityLevel.valueOf(resource.humidity().toUpperCase()),
-                    LocalDate.parse(resource.nextWateringDate()),
-                    resource.imageUrl(),
-                    resource.notificationsEnabled(),
-                    new ProfileId(resource.profileId())
-            );
-    }
+    return new CreatePlantCommand(
+        new PlantName(resource.name()),
+        resource.species(),
+        LocalDate.parse(resource.acquisitionDate()),
+        HumidityLevel.valueOf(resource.humidity().toUpperCase()),
+        LocalDate.parse(resource.nextWateringDate()),
+        resource.imageUrl(),
+        resource.notificationsEnabled(),
+        new ProfileId(resource.profileId())
+    );
+  }
 
 }

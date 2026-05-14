@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public interface PlantQueryService {
 
-    List<Plant> handle(GetAllPlantsQuery query);
+  List<Plant> handle(GetAllPlantsQuery query);
 
-    List<Plant> handle(GetAllPlantsByProfileIdQuery query);
+  List<Plant> handle(GetAllPlantsByProfileIdQuery query);
 
-    Optional<Plant> handle(GetPlantByIdQuery query);
+  Optional<Plant> handle(GetPlantByIdQuery query);
 
 }

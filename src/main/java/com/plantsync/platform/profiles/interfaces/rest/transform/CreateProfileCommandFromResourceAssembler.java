@@ -9,11 +9,10 @@ import com.plantsync.platform.profiles.interfaces.rest.resources.CreateProfileRe
 public class CreateProfileCommandFromResourceAssembler {
 
 
-
-    public static CreateProfileCommand toCommandFromResource(CreateProfileResource resource) {
-        return new CreateProfileCommand(
-              new PersonName( resource.personName()),
-                SubscriptionPlan.valueOf(resource.subscriptionPlan().toUpperCase()),
-                new UserId(resource.userId()));
-    }
+  public static CreateProfileCommand toCommandFromResource(CreateProfileResource resource) {
+    return new CreateProfileCommand(
+        new PersonName(resource.personName()),
+        SubscriptionPlan.valueOf(resource.subscriptionPlan().toUpperCase()),
+        new UserId(resource.userId()));
+  }
 }

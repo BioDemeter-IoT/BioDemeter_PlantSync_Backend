@@ -16,26 +16,28 @@ import java.util.Optional;
 @Service
 public class PlantHistoryQueryServiceImpl implements PlantHistoryQueryService {
 
-    private final PlantHistoryRepository plantHistoryRepository;
+  private final PlantHistoryRepository plantHistoryRepository;
 
-    public PlantHistoryQueryServiceImpl(PlantHistoryRepository plantHistoryRepository) {
-        this.plantHistoryRepository = plantHistoryRepository;
-    }
+  public PlantHistoryQueryServiceImpl(PlantHistoryRepository plantHistoryRepository) {
+    this.plantHistoryRepository = plantHistoryRepository;
+  }
 
 
-    @Override
-    public Optional<PlantHistory> handle(GetPlantHistoryByPlantIdQuery query) {
+  @Override
+  public Optional<PlantHistory> handle(GetPlantHistoryByPlantIdQuery query) {
 
-        return plantHistoryRepository.findFirstByPlantId(new PlantId(query.plantId()));
-    }
-    @Override
-    public Optional<PlantHistory> handle(GetPlantHistoryByIdQuery query) {
-        return plantHistoryRepository.findById(query.id());
-    }
-    @Override
-    public List<PlantHistory> handle(GetAllPlantHistoriesByPlantIdQuery query) {
-        return plantHistoryRepository.findByPlantId(query.plantId());
-    }
+    return plantHistoryRepository.findFirstByPlantId(new PlantId(query.plantId()));
+  }
+
+  @Override
+  public Optional<PlantHistory> handle(GetPlantHistoryByIdQuery query) {
+    return plantHistoryRepository.findById(query.id());
+  }
+
+  @Override
+  public List<PlantHistory> handle(GetAllPlantHistoriesByPlantIdQuery query) {
+    return plantHistoryRepository.findByPlantId(query.plantId());
+  }
 
 
 }

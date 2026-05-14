@@ -9,14 +9,14 @@ import com.plantsync.platform.iam.interfaces.rest.resources.SignUpResource;
 import java.util.List;
 
 public class SignUpCommandFromResourceAssembler {
-    public static SignUpCommand toCommandFromResource(SignUpResource resource) {
-        return new SignUpCommand(
-                resource.name(),
+  public static SignUpCommand toCommandFromResource(SignUpResource resource) {
+    return new SignUpCommand(
+        resource.name(),
 
-                resource.password(),
-                List.of(new Role(Roles.ROLE_USER)), // o lo que definas por defecto
-                resource.email(),
-                resource.subscriptionPlan()
-        );
-    }
+        resource.password(),
+        List.of(new Role(Roles.ROLE_USER)), // o lo que definas por defecto
+        resource.email(),
+        resource.subscriptionPlan()
+    );
+  }
 }

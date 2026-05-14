@@ -5,8 +5,7 @@ package com.plantsync.platform.profiles.interfaces.acl;
  */
 public interface ProfilesContextFacade {
 
-    Long createProfile(String name, Long userId, String subscriptionPlan);
-
+  Long createProfile(String name, Long userId, String subscriptionPlan);
 
 
 }

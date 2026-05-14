@@ -6,18 +6,18 @@ import com.plantsync.platform.tasks.domain.model.valueobjects.ProfileId;
 
 import java.time.LocalDate;
 
-public record CreateTaskCommand (
+public record CreateTaskCommand(
 
-   LocalDate date,
+    LocalDate date,
     String action,
-   Boolean completed,
-   PlantId plantId,
-   ProfileId profileId
+    Boolean completed,
+    PlantId plantId,
+    ProfileId profileId
 
 
 ) {
 
-    public CreateTaskCommand {
+  public CreateTaskCommand {
 
-    }
+  }
 }

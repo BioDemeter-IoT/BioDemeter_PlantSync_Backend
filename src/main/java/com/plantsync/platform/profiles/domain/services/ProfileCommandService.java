@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ProfileCommandService {
 
-    Optional<Profile> handle(CreateProfileCommand command);
+  Optional<Profile> handle(CreateProfileCommand command);
 
-    Optional<Profile> handle(UpdateProfileCommand command);
+  Optional<Profile> handle(UpdateProfileCommand command);
 }

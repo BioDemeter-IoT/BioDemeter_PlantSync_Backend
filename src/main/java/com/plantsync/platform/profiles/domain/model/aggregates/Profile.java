@@ -25,70 +25,70 @@ import lombok.Setter;
 @Entity
 public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
-    /**
-     * The full name of the person associated with the profile.
-     */
-    @Embedded
-    private PersonName personName;
+  /**
+   * The full name of the person associated with the profile.
+   */
+  @Embedded
+  private PersonName personName;
 
-    /**
-     * The current subscription plan of the user (e.g., FREE, PRO).
-     */
-    @Enumerated(EnumType.STRING)
-    private SubscriptionPlan subscriptionPlan;
+  /**
+   * The current subscription plan of the user (e.g., FREE, PRO).
+   */
+  @Enumerated(EnumType.STRING)
+  private SubscriptionPlan subscriptionPlan;
 
-    /**
-     * The ID of the user who owns this profile.
-     */
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "user_id"))
-    private UserId userId;
+  /**
+   * The ID of the user who owns this profile.
+   */
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "user_id"))
+  private UserId userId;
 
-    /**
-     * The current payment status of the subscription (e.g., PENDING, PAID).
-     */
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+  /**
+   * The current payment status of the subscription (e.g., PENDING, PAID).
+   */
+  @Enumerated(EnumType.STRING)
+  private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
-    /**
-     * Default constructor required by JPA.
-     */
-    public Profile() {
-        super();
-    }
+  /**
+   * Default constructor required by JPA.
+   */
+  public Profile() {
+    super();
+  }
 
-    /**
-     * Creates a new profile from the given {@link CreateProfileCommand}.
-     *
-     * @param command the command with all necessary fields to create a profile
-     */
-    public Profile(CreateProfileCommand command) {
-        this.personName = command.personName();
-        this.subscriptionPlan = command.subscriptionPlan();
-        this.userId = command.userId();
-        this.paymentStatus = PaymentStatus.PENDING;
-    }
+  /**
+   * Creates a new profile from the given {@link CreateProfileCommand}.
+   *
+   * @param command the command with all necessary fields to create a profile
+   */
+  public Profile(CreateProfileCommand command) {
+    this.personName = command.personName();
+    this.subscriptionPlan = command.subscriptionPlan();
+    this.userId = command.userId();
+    this.paymentStatus = PaymentStatus.PENDING;
+  }
 
-    /**
-     * Constructs a profile with explicit values, used for internal instantiation or
-     * testing.
-     *
-     * @param name             the person's name
-     * @param subscriptionPlan the user's subscription plan
-     * @param userId           the associated user ID
-     * @param paymentStatus    the current payment status
-     */
-    public Profile(PersonName name, SubscriptionPlan subscriptionPlan, UserId userId, PaymentStatus paymentStatus) {
-        this.personName = name;
-        this.subscriptionPlan = subscriptionPlan;
-        this.userId = userId;
-        this.paymentStatus = paymentStatus;
-    }
+  /**
+   * Constructs a profile with explicit values, used for internal instantiation or
+   * testing.
+   *
+   * @param name             the person's name
+   * @param subscriptionPlan the user's subscription plan
+   * @param userId           the associated user ID
+   * @param paymentStatus    the current payment status
+   */
+  public Profile(PersonName name, SubscriptionPlan subscriptionPlan, UserId userId, PaymentStatus paymentStatus) {
+    this.personName = name;
+    this.subscriptionPlan = subscriptionPlan;
+    this.userId = userId;
+    this.paymentStatus = paymentStatus;
+  }
 
-    public Profile updateInformation(PersonName newPersonName, SubscriptionPlan newSubscriptionPlan) {
-        this.personName = newPersonName;
-        this.subscriptionPlan = newSubscriptionPlan;
-        return this;
-    }
+  public Profile updateInformation(PersonName newPersonName, SubscriptionPlan newSubscriptionPlan) {
+    this.personName = newPersonName;
+    this.subscriptionPlan = newSubscriptionPlan;
+    return this;
+  }
 
 }

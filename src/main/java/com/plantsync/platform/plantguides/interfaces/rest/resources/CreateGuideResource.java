@@ -2,16 +2,16 @@ package com.plantsync.platform.plantguides.interfaces.rest.resources;
 
 public record CreateGuideResource(
 
-        String title,
-        String name,
-        String description,
-        String topic,
-        String type,
-        String imageUrl
+    String title,
+    String name,
+    String description,
+    String topic,
+    String type,
+    String imageUrl
 
 ) {
 
-    public CreateGuideResource{
+  public CreateGuideResource {
 
     if (title.isBlank() || title == null) throw new IllegalArgumentException();
     if (name.isBlank() || name == null) throw new IllegalArgumentException();
@@ -20,5 +20,5 @@ public record CreateGuideResource(
     if (type.isBlank() || type == null) throw new IllegalArgumentException();
     if (imageUrl.isBlank() || imageUrl == null) throw new IllegalArgumentException();
 
-    }
+  }
 }

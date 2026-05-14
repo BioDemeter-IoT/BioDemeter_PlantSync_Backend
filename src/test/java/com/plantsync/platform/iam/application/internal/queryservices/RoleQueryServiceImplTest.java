@@ -23,40 +23,40 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RoleQueryServiceImplTest {
 
-    @Mock
-    private RoleRepository roleRepository;
+  @Mock
+  private RoleRepository roleRepository;
 
-    @InjectMocks
-    private RoleQueryServiceImpl roleQueryService;
+  @InjectMocks
+  private RoleQueryServiceImpl roleQueryService;
 
-    @Test
-    void handleGetAllRolesQueryShouldReturnAllRoles() {
-        // Arrange
-        var query = new GetAllRolesQuery();
-        var roles = List.of(new Role(Roles.ROLE_USER));
-        when(roleRepository.findAll()).thenReturn(roles);
+  @Test
+  void handleGetAllRolesQueryShouldReturnAllRoles() {
+    // Arrange
+    var query = new GetAllRolesQuery();
+    var roles = List.of(new Role(Roles.ROLE_USER));
+    when(roleRepository.findAll()).thenReturn(roles);
 
-        // Act
-        var result = roleQueryService.handle(query);
+    // Act
+    var result = roleQueryService.handle(query);
 
-        // Assert
-        assertEquals(roles, result);
-        verify(roleRepository).findAll();
-    }
+    // Assert
+    assertEquals(roles, result);
+    verify(roleRepository).findAll();
+  }
 
-    @Test
-    void handleGetRoleByNameQueryShouldReturnRoleWhenItExists() {
-        // Arrange
-        var query = new GetRoleByNameQuery(Roles.ROLE_USER);
-        var role = new Role(Roles.ROLE_USER);
-        when(roleRepository.findByName(query.name())).thenReturn(Optional.of(role));
+  @Test
+  void handleGetRoleByNameQueryShouldReturnRoleWhenItExists() {
+    // Arrange
+    var query = new GetRoleByNameQuery(Roles.ROLE_USER);
+    var role = new Role(Roles.ROLE_USER);
+    when(roleRepository.findByName(query.name())).thenReturn(Optional.of(role));
 
-        // Act
-        var result = roleQueryService.handle(query);
+    // Act
+    var result = roleQueryService.handle(query);
 
-        // Assert
-        assertTrue(result.isPresent());
-        assertSame(role, result.get());
-        verify(roleRepository).findByName(query.name());
-    }
+    // Assert
+    assertTrue(result.isPresent());
+    assertSame(role, result.get());
+    verify(roleRepository).findByName(query.name());
+  }
 }

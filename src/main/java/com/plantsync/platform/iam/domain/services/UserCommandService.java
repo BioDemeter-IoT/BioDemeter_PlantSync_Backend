@@ -15,23 +15,23 @@ import java.util.Optional;
  * </p>
  */
 public interface UserCommandService {
-    /**
-     * Handle sign in command.
-     * 
-     * @param command the {@link SignInCommand} command
-     * @return an {@link Optional} of {@link ImmutablePair} of {@link User} and
-     *         {@link String}
-     */
-    Optional<ImmutablePair<User, String>> handle(SignInCommand command);
+  /**
+   * Handle sign in command.
+   *
+   * @param command the {@link SignInCommand} command
+   * @return an {@link Optional} of {@link ImmutablePair} of {@link User} and
+   * {@link String}
+   */
+  Optional<ImmutablePair<User, String>> handle(SignInCommand command);
 
-    /**
-     * Handle sign up command.
-     * 
-     * @param command the {@link SignUpCommand} command
-     * @return an {@link Optional} of {@link User} entity
-     */
-    Optional<User> handle(SignUpCommand command);
+  /**
+   * Handle sign up command.
+   *
+   * @param command the {@link SignUpCommand} command
+   * @return an {@link Optional} of {@link User} entity
+   */
+  Optional<User> handle(SignUpCommand command);
 
-    Optional<User> handle(UpdateUserCommand command);
+  Optional<User> handle(UpdateUserCommand command);
 
 }

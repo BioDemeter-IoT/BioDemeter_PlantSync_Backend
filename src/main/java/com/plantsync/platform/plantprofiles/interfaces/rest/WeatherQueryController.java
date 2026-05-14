@@ -15,22 +15,22 @@ import org.springframework.web.client.RestTemplate;
 @Tag(name = "Weather", description = "Weather Proxy Endpoint")
 public class WeatherQueryController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate = new RestTemplate();
 
 
-    @Value("${weather.api.key}")
-    private String apiKey;
+  @Value("${weather.api.key}")
+  private String apiKey;
 
-    @GetMapping("/city")
-    public ResponseEntity<?> getWeatherByCity(@RequestParam String city) {
-        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city +
-                "&appid=" + apiKey+ "&units=metric";
+  @GetMapping("/city")
+  public ResponseEntity<?> getWeatherByCity(@RequestParam String city) {
+    String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city +
+        "&appid=" + apiKey + "&units=metric";
 
-        try {
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok().body(response.getBody());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Weather API error: " + e.getMessage());
-        }
+    try {
+      ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+      return ResponseEntity.ok().body(response.getBody());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Weather API error: " + e.getMessage());
     }
+  }
 }

@@ -26,50 +26,50 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TaskQueryServiceImplTest {
 
-    @Mock
-    private TaskRepository taskRepository;
+  @Mock
+  private TaskRepository taskRepository;
 
-    @InjectMocks
-    private TaskQueryServiceImpl taskQueryService;
+  @InjectMocks
+  private TaskQueryServiceImpl taskQueryService;
 
-    @Test
-    void handleGetAllTasksQueryShouldReturnAllTasks() {
-        // Arrange
-        var query = new GetAllTasksQuery();
-        var tasks = List.of(createTask());
-        when(taskRepository.findAll()).thenReturn(tasks);
+  @Test
+  void handleGetAllTasksQueryShouldReturnAllTasks() {
+    // Arrange
+    var query = new GetAllTasksQuery();
+    var tasks = List.of(createTask());
+    when(taskRepository.findAll()).thenReturn(tasks);
 
-        // Act
-        var result = taskQueryService.handle(query);
+    // Act
+    var result = taskQueryService.handle(query);
 
-        // Assert
-        assertEquals(tasks, result);
-        verify(taskRepository).findAll();
-    }
+    // Assert
+    assertEquals(tasks, result);
+    verify(taskRepository).findAll();
+  }
 
-    @Test
-    void handleGetTaskByIdQueryShouldReturnTaskWhenItExists() {
-        // Arrange
-        var query = new GetTaskByIdQuery(1L);
-        var task = createTask();
-        when(taskRepository.findById(query.taskId())).thenReturn(Optional.of(task));
+  @Test
+  void handleGetTaskByIdQueryShouldReturnTaskWhenItExists() {
+    // Arrange
+    var query = new GetTaskByIdQuery(1L);
+    var task = createTask();
+    when(taskRepository.findById(query.taskId())).thenReturn(Optional.of(task));
 
-        // Act
-        var result = taskQueryService.handle(query);
+    // Act
+    var result = taskQueryService.handle(query);
 
-        // Assert
-        assertTrue(result.isPresent());
-        assertSame(task, result.get());
-        verify(taskRepository).findById(query.taskId());
-    }
+    // Assert
+    assertTrue(result.isPresent());
+    assertSame(task, result.get());
+    verify(taskRepository).findById(query.taskId());
+  }
 
-    private Task createTask() {
-        return new Task(new CreateTaskCommand(
-                LocalDate.of(2026, 1, 17),
-                "Water plant",
-                false,
-                new PlantId(1L),
-                new ProfileId(1L)
-        ));
-    }
+  private Task createTask() {
+    return new Task(new CreateTaskCommand(
+        LocalDate.of(2026, 1, 17),
+        "Water plant",
+        false,
+        new PlantId(1L),
+        new ProfileId(1L)
+    ));
+  }
 }

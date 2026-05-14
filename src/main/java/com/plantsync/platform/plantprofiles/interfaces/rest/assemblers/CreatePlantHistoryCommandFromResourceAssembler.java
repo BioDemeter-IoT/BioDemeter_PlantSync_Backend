@@ -9,16 +9,16 @@ import java.time.LocalTime;
 
 public class CreatePlantHistoryCommandFromResourceAssembler {
 
-    public static CreatePlantHistoryCommand toCommandFromResource(CreatePlantHistoryResource resource) {
+  public static CreatePlantHistoryCommand toCommandFromResource(CreatePlantHistoryResource resource) {
 
-        return new CreatePlantHistoryCommand(
-                new PlantId(resource.plantId()),
-                resource.type(),
-                LocalDate.parse(resource.date()),
-                LocalTime.parse(resource.time()),
-                resource.humidity()
+    return new CreatePlantHistoryCommand(
+        new PlantId(resource.plantId()),
+        resource.type(),
+        LocalDate.parse(resource.date()),
+        LocalTime.parse(resource.time()),
+        resource.humidity()
 
-        );
-    }
+    );
+  }
 
 }

@@ -26,66 +26,66 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PlantHistoryQueryServiceImplTest {
 
-    @Mock
-    private PlantHistoryRepository plantHistoryRepository;
+  @Mock
+  private PlantHistoryRepository plantHistoryRepository;
 
-    @InjectMocks
-    private PlantHistoryQueryServiceImpl plantHistoryQueryService;
+  @InjectMocks
+  private PlantHistoryQueryServiceImpl plantHistoryQueryService;
 
-    @Test
-    void handleGetPlantHistoryByPlantIdQueryShouldReturnHistoryWhenItExists() {
-        // Arrange
-        var query = new GetPlantHistoryByPlantIdQuery(1L);
-        var plantHistory = createPlantHistory();
-        var plantId = new PlantId(query.plantId());
-        when(plantHistoryRepository.findFirstByPlantId(plantId)).thenReturn(Optional.of(plantHistory));
+  @Test
+  void handleGetPlantHistoryByPlantIdQueryShouldReturnHistoryWhenItExists() {
+    // Arrange
+    var query = new GetPlantHistoryByPlantIdQuery(1L);
+    var plantHistory = createPlantHistory();
+    var plantId = new PlantId(query.plantId());
+    when(plantHistoryRepository.findFirstByPlantId(plantId)).thenReturn(Optional.of(plantHistory));
 
-        // Act
-        var result = plantHistoryQueryService.handle(query);
+    // Act
+    var result = plantHistoryQueryService.handle(query);
 
-        // Assert
-        assertTrue(result.isPresent());
-        assertSame(plantHistory, result.get());
-        verify(plantHistoryRepository).findFirstByPlantId(plantId);
-    }
+    // Assert
+    assertTrue(result.isPresent());
+    assertSame(plantHistory, result.get());
+    verify(plantHistoryRepository).findFirstByPlantId(plantId);
+  }
 
-    @Test
-    void handleGetPlantHistoryByPlantIdQueryShouldReturnEmptyWhenHistoryDoesNotExist() {
-        // Arrange
-        var query = new GetPlantHistoryByPlantIdQuery(99L);
-        var plantId = new PlantId(query.plantId());
-        when(plantHistoryRepository.findFirstByPlantId(plantId)).thenReturn(Optional.empty());
+  @Test
+  void handleGetPlantHistoryByPlantIdQueryShouldReturnEmptyWhenHistoryDoesNotExist() {
+    // Arrange
+    var query = new GetPlantHistoryByPlantIdQuery(99L);
+    var plantId = new PlantId(query.plantId());
+    when(plantHistoryRepository.findFirstByPlantId(plantId)).thenReturn(Optional.empty());
 
-        // Act
-        var result = plantHistoryQueryService.handle(query);
+    // Act
+    var result = plantHistoryQueryService.handle(query);
 
-        // Assert
-        assertTrue(result.isEmpty());
-        verify(plantHistoryRepository).findFirstByPlantId(plantId);
-    }
+    // Assert
+    assertTrue(result.isEmpty());
+    verify(plantHistoryRepository).findFirstByPlantId(plantId);
+  }
 
-    @Test
-    void handleGetAllPlantHistoriesByPlantIdQueryShouldReturnHistoriesForPlant() {
-        // Arrange
-        var query = new GetAllPlantHistoriesByPlantIdQuery(new PlantId(1L));
-        var histories = List.of(createPlantHistory());
-        when(plantHistoryRepository.findByPlantId(query.plantId())).thenReturn(histories);
+  @Test
+  void handleGetAllPlantHistoriesByPlantIdQueryShouldReturnHistoriesForPlant() {
+    // Arrange
+    var query = new GetAllPlantHistoriesByPlantIdQuery(new PlantId(1L));
+    var histories = List.of(createPlantHistory());
+    when(plantHistoryRepository.findByPlantId(query.plantId())).thenReturn(histories);
 
-        // Act
-        var result = plantHistoryQueryService.handle(query);
+    // Act
+    var result = plantHistoryQueryService.handle(query);
 
-        // Assert
-        assertEquals(histories, result);
-        verify(plantHistoryRepository).findByPlantId(query.plantId());
-    }
+    // Assert
+    assertEquals(histories, result);
+    verify(plantHistoryRepository).findByPlantId(query.plantId());
+  }
 
-    private PlantHistory createPlantHistory() {
-        return new PlantHistory(new CreatePlantHistoryCommand(
-                new PlantId(1L),
-                "WATERED",
-                LocalDate.of(2026, 1, 17),
-                LocalTime.of(8, 30),
-                65
-        ));
-    }
+  private PlantHistory createPlantHistory() {
+    return new PlantHistory(new CreatePlantHistoryCommand(
+        new PlantId(1L),
+        "WATERED",
+        LocalDate.of(2026, 1, 17),
+        LocalTime.of(8, 30),
+        65
+    ));
+  }
 }

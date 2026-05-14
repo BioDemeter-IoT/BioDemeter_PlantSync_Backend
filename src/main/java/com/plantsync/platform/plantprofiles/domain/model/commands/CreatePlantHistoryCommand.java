@@ -9,11 +9,11 @@ import java.time.LocalTime;
 public record CreatePlantHistoryCommand(
 
 
-        PlantId plantId,
+    PlantId plantId,
 
-         String type,
-                 LocalDate date,
-                 LocalTime time,
-                 Integer humidity
+    String type,
+    LocalDate date,
+    LocalTime time,
+    Integer humidity
 ) {
 }

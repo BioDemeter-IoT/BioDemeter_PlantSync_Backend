@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PlantRepository extends JpaRepository<Plant,Long> {
+public interface PlantRepository extends JpaRepository<Plant, Long> {
 
 
-    List<Plant> findByProfileId(ProfileId profileId);
+  List<Plant> findByProfileId(ProfileId profileId);
 
 
 }

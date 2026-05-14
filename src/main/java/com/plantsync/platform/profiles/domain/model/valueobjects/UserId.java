@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public record UserId(Long value) {
-    public UserId {
-        if (value == null || value <= 0) throw new IllegalArgumentException("Invalid profile id");
-    }
+  public UserId {
+    if (value == null || value <= 0) throw new IllegalArgumentException("Invalid profile id");
+  }
 }

@@ -10,13 +10,11 @@ import java.util.Optional;
 public interface PlantCommandService {
 
 
+  Long handle(CreatePlantCommand command);
 
+  void handle(DeletePlantCommand command);
 
-        Long handle(CreatePlantCommand command);
-
-        void handle(DeletePlantCommand command);
-
-        Optional<Plant> handle(UpdatePlantCommand command);
+  Optional<Plant> handle(UpdatePlantCommand command);
 
 
 }

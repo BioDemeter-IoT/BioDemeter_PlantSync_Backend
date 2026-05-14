@@ -7,11 +7,11 @@ import com.plantsync.platform.plantguides.domain.model.commands.CreateGuideComma
  */
 public interface GuideCommandService {
 
-    /**
-     * Handles the creation of a new guide.
-     *
-     * @param command the command object containing the data for the new guide.
-     * @return the ID of the created guide.
-     */
-    Long handle(CreateGuideCommand command);
+  /**
+   * Handles the creation of a new guide.
+   *
+   * @param command the command object containing the data for the new guide.
+   * @return the ID of the created guide.
+   */
+  Long handle(CreateGuideCommand command);
 }

@@ -22,52 +22,52 @@ import java.time.LocalTime;
 @Entity
 public class PlantHistory extends AuditableAbstractAggregateRoot<PlantHistory> {
 
-    /**
-     * The ID of the plant associated with this history record.
-     */
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "plant_id"))
-    private PlantId plantId;
+  /**
+   * The ID of the plant associated with this history record.
+   */
+  @Embedded
+  @AttributeOverride(name = "value", column = @Column(name = "plant_id"))
+  private PlantId plantId;
 
-    /**
-     * The type of action or event recorded (e.g., "WATERED", "FERTILIZED",
-     * "SENSOR_READING").
-     */
-    private String type;
+  /**
+   * The type of action or event recorded (e.g., "WATERED", "FERTILIZED",
+   * "SENSOR_READING").
+   */
+  private String type;
 
-    /**
-     * The date the action or reading occurred.
-     */
-    private LocalDate date;
+  /**
+   * The date the action or reading occurred.
+   */
+  private LocalDate date;
 
-    /**
-     * The time the action or reading occurred.
-     */
-    private LocalTime time;
+  /**
+   * The time the action or reading occurred.
+   */
+  private LocalTime time;
 
-    /**
-     * The humidity level recorded at that time, if applicable.
-     */
-    private Integer humidity;
+  /**
+   * The humidity level recorded at that time, if applicable.
+   */
+  private Integer humidity;
 
-    /**
-     * Default constructor required by JPA.
-     */
-    public PlantHistory() {
-        super();
-    }
+  /**
+   * Default constructor required by JPA.
+   */
+  public PlantHistory() {
+    super();
+  }
 
-    /**
-     * Constructs a new {@link PlantHistory} record based on the given command.
-     *
-     * @param command the command containing all necessary information to create the
-     *                record
-     */
-    public PlantHistory(CreatePlantHistoryCommand command) {
-        this.plantId = command.plantId();
-        this.type = command.type();
-        this.date = command.date();
-        this.time = command.time();
-        this.humidity = command.humidity();
-    }
+  /**
+   * Constructs a new {@link PlantHistory} record based on the given command.
+   *
+   * @param command the command containing all necessary information to create the
+   *                record
+   */
+  public PlantHistory(CreatePlantHistoryCommand command) {
+    this.plantId = command.plantId();
+    this.type = command.type();
+    this.date = command.date();
+    this.time = command.time();
+    this.humidity = command.humidity();
+  }
 }
