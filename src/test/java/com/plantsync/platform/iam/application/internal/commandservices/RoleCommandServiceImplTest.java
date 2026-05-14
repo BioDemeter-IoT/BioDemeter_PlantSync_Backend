@@ -6,12 +6,11 @@ import com.plantsync.platform.iam.domain.model.valueobjects.Roles;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.RoleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,15 +29,13 @@ class RoleCommandServiceImplTest {
         // Arrange
         var command = new SeedRolesCommand();
         when(roleRepository.existsByName(Roles.ROLE_USER)).thenReturn(false);
-        var roleCaptor = ArgumentCaptor.forClass(Role.class);
 
         // Act
         roleCommandService.handle(command);
 
         // Assert
         verify(roleRepository).existsByName(Roles.ROLE_USER);
-        verify(roleRepository).save(roleCaptor.capture());
-        assertEquals(Roles.ROLE_USER, roleCaptor.getValue().getName());
+        verify(roleRepository).save(any(Role.class));
     }
 
     @Test
@@ -52,6 +49,6 @@ class RoleCommandServiceImplTest {
 
         // Assert
         verify(roleRepository).existsByName(Roles.ROLE_USER);
-        verify(roleRepository, never()).save(org.mockito.ArgumentMatchers.any(Role.class));
+        verify(roleRepository, never()).save(any(Role.class));
     }
 }

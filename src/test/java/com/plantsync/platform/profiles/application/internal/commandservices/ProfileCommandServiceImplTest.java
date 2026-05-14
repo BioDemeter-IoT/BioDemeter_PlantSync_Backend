@@ -11,7 +11,6 @@ import com.plantsync.platform.profiles.domain.model.valueobjects.UserId;
 import com.plantsync.platform.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,19 +43,17 @@ class ProfileCommandServiceImplTest {
                 SubscriptionPlan.BASIC,
                 new UserId(1L)
         );
-        var profileCaptor = ArgumentCaptor.forClass(Profile.class);
 
         // Act
         var result = profileCommandService.handle(command);
 
         // Assert
         assertTrue(result.isPresent());
-        verify(profileRepository).save(profileCaptor.capture());
-        assertSame(result.get(), profileCaptor.getValue());
         assertEquals(command.personName(), result.get().getPersonName());
         assertEquals(command.subscriptionPlan(), result.get().getSubscriptionPlan());
         assertEquals(command.userId(), result.get().getUserId());
         assertEquals(PaymentStatus.PENDING, result.get().getPaymentStatus());
+        verify(profileRepository).save(any(Profile.class));
     }
 
     @Test

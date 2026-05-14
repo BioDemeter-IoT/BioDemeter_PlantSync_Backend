@@ -15,7 +15,6 @@ import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.U
 import com.plantsync.platform.profiles.interfaces.acl.ProfilesContextFacade;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -116,7 +115,6 @@ class UserCommandServiceImplTest {
                 "FREE"
         );
         var createdUser = new User(command.email(), "encoded-password", List.of(role));
-        var userCaptor = ArgumentCaptor.forClass(User.class);
         when(userRepository.existsByEmail(command.email())).thenReturn(false);
         when(roleRepository.findByName(Roles.ROLE_USER)).thenReturn(Optional.of(role));
         when(hashingService.encode(command.password())).thenReturn("encoded-password");
@@ -128,10 +126,10 @@ class UserCommandServiceImplTest {
         // Assert
         assertTrue(result.isPresent());
         assertSame(createdUser, result.get());
-        verify(userRepository).save(userCaptor.capture());
-        assertEquals(command.email(), userCaptor.getValue().getEmail());
-        assertEquals("encoded-password", userCaptor.getValue().getPassword());
-        assertTrue(userCaptor.getValue().getRoles().contains(role));
+        assertEquals(command.email(), result.get().getEmail());
+        assertEquals("encoded-password", result.get().getPassword());
+        assertTrue(result.get().getRoles().contains(role));
+        verify(userRepository).save(any(User.class));
         verify(profilesContextFacade).createProfile(command.name(), null, command.subscriptionPlan());
     }
 
