@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,12 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
 /**
  * Bearer Authorization Request Filter.
- * <p>
- * This class is responsible for filtering requests and setting the user authentication.
+ *
+ * <p>This class is responsible for filtering requests and setting the user authentication.
  * It extends the OncePerRequestFilter class.
  * </p>
  *
@@ -27,14 +26,21 @@ import java.io.IOException;
  */
 public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(BearerAuthorizationRequestFilter.class);
+  private static final Logger LOGGER = 
+      LoggerFactory.getLogger(BearerAuthorizationRequestFilter.class);
   private final BearerTokenService tokenService;
-
 
   @Qualifier("defaultUserDetailsService")
   private final UserDetailsService userDetailsService;
 
-  public BearerAuthorizationRequestFilter(BearerTokenService tokenService, UserDetailsService userDetailsService) {
+  /**
+   * Constructor for BearerAuthorizationRequestFilter.
+   *
+   * @param tokenService       The token service.
+   * @param userDetailsService The user details service.
+   */
+  public BearerAuthorizationRequestFilter(BearerTokenService tokenService, 
+                                          UserDetailsService userDetailsService) {
     this.tokenService = tokenService;
     this.userDetailsService = userDetailsService;
   }
@@ -42,10 +48,10 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
     String path = request.getServletPath();
-    boolean skip = path.startsWith("/api/v1/authentication/") ||
-        path.startsWith("/v3/api-docs/") ||
-        path.startsWith("/swagger-ui/") ||
-        path.equals("/swagger-ui.html");
+    boolean skip = path.startsWith("/api/v1/authentication/")
+        || path.startsWith("/v3/api-docs/")
+        || path.startsWith("/swagger-ui/")
+        || path.equals("/swagger-ui.html");
     LOGGER.info("shouldNotFilter path: {} -> skip: {}", path, skip);
     return skip;
   }
@@ -58,7 +64,10 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
    * @param filterChain The filter chain object.
    */
   @Override
-  protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(@NonNull HttpServletRequest request, 
+                                  @NonNull HttpServletResponse response, 
+                                  @NonNull FilterChain filterChain) 
+      throws ServletException, IOException {
     LOGGER.info("Filter hit: {}", request.getServletPath());
     try {
       String token = tokenService.getBearerTokenFrom(request);
@@ -66,7 +75,8 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
       if (token != null && tokenService.validateToken(token)) {
         String email = tokenService.getEmailFromToken(token);
         var userDetails = userDetailsService.loadUserByUsername(email);
-        SecurityContextHolder.getContext().setAuthentication(EmailPasswordAuthenticationTokenBuilder.build(userDetails, request));
+        SecurityContextHolder.getContext()
+            .setAuthentication(EmailPasswordAuthenticationTokenBuilder.build(userDetails, request));
       } else {
         LOGGER.info("Token is not valid");
       }

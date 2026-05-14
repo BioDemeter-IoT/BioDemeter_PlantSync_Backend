@@ -1,5 +1,9 @@
 package com.plantsync.platform.plantguides.interfaces.rest.resources;
 
+/**
+ * Create Guide Resource.
+ * */
+
 public record CreateGuideResource(
 
     String title,
@@ -11,14 +15,30 @@ public record CreateGuideResource(
 
 ) {
 
+  /**
+   * Valdations for guides.
+   */
+
   public CreateGuideResource {
 
-    if (title.isBlank() || title == null) throw new IllegalArgumentException();
-    if (name.isBlank() || name == null) throw new IllegalArgumentException();
-    if (description.isBlank() || description == null) throw new IllegalArgumentException();
-    if (topic.isBlank() || topic == null) throw new IllegalArgumentException();
-    if (type.isBlank() || type == null) throw new IllegalArgumentException();
-    if (imageUrl.isBlank() || imageUrl == null) throw new IllegalArgumentException();
+    if (title.isBlank() || title == null) {
+      throw new IllegalArgumentException();
+    }
+    if (name.isBlank() || name == null) {
+      throw new IllegalArgumentException();
+    }
+    if (description.isBlank() || description == null) {
+      throw new IllegalArgumentException();
+    }
+    if (topic.isBlank() || topic == null) {
+      throw new IllegalArgumentException();
+    }
+    if (type.isBlank() || type == null) {
+      throw new IllegalArgumentException();
+    }
+    if (imageUrl.isBlank() || imageUrl == null) {
+      throw new IllegalArgumentException();
+    }
 
   }
 }

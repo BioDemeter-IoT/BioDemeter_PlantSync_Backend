@@ -12,12 +12,11 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * User aggregate root.
@@ -45,16 +44,32 @@ public class User extends AuditableAbstractAggregateRoot<User> {
       inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles;
 
+  /**
+   * Default constructor.
+   */
   public User() {
     this.roles = new HashSet<>();
   }
 
+  /**
+   * Constructor with email and password.
+   *
+   * @param email    The user email.
+   * @param password The user password.
+   */
   public User(String email, String password) {
     this.email = email;
     this.password = password;
     this.roles = new HashSet<>();
   }
 
+  /**
+   * Constructor with email, password, and roles.
+   *
+   * @param email    The user email.
+   * @param password The user password.
+   * @param roles    The user roles.
+   */
   public User(String email, String password, List<Role> roles) {
     this(email, password);
     addRoles(roles);
@@ -83,6 +98,12 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     return this;
   }
 
+  /**
+   * Update user information.
+   *
+   * @param newEmail The new email.
+   * @return The updated user.
+   */
   public User updateInformation(String newEmail) {
     this.email = newEmail;
     return this;

@@ -13,17 +13,15 @@ import com.plantsync.platform.iam.domain.services.UserCommandService;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.RoleRepository;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.UserRepository;
 import com.plantsync.platform.profiles.interfaces.acl.ProfilesContextFacade;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
- * User command service implementation
- * <p>
- * This class implements the {@link UserCommandService} interface and provides the implementation for the
- * {@link SignInCommand} and {@link SignUpCommand} commands.
- * </p>
+ * User command service implementation.
+ *
+ * <p>This class implements the {@link UserCommandService} interface and provides the implementation
+ * for the {@link SignInCommand} and {@link SignUpCommand} commands.</p>
  */
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
@@ -34,7 +32,19 @@ public class UserCommandServiceImpl implements UserCommandService {
   private final ProfilesContextFacade profilesContextFacade;
   private final RoleRepository roleRepository;
 
-  public UserCommandServiceImpl(UserRepository userRepository, HashingService hashingService, TokenService tokenService, ProfilesContextFacade profilesContextFacade, RoleRepository roleRepository) {
+  /**
+   * Constructor for UserCommandServiceImpl.
+   *
+   * @param userRepository        The user repository.
+   * @param hashingService       The hashing service.
+   * @param tokenService         The token service.
+   * @param profilesContextFacade The profiles context facade.
+   * @param roleRepository        The role repository.
+   */
+  public UserCommandServiceImpl(UserRepository userRepository, HashingService hashingService,
+                                TokenService tokenService,
+                                ProfilesContextFacade profilesContextFacade,
+                                RoleRepository roleRepository) {
     this.userRepository = userRepository;
     this.hashingService = hashingService;
     this.tokenService = tokenService;
@@ -43,10 +53,9 @@ public class UserCommandServiceImpl implements UserCommandService {
   }
 
   /**
-   * Handle the sign-in command
-   * <p>
-   * This method handles the {@link SignInCommand} command and returns the user and the token.
-   * </p>
+   * Handle the sign-in command.
+   *
+   * <p>This method handles the {@link SignInCommand} command and returns the user and the token.</p>
    *
    * @param command the sign-in command containing the email and password
    * @return and optional containing the user matching the email and the generated token
@@ -55,28 +64,31 @@ public class UserCommandServiceImpl implements UserCommandService {
   @Override
   public Optional<ImmutablePair<User, String>> handle(SignInCommand command) {
     var user = userRepository.findByEmail(command.username());
-    if (user.isEmpty())
+    if (user.isEmpty()) {
       throw new RuntimeException("User not found");
-    if (!hashingService.matches(command.password(), user.get().getPassword()))
+    }
+    if (!hashingService.matches(command.password(), user.get().getPassword())) {
       throw new RuntimeException("Invalid password");
+    }
     var token = tokenService.generateToken(user.get().getEmail());
     return Optional.of(ImmutablePair.of(user.get(), token));
   }
 
   /**
-   * Handle the sign-up command
-   * <p>
-   * This method handles the {@link SignUpCommand} command and returns the user.
-   * </p>
+   * Handle the sign-up command.
+   *
+   * <p>This method handles the {@link SignUpCommand} command and returns the user.</p>
    *
    * @param command the sign-up command containing the email and password
    * @return the created user
    */
   @Override
   public Optional<User> handle(SignUpCommand command) {
-    if (userRepository.existsByEmail(command.email()))
+    if (userRepository.existsByEmail(command.email())) {
       throw new UserAlreadyExistsException(command.email());
-    var roles = command.roles().stream().map(role -> roleRepository.findByName(role.getName()).orElseThrow(() -> new RoleNotFoundException(role.getName())))
+    }
+    var roles = command.roles().stream().map(role -> roleRepository.findByName(role.getName())
+            .orElseThrow(() -> new RoleNotFoundException(role.getName())))
         .toList();
     var user = new User(command.email(), hashingService.encode(command.password()), roles);
     userRepository.save(user);

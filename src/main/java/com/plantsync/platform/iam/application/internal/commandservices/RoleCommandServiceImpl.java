@@ -6,9 +6,8 @@ import com.plantsync.platform.iam.domain.model.entities.Role;
 import com.plantsync.platform.iam.domain.model.valueobjects.Roles;
 import com.plantsync.platform.iam.domain.services.RoleCommandService;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.RoleRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
+import org.springframework.stereotype.Service;
 
 /**
  * Implementation of {@link RoleCommandService} to handle {@link SeedRolesCommand}.
@@ -18,6 +17,11 @@ public class RoleCommandServiceImpl implements RoleCommandService {
 
   private final RoleRepository roleRepository;
 
+  /**
+   * Constructor for RoleCommandServiceImpl.
+   *
+   * @param roleRepository The role repository.
+   */
   public RoleCommandServiceImpl(RoleRepository roleRepository) {
     this.roleRepository = roleRepository;
   }

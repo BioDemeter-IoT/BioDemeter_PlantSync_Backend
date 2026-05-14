@@ -5,12 +5,16 @@ import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLe
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.plantprofiles.interfaces.rest.resources.CreatePlantResource;
-
 import java.time.LocalDate;
 
+/**
+ * Create Plant Assembler.
+ * */
 public class CreatePlantCommandFromResourceAssembler {
 
-
+  /**
+   * Create plant command to resource.
+   * */
   public static CreatePlantCommand toCommandFromResource(CreatePlantResource resource) {
 
     return new CreatePlantCommand(

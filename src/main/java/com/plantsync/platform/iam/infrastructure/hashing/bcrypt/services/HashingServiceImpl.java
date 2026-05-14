@@ -1,13 +1,19 @@
 package com.plantsync.platform.iam.infrastructure.hashing.bcrypt.services;
 
-import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
+import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BcryptHashingService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link BcryptHashingService} using {@link BCryptPasswordEncoder}.
+ */
 @Service
-public class HashingServiceImpl implements BCryptHashingService {
+public class HashingServiceImpl implements BcryptHashingService {
   private final BCryptPasswordEncoder passwordEncoder;
 
+  /**
+   * Default constructor.
+   */
   HashingServiceImpl() {
     this.passwordEncoder = new BCryptPasswordEncoder();
   }
@@ -16,7 +22,7 @@ public class HashingServiceImpl implements BCryptHashingService {
    * Hash a password using the BCrypt algorithm.
    *
    * @param rawPassword the password to hash
-   * @return String the hashed password
+   * @return {@link String} the hashed password
    */
   @Override
   public String encode(CharSequence rawPassword) {
@@ -28,7 +34,7 @@ public class HashingServiceImpl implements BCryptHashingService {
    *
    * @param rawPassword     the raw password
    * @param encodedPassword the hashed password
-   * @return boolean true if the raw password matches the hashed password, false otherwise
+   * @return {@code boolean} true if the raw password matches the hashed password, false otherwise
    */
   @Override
   public boolean matches(CharSequence rawPassword, String encodedPassword) {

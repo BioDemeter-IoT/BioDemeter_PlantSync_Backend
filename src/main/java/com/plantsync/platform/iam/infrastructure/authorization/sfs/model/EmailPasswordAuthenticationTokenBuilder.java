@@ -20,9 +20,12 @@ public class EmailPasswordAuthenticationTokenBuilder {
    * @see UsernamePasswordAuthenticationToken
    * @see UserDetails
    */
-  public static UsernamePasswordAuthenticationToken build(UserDetails principal, HttpServletRequest request) {
-    var emailPasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-    emailPasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+  public static UsernamePasswordAuthenticationToken build(
+      UserDetails principal, HttpServletRequest request) {
+    var emailPasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+        principal, null, principal.getAuthorities());
+    emailPasswordAuthenticationToken.setDetails(
+        new WebAuthenticationDetailsSource().buildDetails(request));
     return emailPasswordAuthenticationToken;
   }
 }

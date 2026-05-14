@@ -1,4 +1,9 @@
 package com.plantsync.platform.iam.domain.model.queries;
 
-public record GetUserByIdQuery(Long UserId) {
+/**
+ * Query to get a user by id.
+ *
+ * @param userId The user id.
+ */
+public record GetUserByIdQuery(Long userId) {
 }

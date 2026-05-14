@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.interfaces.rest;
 
-
 import com.plantsync.platform.iam.domain.services.UserCommandService;
 import com.plantsync.platform.iam.interfaces.rest.resources.AuthenticatedUserResource;
 import com.plantsync.platform.iam.interfaces.rest.resources.SignInResource;
@@ -24,21 +23,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * AuthenticationController
- * <p>
- * This controller is responsible for handling authentication requests.
- * It exposes two endpoints:
- *     <ul>
- *         <li>POST /api/v1/auth/sign-in</li>
- *         <li>POST /api/v1/auth/sign-up</li>
- *     </ul>
- * </p>
+ * AuthenticationController.
+ *
  */
+
 @RestController
 @RequestMapping(value = "/api/v1/authentication", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Authentication", description = "Available Authentication Endpoints")
 public class AuthenticationController {
   private final UserCommandService userCommandService;
+
+  /**
+   * Auth Controller.
+   * */
 
   public AuthenticationController(UserCommandService userCommandService) {
     this.userCommandService = userCommandService;
@@ -55,13 +52,17 @@ public class AuthenticationController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "User authenticated successfully."),
       @ApiResponse(responseCode = "404", description = "User not found.")})
-  public ResponseEntity<AuthenticatedUserResource> signIn(@Valid @RequestBody SignInResource signInResource) {
+  public ResponseEntity<AuthenticatedUserResource> signIn(
+      @Valid @RequestBody SignInResource signInResource) {
     var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
     var authenticatedUser = userCommandService.handle(signInCommand);
     if (authenticatedUser.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
-    var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler.toResourceFromEntity(authenticatedUser.get().getLeft(), authenticatedUser.get().getRight());
+    var authenticatedUserResource =
+        AuthenticatedUserResourceFromEntityAssembler.toResourceFromEntity(
+            authenticatedUser.get().getLeft(),
+            authenticatedUser.get().getRight());
     return ResponseEntity.ok(authenticatedUserResource);
   }
 

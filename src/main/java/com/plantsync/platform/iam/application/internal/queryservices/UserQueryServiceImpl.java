@@ -7,10 +7,9 @@ import com.plantsync.platform.iam.domain.model.queries.GetUserByEmailQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetUserByIdQuery;
 import com.plantsync.platform.iam.domain.services.UserQueryService;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.UserRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Implementation of {@link UserQueryService} interface.
@@ -49,10 +48,17 @@ public class UserQueryServiceImpl implements UserQueryService {
    */
   @Override
   public Optional<User> handle(GetUserByIdQuery query) {
-    return userRepository.findById(query.UserId());
+    return userRepository.findById(query.userId());
   }
 
 
+  /**
+   * This method is used to handle {@link GetUserByEmailQuery} query.
+   *
+   * @param query {@link GetUserByEmailQuery} instance.
+   * @return {@link Optional} of {@link User} instance.
+   * @see GetUserByEmailQuery
+   */
   @Override
   public Optional<User> handle(GetUserByEmailQuery query) {
     return userRepository.findByEmail(query.email());

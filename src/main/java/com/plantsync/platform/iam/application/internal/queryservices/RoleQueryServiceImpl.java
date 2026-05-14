@@ -5,10 +5,9 @@ import com.plantsync.platform.iam.domain.model.queries.GetAllRolesQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetRoleByNameQuery;
 import com.plantsync.platform.iam.domain.services.RoleQueryService;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.RoleRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * RoleQueryServiceImpl class.
@@ -31,7 +30,7 @@ public class RoleQueryServiceImpl implements RoleQueryService {
    * Handle the get all roles query.
    *
    * @param query the get all roles query
-   * @return List<Role> the list of roles
+   * @return {@code List<Role>} the list of roles
    */
   @Override
   public List<Role> handle(GetAllRolesQuery query) {
@@ -42,7 +41,7 @@ public class RoleQueryServiceImpl implements RoleQueryService {
    * Handle the get role by name query.
    *
    * @param query the get role by name query
-   * @return Optional<Role> the role
+   * @return {@code Optional<Role>} the role
    */
   @Override
   public Optional<Role> handle(GetRoleByNameQuery query) {
