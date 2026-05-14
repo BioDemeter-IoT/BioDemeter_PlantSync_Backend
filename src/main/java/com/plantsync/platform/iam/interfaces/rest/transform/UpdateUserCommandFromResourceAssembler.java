@@ -5,7 +5,7 @@ import com.plantsync.platform.iam.interfaces.rest.resources.UpdateUserResource;
 
 public class UpdateUserCommandFromResourceAssembler {
 
-  public static UpdateUserCommand toCommandFromResource(Long id, UpdateUserResource resource) {
-    return new UpdateUserCommand(id, resource.email());
-  }
+    public static UpdateUserCommand toCommandFromResource(Long id, UpdateUserResource resource) {
+        return new UpdateUserCommand(id, resource.email());
+    }
 }

@@ -26,51 +26,51 @@ import java.io.IOException;
  */
 public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(BearerAuthorizationRequestFilter.class);
-  private final BearerTokenService tokenService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BearerAuthorizationRequestFilter.class);
+    private final BearerTokenService tokenService;
 
 
-  @Qualifier("defaultUserDetailsService")
-  private final UserDetailsService userDetailsService;
+    @Qualifier("defaultUserDetailsService")
+    private final UserDetailsService userDetailsService;
 
-  public BearerAuthorizationRequestFilter(BearerTokenService tokenService, UserDetailsService userDetailsService) {
-    this.tokenService = tokenService;
-    this.userDetailsService = userDetailsService;
-  }
-
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
-    String path = request.getServletPath();
-    boolean skip = path.startsWith("/api/v1/authentication/") ||
-        path.startsWith("/v3/api-docs/") ||
-        path.startsWith("/swagger-ui/") ||
-        path.equals("/swagger-ui.html");
-    LOGGER.info("shouldNotFilter path: {} -> skip: {}", path, skip);
-    return skip;
-  }
-  /**
-   * This method is responsible for filtering requests and setting the user authentication.
-   * @param request The request object.
-   * @param response The response object.
-   * @param filterChain The filter chain object.
-   */
-  @Override
-  protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-    LOGGER.info("Filter hit: {}", request.getServletPath());
-    try {
-      String token = tokenService.getBearerTokenFrom(request);
-      LOGGER.info("Token: {}", token);
-      if (token != null && tokenService.validateToken(token)) {
-        String email = tokenService.getEmailFromToken(token);
-        var userDetails = userDetailsService.loadUserByUsername(email);
-        SecurityContextHolder.getContext().setAuthentication(EmailPasswordAuthenticationTokenBuilder.build(userDetails, request));
-      } else {
-        LOGGER.info("Token is not valid");
-      }
-
-    } catch (Exception e) {
-      LOGGER.error("Cannot set user authentication: {}", e.getMessage());
+    public BearerAuthorizationRequestFilter(BearerTokenService tokenService, UserDetailsService userDetailsService) {
+        this.tokenService = tokenService;
+        this.userDetailsService = userDetailsService;
     }
-    filterChain.doFilter(request, response);
-  }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        boolean skip = path.startsWith("/api/v1/authentication/") ||
+                path.startsWith("/v3/api-docs/") ||
+                path.startsWith("/swagger-ui/") ||
+                path.equals("/swagger-ui.html");
+        LOGGER.info("shouldNotFilter path: {} -> skip: {}", path, skip);
+        return skip;
+    }
+    /**
+     * This method is responsible for filtering requests and setting the user authentication.
+     * @param request The request object.
+     * @param response The response object.
+     * @param filterChain The filter chain object.
+     */
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        LOGGER.info("Filter hit: {}", request.getServletPath());
+        try {
+            String token = tokenService.getBearerTokenFrom(request);
+            LOGGER.info("Token: {}", token);
+            if (token != null && tokenService.validateToken(token)) {
+                String email = tokenService.getEmailFromToken(token);
+                var userDetails = userDetailsService.loadUserByUsername(email);
+                SecurityContextHolder.getContext().setAuthentication(EmailPasswordAuthenticationTokenBuilder.build(userDetails, request));
+            } else {
+                LOGGER.info("Token is not valid");
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Cannot set user authentication: {}", e.getMessage());
+        }
+        filterChain.doFilter(request, response);
+    }
 }

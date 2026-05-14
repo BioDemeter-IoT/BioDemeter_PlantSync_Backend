@@ -11,14 +11,14 @@ import javax.sql.DataSource;
 @Configuration
 public class FlywayConfiguration {
 
-  @Autowired
-  public FlywayConfiguration(DataSource dataSource) {
-    Flyway flyway = Flyway.configure()
-        .baselineOnMigrate(true)
-        .dataSource(dataSource)
-        .load();
+    @Autowired
+    public FlywayConfiguration(DataSource dataSource) {
+        Flyway flyway = Flyway.configure()
+                .baselineOnMigrate(true)
+                .dataSource(dataSource)
+                .load();
 
-    flyway.repair();
-    flyway.migrate();
-  }
+        flyway.repair();
+        flyway.migrate();
+    }
 }

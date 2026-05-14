@@ -26,35 +26,35 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Tag(name = "Plant Histories", description = "Available Plant Histories Endpoints")
 public class PlantHistoryCommandController {
 
-  private final PlantHistoryCommandService plantHistoryCommandService;
-  private final PlantHistoryQueryService plantHistoryQueryService;
+    private final PlantHistoryCommandService plantHistoryCommandService;
+    private final PlantHistoryQueryService plantHistoryQueryService;
 
-  public PlantHistoryCommandController(PlantHistoryCommandService plantHistoryCommandService,
-                                       PlantHistoryQueryService plantHistoryQueryService) {
-    this.plantHistoryCommandService = plantHistoryCommandService;
-    this.plantHistoryQueryService = plantHistoryQueryService;
+    public PlantHistoryCommandController(PlantHistoryCommandService plantHistoryCommandService,
+            PlantHistoryQueryService plantHistoryQueryService) {
+        this.plantHistoryCommandService = plantHistoryCommandService;
+        this.plantHistoryQueryService = plantHistoryQueryService;
 
-  }
+    }
 
-  @PostMapping
-  @Operation(summary = "Create a new plant history", description = "Create a new plant history")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Plant created"),
-      @ApiResponse(responseCode = "400", description = "Invalid input"),
-      @ApiResponse(responseCode = "404", description = "Plant not found") })
-  public ResponseEntity<PlantHistoryResource> createPlantHistory(
-      @Valid @RequestBody CreatePlantHistoryResource resource) {
-    var createPlantHistoryCommand = CreatePlantHistoryCommandFromResourceAssembler.toCommandFromResource(resource);
-    var plantHistoryId = plantHistoryCommandService.handle(createPlantHistoryCommand);
-    if (plantHistoryId == null || plantHistoryId == 0L)
-      return ResponseEntity.badRequest().build();
+    @PostMapping
+    @Operation(summary = "Create a new plant history", description = "Create a new plant history")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Plant created"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Plant not found") })
+    public ResponseEntity<PlantHistoryResource> createPlantHistory(
+            @Valid @RequestBody CreatePlantHistoryResource resource) {
+        var createPlantHistoryCommand = CreatePlantHistoryCommandFromResourceAssembler.toCommandFromResource(resource);
+        var plantHistoryId = plantHistoryCommandService.handle(createPlantHistoryCommand);
+        if (plantHistoryId == null || plantHistoryId == 0L)
+            return ResponseEntity.badRequest().build();
 
-    var getPlantHistoryByIdQuery = new GetPlantHistoryByIdQuery(plantHistoryId);
-    var plantHistory = plantHistoryQueryService.handle(getPlantHistoryByIdQuery);
-    if (plantHistory.isEmpty())
-      return ResponseEntity.notFound().build();
-    var plantHistoryResource = PlantHistoryResourceFromEntityAssembler.toResourceFromEntity(plantHistory.get());
-    return new ResponseEntity<>(plantHistoryResource, HttpStatus.CREATED);
-  }
+        var getPlantHistoryByIdQuery = new GetPlantHistoryByIdQuery(plantHistoryId);
+        var plantHistory = plantHistoryQueryService.handle(getPlantHistoryByIdQuery);
+        if (plantHistory.isEmpty())
+            return ResponseEntity.notFound().build();
+        var plantHistoryResource = PlantHistoryResourceFromEntityAssembler.toResourceFromEntity(plantHistory.get());
+        return new ResponseEntity<>(plantHistoryResource, HttpStatus.CREATED);
+    }
 
 }

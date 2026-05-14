@@ -5,15 +5,15 @@ import com.plantsync.platform.plantguides.interfaces.rest.resources.CreateGuideR
 
 public class CreateGuideCommandFromResourceAssembler {
 
-  public static CreateGuideCommand toCommandFromResource(CreateGuideResource resource) {
+    public static CreateGuideCommand toCommandFromResource(CreateGuideResource resource) {
 
-    return new CreateGuideCommand(
-        resource.title(),
-        resource.name(),
-        resource.description(),
-        resource.topic(),
-        resource.type(),
-        resource.imageUrl());
+        return new CreateGuideCommand(
+                resource.title(),
+                resource.name(),
+                resource.description(),
+                resource.topic(),
+                resource.type(),
+                resource.imageUrl());
 
-  }
+    }
 }

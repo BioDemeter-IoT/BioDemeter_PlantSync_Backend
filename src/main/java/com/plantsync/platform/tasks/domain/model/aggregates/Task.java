@@ -22,53 +22,53 @@ import java.time.LocalDate;
 @Entity
 public class Task extends AuditableAbstractAggregateRoot<Task> {
 
-  @NotNull
-  private LocalDate date;
+    @NotNull
+    private LocalDate date;
 
-  @NotBlank
-  private String action;
+    @NotBlank
+    private String action;
 
-  @NotNull
-  private Boolean completed;
+    @NotNull
+    private Boolean completed;
 
-  @Embedded
-  @AttributeOverride(name = "value", column = @Column(name = "plant_id"))
-  private PlantId plantId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "plant_id"))
+    private PlantId plantId;
 
-  @Embedded
-  @AttributeOverride(name = "value", column = @Column(name = "profile_id"))
-  private ProfileId profileId;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "profile_id"))
+    private ProfileId profileId;
 
-  public Task() {}
+    public Task() {}
 
 
-  public Task(CreateTaskCommand command) {
-    this.date = command.date();
+    public Task(CreateTaskCommand command) {
+        this.date = command.date();
     this.action = command.action();
-    this.completed = command.completed();
+        this.completed = command.completed();
     this.plantId = command.plantId();
     this.profileId = command.profileId();
 
-  }
+    }
 
 
-  public Task updateInformation(
-      String newAction,
-      LocalDate newDate,
-      PlantId newPlantId,
-      ProfileId newProfileId,
-      Boolean newCompleted
-  ) {
-    this.action = newAction;
-    this.date = newDate;
-    this.plantId = newPlantId;
-    this.profileId = newProfileId;
-    this.completed = newCompleted;
+    public Task updateInformation(
+            String newAction,
+            LocalDate newDate,
+            PlantId newPlantId,
+            ProfileId newProfileId,
+            Boolean newCompleted
+    ) {
+        this.action = newAction;
+        this.date = newDate;
+        this.plantId = newPlantId;
+        this.profileId = newProfileId;
+        this.completed = newCompleted;
 
-    return this;
-  }
-
-
-
-
+        return this;
+    }
+    
+    
+    
+    
 }

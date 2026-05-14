@@ -13,25 +13,25 @@ package com.plantsync.platform.plantguides.domain.model.commands;
  */
 public record CreateGuideCommand(
 
-    String title,
-    String name,
-    String description,
-    String topic,
-    String type,
-    String imageUrl
+        String title,
+        String name,
+        String description,
+        String topic,
+        String type,
+        String imageUrl
 
 ) {
-  /**
-   * Compact constructor with validation for required fields.
-   *
-   * @throws IllegalArgumentException if title or description are null or blank.
-   */
-  public CreateGuideCommand {
-    if (title == null || title.isBlank()) {
-      throw new IllegalArgumentException("title cannot be null or blank");
+    /**
+     * Compact constructor with validation for required fields.
+     *
+     * @throws IllegalArgumentException if title or description are null or blank.
+     */
+    public CreateGuideCommand {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("title cannot be null or blank");
+        }
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("description cannot be null or blank");
+        }
     }
-    if (description == null || description.isBlank()) {
-      throw new IllegalArgumentException("description cannot be null or blank");
-    }
-  }
 }

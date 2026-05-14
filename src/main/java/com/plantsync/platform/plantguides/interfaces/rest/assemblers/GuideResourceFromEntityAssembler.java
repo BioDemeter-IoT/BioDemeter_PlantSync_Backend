@@ -6,16 +6,16 @@ import com.plantsync.platform.plantguides.interfaces.rest.resources.GuideResourc
 
 public class GuideResourceFromEntityAssembler {
 
-  public static GuideResource toResourceFromEntity(Guide entity) {
+public static GuideResource toResourceFromEntity(Guide entity) {
 
-    return new GuideResource(
-        entity.getId(),
-        entity.getTitle(),
-        entity.getName(),
-        entity.getDescription(),
-        entity.getTopic(),
-        entity.getType(),
-        entity.getImageUrl());
-  }
+ return new GuideResource(
+         entity.getId(),
+         entity.getTitle(),
+         entity.getName(),
+         entity.getDescription(),
+         entity.getTopic(),
+         entity.getType(),
+         entity.getImageUrl());
+}
 
 }

@@ -24,29 +24,29 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class TaskQueryController {
 
 
-  private final TaskQueryService taskQueryService;
+    private final TaskQueryService taskQueryService;
 
-  public TaskQueryController(TaskQueryService taskQueryService) {
-    this.taskQueryService = taskQueryService;
-  }
+    public TaskQueryController(TaskQueryService taskQueryService) {
+        this.taskQueryService = taskQueryService;
+    }
 
-  @GetMapping
-  @Operation(summary = "Get all tasks")
-  @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Tasks found"),
-      @ApiResponse(responseCode = "404", description = "No tasks found")
-  })
-  public ResponseEntity<List<TaskResource>> getAllTasks() {
-    var tasks = taskQueryService.handle(new GetAllTasksQuery());
+    @GetMapping
+    @Operation(summary = "Get all tasks")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tasks found"),
+            @ApiResponse(responseCode = "404", description = "No tasks found")
+    })
+    public ResponseEntity<List<TaskResource>> getAllTasks() {
+        var tasks = taskQueryService.handle(new GetAllTasksQuery());
 
-    if (tasks.isEmpty()) return ResponseEntity.notFound().build();
+        if (tasks.isEmpty()) return ResponseEntity.notFound().build();
 
-    var resources = tasks.stream()
-        .map(TaskResourceFromEntityAssembler::toResourceFromEntity)
-        .toList();
+        var resources = tasks.stream()
+                .map(TaskResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
 
-    return ResponseEntity.ok(resources);
-  }
+        return ResponseEntity.ok(resources);
+    }
 
 
 

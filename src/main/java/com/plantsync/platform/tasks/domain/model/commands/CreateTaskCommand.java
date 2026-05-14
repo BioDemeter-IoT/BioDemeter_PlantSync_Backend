@@ -8,16 +8,16 @@ import java.time.LocalDate;
 
 public record CreateTaskCommand (
 
-    LocalDate date,
+   LocalDate date,
     String action,
-    Boolean completed,
-    PlantId plantId,
-    ProfileId profileId
+   Boolean completed,
+   PlantId plantId,
+   ProfileId profileId
 
 
 ) {
 
-  public CreateTaskCommand {
+    public CreateTaskCommand {
 
-  }
+    }
 }

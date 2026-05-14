@@ -10,24 +10,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlantHistoryCommandServiceImpl implements PlantHistoryCommandService {
 
-  private final PlantHistoryRepository plantHistoryRepository;
+    private final PlantHistoryRepository plantHistoryRepository;
 
-  public PlantHistoryCommandServiceImpl(PlantHistoryRepository plantHistoryRepository) {
+    public PlantHistoryCommandServiceImpl(PlantHistoryRepository plantHistoryRepository) {
 
-    this.plantHistoryRepository = plantHistoryRepository;
-  }
-
-
-  @Override
-  public Long handle(CreatePlantHistoryCommand command) {
-    var plantHistory = new PlantHistory(command);
-    try {
-      plantHistoryRepository.save(plantHistory);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Error saving plant history: %s".formatted(e.getMessage()));
+        this.plantHistoryRepository = plantHistoryRepository;
     }
-    return plantHistory.getId();
 
 
-  }
+    @Override
+    public Long handle(CreatePlantHistoryCommand command) {
+        var plantHistory = new PlantHistory(command);
+        try {
+            plantHistoryRepository.save(plantHistory);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error saving plant history: %s".formatted(e.getMessage()));
+        }
+        return plantHistory.getId();
+
+
+    }
 }

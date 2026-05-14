@@ -27,65 +27,65 @@ import java.util.List;
 public class ProfilesQueryController {
 
 
-  private final ProfileQueryService profileQueryService;
+    private final ProfileQueryService profileQueryService;
 
-  public ProfilesQueryController(ProfileQueryService profileQueryService) {
-    this.profileQueryService = profileQueryService;
-  }
+    public ProfilesQueryController(ProfileQueryService profileQueryService) {
+        this.profileQueryService = profileQueryService;
+    }
 
-  @GetMapping("/{profileId}")
-  @Operation(summary = "Get a profile by ID")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Profile found"),
-      @ApiResponse(responseCode = "404", description = "Profile not found")})
-  public ResponseEntity<ProfileResource> getProfileById(@PathVariable Long profileId) {
-    var getProfileByIdQuery = new GetProfileByIdQuery(profileId);
-    var profile = profileQueryService.handle(getProfileByIdQuery);
-    if (profile.isEmpty()) return ResponseEntity.notFound().build();
-    var profileEntity = profile.get();
-    var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profileEntity);
-    return ResponseEntity.ok(profileResource);
-  }
+    @GetMapping("/{profileId}")
+    @Operation(summary = "Get a profile by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profile found"),
+            @ApiResponse(responseCode = "404", description = "Profile not found")})
+    public ResponseEntity<ProfileResource> getProfileById(@PathVariable Long profileId) {
+        var getProfileByIdQuery = new GetProfileByIdQuery(profileId);
+        var profile = profileQueryService.handle(getProfileByIdQuery);
+        if (profile.isEmpty()) return ResponseEntity.notFound().build();
+        var profileEntity = profile.get();
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profileEntity);
+        return ResponseEntity.ok(profileResource);
+    }
 
-  /**
-   * Get all profiles.
-   * @return A list of {@link ProfileResource} resources for all profiles, or a not found response if no profiles are found.
-   */
-  @GetMapping
-  @Operation(summary = "Get all profiles")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Profiles found"),
-      @ApiResponse(responseCode = "404", description = "Profiles not found")})
-  public ResponseEntity<List<ProfileResource>> getAllProfiles() {
-    var profiles = profileQueryService.handle(new GetAllProfilesQuery());
-    if (profiles.isEmpty()) return ResponseEntity.notFound().build();
-    var profileResources = profiles.stream()
-        .map(ProfileResourceFromEntityAssembler::toResourceFromEntity)
-        .toList();
-    return ResponseEntity.ok(profileResources);
-  }
+    /**
+     * Get all profiles.
+     * @return A list of {@link ProfileResource} resources for all profiles, or a not found response if no profiles are found.
+     */
+    @GetMapping
+    @Operation(summary = "Get all profiles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profiles found"),
+            @ApiResponse(responseCode = "404", description = "Profiles not found")})
+    public ResponseEntity<List<ProfileResource>> getAllProfiles() {
+        var profiles = profileQueryService.handle(new GetAllProfilesQuery());
+        if (profiles.isEmpty()) return ResponseEntity.notFound().build();
+        var profileResources = profiles.stream()
+                .map(ProfileResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+        return ResponseEntity.ok(profileResources);
+    }
 
-  /**
-   * Retrieves a profile by its unique identifier.
-   *
-   * @param userId the ID of the profile to retrieve
-   * @return the profile resource if found, otherwise 404 Not Found
-   */
-  @GetMapping("/by-user-id")
-  @Operation(summary = "Get profile by user ID")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Profile found"),
-      @ApiResponse(responseCode = "404", description = "Profile not found")
-  })
-  public ResponseEntity<ProfileResource> getProfileByUserId(@RequestParam Long userId) {
-    var query = new GetProfileByUserIdQuery(userId);
-    var profile = profileQueryService.handle(query);
+    /**
+     * Retrieves a profile by its unique identifier.
+     *
+     * @param userId the ID of the profile to retrieve
+     * @return the profile resource if found, otherwise 404 Not Found
+     */
+    @GetMapping("/by-user-id")
+    @Operation(summary = "Get profile by user ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profile found"),
+            @ApiResponse(responseCode = "404", description = "Profile not found")
+    })
+    public ResponseEntity<ProfileResource> getProfileByUserId(@RequestParam Long userId) {
+        var query = new GetProfileByUserIdQuery(userId);
+        var profile = profileQueryService.handle(query);
 
-    if (profile.isEmpty()) return ResponseEntity.notFound().build();
+        if (profile.isEmpty()) return ResponseEntity.notFound().build();
 
-    var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
-    return ResponseEntity.ok(profileResource);
-  }
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+        return ResponseEntity.ok(profileResource);
+    }
 
 
 }

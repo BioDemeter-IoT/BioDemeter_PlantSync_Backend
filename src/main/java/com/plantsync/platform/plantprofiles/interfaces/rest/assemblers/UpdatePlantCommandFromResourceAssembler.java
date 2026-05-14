@@ -10,19 +10,19 @@ import java.time.LocalDate;
 
 public class UpdatePlantCommandFromResourceAssembler {
 
-  public static UpdatePlantCommand toCommandFromResource(Long plantId, UpdatePlantResource resource) {
-    return new UpdatePlantCommand(
-        plantId,
-        new PlantName(resource.name()),
-        resource.species(),
-        LocalDate.parse(resource.acquisitionDate()),
-        HumidityLevel.valueOf(resource.humidity().toUpperCase()),
-        LocalDate.parse(resource.nextWateringDate()),
-        resource.imageUrl(),
-        resource.notificationsEnabled(),
-        new ProfileId(resource.profileId())
+    public static UpdatePlantCommand toCommandFromResource(Long plantId, UpdatePlantResource resource) {
+        return new UpdatePlantCommand(
+                plantId,
+                new PlantName(resource.name()),
+                resource.species(),
+                LocalDate.parse(resource.acquisitionDate()),
+                HumidityLevel.valueOf(resource.humidity().toUpperCase()),
+                LocalDate.parse(resource.nextWateringDate()),
+                resource.imageUrl(),
+                resource.notificationsEnabled(),
+                new ProfileId(resource.profileId())
 
 
-    );
-  }
+        );
+    }
 }
