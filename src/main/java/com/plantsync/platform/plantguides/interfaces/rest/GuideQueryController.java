@@ -1,25 +1,22 @@
 package com.plantsync.platform.plantguides.interfaces.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import com.plantsync.platform.plantguides.domain.model.queries.GetAllGuidesQuery;
 import com.plantsync.platform.plantguides.domain.model.queries.GetGuideByIdQuery;
+import com.plantsync.platform.plantguides.domain.services.GuideQueryService;
 import com.plantsync.platform.plantguides.interfaces.rest.assemblers.GuideResourceFromEntityAssembler;
 import com.plantsync.platform.plantguides.interfaces.rest.resources.GuideResource;
-import com.plantsync.platform.plantguides.domain.services.GuideQueryService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * REST controller for handling HTTP requests related to Guide queries.
@@ -32,11 +29,20 @@ public class GuideQueryController {
 
   private final GuideQueryService guideQueryService;
 
+  /**
+   * Constructor for GuideQueryController.
+   *
+   * @param guideQueryService The guide query service.
+   */
   public GuideQueryController(GuideQueryService guideQueryService) {
     this.guideQueryService = guideQueryService;
   }
 
-
+  /**
+   * Get all guides.
+   *
+   * @return A {@link ResponseEntity} containing a list of {@link GuideResource}.
+   */
   @GetMapping
   @Operation(summary = "Get all guides", description = "Get all guides")
   @ApiResponses(value = {
@@ -44,7 +50,9 @@ public class GuideQueryController {
       @ApiResponse(responseCode = "404", description = "Guides not found or non existent")})
   public ResponseEntity<List<GuideResource>> getAllGuides() {
     var guides = guideQueryService.handle(new GetAllGuidesQuery());
-    if (guides.isEmpty()) return ResponseEntity.notFound().build();
+    if (guides.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
     var guideResources = guides.stream()
         .map(GuideResourceFromEntityAssembler::toResourceFromEntity)
         .toList();
@@ -66,11 +74,11 @@ public class GuideQueryController {
   public ResponseEntity<GuideResource> getGuideById(@PathVariable Long guideId) {
     var getGuideByIdQuery = new GetGuideByIdQuery(guideId);
     var guide = guideQueryService.handle(getGuideByIdQuery);
-    if (guide.isEmpty()) return ResponseEntity.notFound().build();
+    if (guide.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
     var guideEntity = guide.get();
     var guideResource = GuideResourceFromEntityAssembler.toResourceFromEntity(guideEntity);
     return ResponseEntity.ok(guideResource);
   }
-
-
 }

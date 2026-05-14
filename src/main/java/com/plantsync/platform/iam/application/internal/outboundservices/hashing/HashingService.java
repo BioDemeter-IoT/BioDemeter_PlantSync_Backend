@@ -1,6 +1,8 @@
 package com.plantsync.platform.iam.application.internal.outboundservices.hashing;
 
-
+/**
+ * The interface Hashing service.
+ */
 public interface HashingService {
   /**
    * Encode a password.

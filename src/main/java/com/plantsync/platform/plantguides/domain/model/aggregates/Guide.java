@@ -1,6 +1,7 @@
 package com.plantsync.platform.plantguides.domain.model.aggregates;
 
 import com.plantsync.platform.plantguides.domain.model.commands.CreateGuideCommand;
+import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.validation.constraints.NotBlank;
@@ -8,11 +9,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
 /**
  * Entity that represents a guide in the system.
- * A guide contains information such as title, author name, description, topic, type, and an associated image URL.
+ * A guide contains information such as title, author name, description, topic, type,
+ * and an associated image URL.
  */
 @Getter
 @Setter
@@ -84,7 +85,8 @@ public class Guide extends AuditableAbstractAggregateRoot<Guide> {
    * @param type        the type of guide
    * @param imageUrl    the image URL
    */
-  public Guide(String title, String name, String description, String topic, String type, String imageUrl) {
+  public Guide(String title, String name, String description, String topic, String type,
+               String imageUrl) {
     this.title = title;
     this.name = name;
     this.description = description;

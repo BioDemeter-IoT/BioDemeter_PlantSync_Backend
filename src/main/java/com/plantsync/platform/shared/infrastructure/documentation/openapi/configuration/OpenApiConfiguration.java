@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * The type Open api configuration.
+ */
 @Configuration
 public class OpenApiConfiguration {
   // Properties
@@ -25,6 +28,11 @@ public class OpenApiConfiguration {
 
   // Methods
 
+  /**
+   * Plantsync platform open api open api.
+   *
+   * @return the open api
+   */
   @Bean
   public OpenAPI plantsyncPlatformOpenApi() {
     // General configuration

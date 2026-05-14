@@ -1,24 +1,23 @@
 package com.plantsync.platform.iam.application.internal.queryservices;
 
-import com.plantsync.platform.iam.domain.model.aggregates.User;
-import com.plantsync.platform.iam.domain.model.queries.GetAllUsersQuery;
-import com.plantsync.platform.iam.domain.model.queries.GetUserByEmailQuery;
-import com.plantsync.platform.iam.domain.model.queries.GetUserByIdQuery;
-import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.UserRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.plantsync.platform.iam.domain.model.aggregates.User;
+import com.plantsync.platform.iam.domain.model.queries.GetAllUsersQuery;
+import com.plantsync.platform.iam.domain.model.queries.GetUserByEmailQuery;
+import com.plantsync.platform.iam.domain.model.queries.GetUserByIdQuery;
+import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.UserRepository;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class UserQueryServiceImplTest {
@@ -49,7 +48,7 @@ class UserQueryServiceImplTest {
     // Arrange
     var query = new GetUserByIdQuery(1L);
     var user = new User("owner@plantsync.com", "hashed-password");
-    when(userRepository.findById(query.UserId())).thenReturn(Optional.of(user));
+    when(userRepository.findById(query.userId())).thenReturn(Optional.of(user));
 
     // Act
     var result = userQueryService.handle(query);
@@ -57,7 +56,7 @@ class UserQueryServiceImplTest {
     // Assert
     assertTrue(result.isPresent());
     assertSame(user, result.get());
-    verify(userRepository).findById(query.UserId());
+    verify(userRepository).findById(query.userId());
   }
 
   @Test

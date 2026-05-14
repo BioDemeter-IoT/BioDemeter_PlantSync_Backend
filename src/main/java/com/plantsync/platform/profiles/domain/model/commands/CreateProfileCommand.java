@@ -4,7 +4,6 @@ import com.plantsync.platform.profiles.domain.model.valueobjects.PersonName;
 import com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPlan;
 import com.plantsync.platform.profiles.domain.model.valueobjects.UserId;
 
-
 /**
  * Command used to create a new  Profile
  * Contains the necessary data required to instantiate a new profile.

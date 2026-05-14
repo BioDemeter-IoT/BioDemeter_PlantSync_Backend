@@ -4,7 +4,9 @@ import com.plantsync.platform.plantguides.domain.model.aggregates.Guide;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
+/**
+ * The interface Guide repository.
+ */
 @Repository
 public interface GuideRepository extends JpaRepository<Guide, Long> {
 }
