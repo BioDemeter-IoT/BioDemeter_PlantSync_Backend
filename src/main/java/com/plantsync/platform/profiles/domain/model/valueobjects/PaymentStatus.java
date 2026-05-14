@@ -1,6 +1,15 @@
 package com.plantsync.platform.profiles.domain.model.valueobjects;
 
+/**
+ * The enum Payment status.
+ */
 public enum PaymentStatus {
-    PENDING,
-    PAID
+  /**
+   * Pending payment status.
+   */
+  PENDING,
+  /**
+   * Paid payment status.
+   */
+  PAID
 }

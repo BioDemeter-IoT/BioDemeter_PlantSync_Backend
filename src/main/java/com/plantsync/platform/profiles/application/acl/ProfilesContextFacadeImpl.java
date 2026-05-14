@@ -10,25 +10,35 @@ import com.plantsync.platform.profiles.domain.services.ProfileQueryService;
 import com.plantsync.platform.profiles.interfaces.acl.ProfilesContextFacade;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of the ProfilesContextFacade interface.
+ * Provides access to profile-related operations from other contexts.
+ */
 @Service
 public class ProfilesContextFacadeImpl implements ProfilesContextFacade {
-    private final ProfileCommandService profileCommandService;
-    private final ProfileQueryService profileQueryService;
+  private final ProfileCommandService profileCommandService;
+  private final ProfileQueryService profileQueryService;
 
-    public ProfilesContextFacadeImpl(ProfileCommandService profileCommandService,
-            ProfileQueryService profileQueryService) {
-        this.profileCommandService = profileCommandService;
-        this.profileQueryService = profileQueryService;
-    }
+  /**
+   * Constructor for ProfilesContextFacadeImpl.
+   *
+   * @param profileCommandService The profile command service.
+   * @param profileQueryService   The profile query service.
+   */
+  public ProfilesContextFacadeImpl(ProfileCommandService profileCommandService,
+                                   ProfileQueryService profileQueryService) {
+    this.profileCommandService = profileCommandService;
+    this.profileQueryService = profileQueryService;
+  }
 
-    @Override
-    public Long createProfile(String name, Long userId, String subscriptionPlan) {
-        var command = new CreateProfileCommand(
-                new PersonName(name),
-                SubscriptionPlan.fromString(subscriptionPlan),
-                new UserId(userId));
-        var profile = profileCommandService.handle(command);
-        return profile.map(Profile::getId).orElse(0L);
-    }
+  @Override
+  public Long createProfile(String name, Long userId, String subscriptionPlan) {
+    var command = new CreateProfileCommand(
+        new PersonName(name),
+        SubscriptionPlan.fromString(subscriptionPlan),
+        new UserId(userId));
+    var profile = profileCommandService.handle(command);
+    return profile.map(Profile::getId).orElse(0L);
+  }
 
 }

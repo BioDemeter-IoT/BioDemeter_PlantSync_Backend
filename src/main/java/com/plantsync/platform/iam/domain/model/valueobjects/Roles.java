@@ -1,6 +1,11 @@
 package com.plantsync.platform.iam.domain.model.valueobjects;
 
-
+/**
+ * The enum Roles.
+ */
 public enum Roles {
-    ROLE_USER
+  /**
+   * Role user roles.
+   */
+  ROLE_USER
 }

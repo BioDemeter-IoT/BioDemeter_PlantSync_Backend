@@ -20,47 +20,55 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GuideCommandServiceImplTest {
 
-    @Mock
-    private GuideRepository guideRepository;
+  @Mock
+  private GuideRepository guideRepository;
 
-    @InjectMocks
-    private GuideCommandServiceImpl guideCommandService;
+  @InjectMocks
+  private GuideCommandServiceImpl guideCommandService;
 
-    @Test
-    void handleCreateGuideCommandShouldSaveGuideAndReturnGeneratedId() {
-        // Arrange
-        var command = createGuideCommand();
+  @Test
+  void handleCreateGuideCommandShouldSaveGuideAndReturnGeneratedId() {
+    // Arrange
+    var command = createGuideCommand();
+    var guideCaptor = ArgumentCaptor.forClass(Guide.class);
 
-        // Act
-        var result = guideCommandService.handle(command);
+    // Act
+    var result = guideCommandService.handle(command);
 
-        // Assert
-        assertNull(result);
-        verify(guideRepository).save(any(Guide.class));
-    }
+    // Assert
+    verify(guideRepository).save(guideCaptor.capture());
+    var savedGuide = guideCaptor.getValue();
+    assertEquals(command.title(), savedGuide.getTitle());
+    assertEquals(command.name(), savedGuide.getName());
+    assertEquals(command.description(), savedGuide.getDescription());
+    assertEquals(command.topic(), savedGuide.getTopic());
+    assertEquals(command.type(), savedGuide.getType());
+    assertEquals(command.imageUrl(), savedGuide.getImageUrl());
+    assertNull(result);
+  }
 
-    @Test
-    void handleCreateGuideCommandShouldThrowGuideCreationExceptionWhenSaveFails() {
-        // Arrange
-        var command = createGuideCommand();
-        when(guideRepository.save(any(Guide.class))).thenThrow(new RuntimeException("database unavailable"));
+  @Test
+  void handleCreateGuideCommandShouldThrowGuideCreationExceptionWhenSaveFails() {
+    // Arrange
+    var command = createGuideCommand();
+    when(guideRepository.save(any(Guide.class))).thenThrow(new RuntimeException("database unavailable"));
 
-        // Act
-        var exception = assertThrows(GuideCreationException.class, () -> guideCommandService.handle(command));
+    // Act
+    var exception = assertThrows(GuideCreationException.class, () -> guideCommandService.handle(command));
 
-        // Assert
-        assertEquals("Error saving guide: database unavailable", exception.getMessage());
-        verify(guideRepository).save(any(Guide.class));
-    }
+    // Assert
+    assertEquals("Error saving guide: database unavailable", exception.getMessage());
+    verify(guideRepository).save(any(Guide.class));
+  }
 
-    private CreateGuideCommand createGuideCommand() {
-        return new CreateGuideCommand(
-                "Watering Basics",
-                "PlantSync",
-                "A practical guide for watering indoor plants.",
-                "Care",
-                "Article",
-                "https://example.com/watering-basics.jpg"
-        );
-    }
+  private CreateGuideCommand createGuideCommand() {
+    return new CreateGuideCommand(
+        "Watering Basics",
+        "PlantSync",
+        "A practical guide for watering indoor plants.",
+        "Care",
+        "Article",
+        "https://example.com/watering-basics.jpg"
+    );
+  }
 }

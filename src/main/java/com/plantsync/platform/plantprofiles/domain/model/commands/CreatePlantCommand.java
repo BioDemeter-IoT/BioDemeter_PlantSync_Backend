@@ -3,31 +3,36 @@ package com.plantsync.platform.plantprofiles.domain.model.commands;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
-
 import java.time.LocalDate;
 
-public record CreatePlantCommand (
+/**
+ * Create Plant command.
+ * */
+public record CreatePlantCommand(
 
-         PlantName name,
+    PlantName name,
 
-         String species,
+    String species,
 
-         LocalDate acquisitionDate,
+    LocalDate acquisitionDate,
 
-         HumidityLevel humidity,
+    HumidityLevel humidity,
 
-        LocalDate nextWateringDate,
+    LocalDate nextWateringDate,
 
-        String imageUrl,
+    String imageUrl,
 
-        Boolean notificationsEnabled,
+    Boolean notificationsEnabled,
 
-        ProfileId profileId
+    ProfileId profileId
 
 
 ) {
 
-    public CreatePlantCommand {
+  /**
+   * Constructor.
+   */
+  public CreatePlantCommand {
 
-    }
+  }
 }

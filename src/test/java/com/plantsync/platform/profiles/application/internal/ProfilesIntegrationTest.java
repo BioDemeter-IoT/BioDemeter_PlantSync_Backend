@@ -57,8 +57,7 @@ class ProfilesIntegrationTest {
         CreateProfileCommand command = new CreateProfileCommand(
                 new PersonName("John Doe"),
                 SubscriptionPlan.BASIC,
-                new UserId(100L)
-        );
+                new UserId(100L));
 
         // Act
         profileCommandService.handle(command);
@@ -85,8 +84,7 @@ class ProfilesIntegrationTest {
         CreateProfileCommand createCommand = new CreateProfileCommand(
                 new PersonName("Jane Doe"),
                 SubscriptionPlan.BASIC,
-                new UserId(101L)
-        );
+                new UserId(101L));
         profileCommandService.handle(createCommand);
 
         Profile savedProfile = profileRepository.findAll().get(0);
@@ -94,8 +92,7 @@ class ProfilesIntegrationTest {
         UpdateProfileCommand updateCommand = new UpdateProfileCommand(
                 savedProfile.getId(),
                 "Jane Smith",
-                "PRO"
-        );
+                "PRO");
 
         // Act
         Optional<Profile> updatedProfileResult = profileCommandService.handle(updateCommand);
@@ -112,11 +109,9 @@ class ProfilesIntegrationTest {
     void getAllProfilesShouldReturnAllCreatedProfiles() {
         // Arrange
         CreateProfileCommand command1 = new CreateProfileCommand(
-                new PersonName("User One"), SubscriptionPlan.BASIC, new UserId(1L)
-        );
+                new PersonName("User One"), SubscriptionPlan.BASIC, new UserId(1L));
         CreateProfileCommand command2 = new CreateProfileCommand(
-                new PersonName("User Two"), SubscriptionPlan.PREMIUM, new UserId(2L)
-        );
+                new PersonName("User Two"), SubscriptionPlan.PREMIUM, new UserId(2L));
 
         profileCommandService.handle(command1);
         profileCommandService.handle(command2);

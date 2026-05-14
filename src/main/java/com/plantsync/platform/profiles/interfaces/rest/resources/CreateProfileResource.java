@@ -1,13 +1,23 @@
 package com.plantsync.platform.profiles.interfaces.rest.resources;
 
-public record CreateProfileResource (
+/**
+ * The type Create profile resource.
+ */
+public record CreateProfileResource(
 
-        String personName,
-        String subscriptionPlan,
-        Long userId
+    String personName,
+    String subscriptionPlan,
+    Long userId
 
 ) {
-public CreateProfileResource{
+  /**
+   * Instantiates a new Create profile resource.
+   *
+   * @param personName       the person name
+   * @param subscriptionPlan the subscription plan
+   * @param userId           the user id
+   */
+  public CreateProfileResource {
 
-}
+  }
 }

@@ -1,3 +1,7 @@
 package com.plantsync.platform.profiles.interfaces.rest.resources;
 
-public record UpdateProfileResource(String personName, String subscriptionPlan) {}
+/**
+ * The type Update profile resource.
+ */
+public record UpdateProfileResource(String personName, String subscriptionPlan) {
+}

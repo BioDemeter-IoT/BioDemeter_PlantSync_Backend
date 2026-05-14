@@ -1,4 +1,7 @@
 package com.plantsync.platform.tasks.domain.model.queries;
 
-public record GetTaskByIdQuery (Long taskId) {
+/**
+ * The type Get task by id query.
+ */
+public record GetTaskByIdQuery(Long taskId) {
 }

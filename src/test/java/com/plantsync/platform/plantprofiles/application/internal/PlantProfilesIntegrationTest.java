@@ -79,8 +79,7 @@ class PlantProfilesIntegrationTest {
                 LocalDate.now().plusDays(7),
                 "http://image.url",
                 true,
-                new ProfileId(1L)
-        );
+                new ProfileId(1L));
 
         // Act
         plantCommandService.handle(command);
@@ -109,8 +108,7 @@ class PlantProfilesIntegrationTest {
                 LocalDate.now().plusDays(14),
                 "http://image.url",
                 false,
-                new ProfileId(1L)
-        );
+                new ProfileId(1L));
         plantCommandService.handle(createCommand);
         Plant savedPlant = plantRepository.findAll().get(0);
 
@@ -123,8 +121,7 @@ class PlantProfilesIntegrationTest {
                 LocalDate.now().plusDays(10),
                 "http://newimage.url",
                 true,
-                new ProfileId(1L)
-        );
+                new ProfileId(1L));
 
         // Act
         Optional<Plant> updatedPlantResult = plantCommandService.handle(updateCommand);
@@ -147,8 +144,7 @@ class PlantProfilesIntegrationTest {
                 LocalDate.now().plusDays(2),
                 "http://image.url",
                 true,
-                new ProfileId(1L)
-        );
+                new ProfileId(1L));
         plantCommandService.handle(plantCommand);
         Long plantId = plantRepository.findAll().get(0).getId();
 
@@ -157,12 +153,12 @@ class PlantProfilesIntegrationTest {
                 "WATERED",
                 LocalDate.now(),
                 LocalTime.now(),
-                80
-        );
+                80);
 
         // Act
         plantHistoryCommandService.handle(historyCommand);
-        List<PlantHistory> historyList = plantHistoryQueryService.handle(new GetAllPlantHistoriesByPlantIdQuery(new PlantId(plantId)));
+        List<PlantHistory> historyList = plantHistoryQueryService
+                .handle(new GetAllPlantHistoriesByPlantIdQuery(new PlantId(plantId)));
 
         // Assert
         assertNotNull(historyList);

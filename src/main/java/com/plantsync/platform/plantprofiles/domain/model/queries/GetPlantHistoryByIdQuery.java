@@ -1,3 +1,7 @@
 package com.plantsync.platform.plantprofiles.domain.model.queries;
 
-public record GetPlantHistoryByIdQuery(Long id) {}
+/**
+ * The type Get plant history by id query.
+ */
+public record GetPlantHistoryByIdQuery(Long id) {
+}

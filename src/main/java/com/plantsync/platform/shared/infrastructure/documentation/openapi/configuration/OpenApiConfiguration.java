@@ -11,51 +11,59 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * The type Open api configuration.
+ */
 @Configuration
 public class OpenApiConfiguration {
-    // Properties
-    @Value("${spring.application.name}")
-    private String applicationName;
+  // Properties
+  @Value("${spring.application.name}")
+  private String applicationName;
 
-    @Value("${documentation.application.description}")
-    private String applicationDescription;
+  @Value("${documentation.application.description}")
+  private String applicationDescription;
 
-    @Value("${documentation.application.version}")
-    private String applicationVersion;
+  @Value("${documentation.application.version}")
+  private String applicationVersion;
 
-    // Methods
+  // Methods
 
-    @Bean
-    public OpenAPI plantsyncPlatformOpenApi() {
-        // General configuration
-        var openApi = new OpenAPI();
-        openApi
-                .info(new Info()
-                        .title(this.applicationName)
-                        .description(this.applicationDescription)
-                        .version(this.applicationVersion)
-                        .license(new License().name("Apache 2.0")
-                                .url("https://springdoc.org")))
-                .externalDocs(new ExternalDocumentation()
-                        .description("PlantSync wiki Documentation")
-                       );
+  /**
+   * Plantsync platform open api open api.
+   *
+   * @return the open api
+   */
+  @Bean
+  public OpenAPI plantsyncPlatformOpenApi() {
+    // General configuration
+    var openApi = new OpenAPI();
+    openApi
+        .info(new Info()
+            .title(this.applicationName)
+            .description(this.applicationDescription)
+            .version(this.applicationVersion)
+            .license(new License().name("Apache 2.0")
+                .url("https://springdoc.org")))
+        .externalDocs(new ExternalDocumentation()
+            .description("PlantSync wiki Documentation")
+        );
 
-        // Add a security scheme
+    // Add a security scheme
 
-        final String securitySchemeName = "bearerAuth";
+    final String securitySchemeName = "bearerAuth";
 
-        openApi.addSecurityItem(new SecurityRequirement()
-                        .addList(securitySchemeName))
-                .components(new Components()
-                        .addSecuritySchemes(securitySchemeName,
-                                new SecurityScheme()
-                                        .name(securitySchemeName)
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+    openApi.addSecurityItem(new SecurityRequirement()
+            .addList(securitySchemeName))
+        .components(new Components()
+            .addSecuritySchemes(securitySchemeName,
+                new SecurityScheme()
+                    .name(securitySchemeName)
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("bearer")
+                    .bearerFormat("JWT")));
 
-        // Return the OpenAPI configuration object with all the settings
+    // Return the OpenAPI configuration object with all the settings
 
-        return openApi;
-    }
+    return openApi;
+  }
 }

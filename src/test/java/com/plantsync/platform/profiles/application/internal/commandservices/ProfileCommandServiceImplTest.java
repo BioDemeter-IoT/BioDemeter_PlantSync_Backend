@@ -29,88 +29,90 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ProfileCommandServiceImplTest {
 
-    @Mock
-    private ProfileRepository profileRepository;
+  @Mock
+  private ProfileRepository profileRepository;
 
-    @InjectMocks
-    private ProfileCommandServiceImpl profileCommandService;
+  @InjectMocks
+  private ProfileCommandServiceImpl profileCommandService;
 
-    @Test
-    void handleCreateProfileCommandShouldSaveAndReturnProfile() {
-        // Arrange
-        var command = new CreateProfileCommand(
-                new PersonName("Plant Owner"),
-                SubscriptionPlan.BASIC,
-                new UserId(1L)
-        );
+  @Test
+  void handleCreateProfileCommandShouldSaveAndReturnProfile() {
+    // Arrange
+    var command = new CreateProfileCommand(
+        new PersonName("Plant Owner"),
+        SubscriptionPlan.BASIC,
+        new UserId(1L)
+    );
+    var profileCaptor = ArgumentCaptor.forClass(Profile.class);
 
-        // Act
-        var result = profileCommandService.handle(command);
+    // Act
+    var result = profileCommandService.handle(command);
 
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(command.personName(), result.get().getPersonName());
-        assertEquals(command.subscriptionPlan(), result.get().getSubscriptionPlan());
-        assertEquals(command.userId(), result.get().getUserId());
-        assertEquals(PaymentStatus.PENDING, result.get().getPaymentStatus());
-        verify(profileRepository).save(any(Profile.class));
-    }
+    // Assert
+    assertTrue(result.isPresent());
+    verify(profileRepository).save(profileCaptor.capture());
+    assertSame(result.get(), profileCaptor.getValue());
+    assertEquals(command.personName(), result.get().getPersonName());
+    assertEquals(command.subscriptionPlan(), result.get().getSubscriptionPlan());
+    assertEquals(command.userId(), result.get().getUserId());
+    assertEquals(PaymentStatus.PENDING, result.get().getPaymentStatus());
+  }
 
-    @Test
-    void handleUpdateProfileCommandShouldUpdateAndReturnProfileWhenItExists() {
-        // Arrange
-        var command = new UpdateProfileCommand(1L, "Updated Owner", "premium");
-        var existingProfile = new Profile(
-                new PersonName("Plant Owner"),
-                SubscriptionPlan.BASIC,
-                new UserId(1L),
-                PaymentStatus.PENDING
-        );
-        when(profileRepository.findById(command.id())).thenReturn(Optional.of(existingProfile));
-        when(profileRepository.save(existingProfile)).thenReturn(existingProfile);
+  @Test
+  void handleUpdateProfileCommandShouldUpdateAndReturnProfileWhenItExists() {
+    // Arrange
+    var command = new UpdateProfileCommand(1L, "Updated Owner", "premium");
+    var existingProfile = new Profile(
+        new PersonName("Plant Owner"),
+        SubscriptionPlan.BASIC,
+        new UserId(1L),
+        PaymentStatus.PENDING
+    );
+    when(profileRepository.findById(command.id())).thenReturn(Optional.of(existingProfile));
+    when(profileRepository.save(existingProfile)).thenReturn(existingProfile);
 
-        // Act
-        var result = profileCommandService.handle(command);
+    // Act
+    var result = profileCommandService.handle(command);
 
-        // Assert
-        assertTrue(result.isPresent());
-        assertSame(existingProfile, result.get());
-        assertEquals(new PersonName(command.personName()), result.get().getPersonName());
-        assertEquals(SubscriptionPlan.PREMIUM, result.get().getSubscriptionPlan());
-        verify(profileRepository).save(existingProfile);
-    }
+    // Assert
+    assertTrue(result.isPresent());
+    assertSame(existingProfile, result.get());
+    assertEquals(new PersonName(command.personName()), result.get().getPersonName());
+    assertEquals(SubscriptionPlan.PREMIUM, result.get().getSubscriptionPlan());
+    verify(profileRepository).save(existingProfile);
+  }
 
-    @Test
-    void handleUpdateProfileCommandShouldReturnEmptyWhenProfileDoesNotExist() {
-        // Arrange
-        var command = new UpdateProfileCommand(99L, "Updated Owner", "premium");
-        when(profileRepository.findById(command.id())).thenReturn(Optional.empty());
+  @Test
+  void handleUpdateProfileCommandShouldThrowWhenProfileDoesNotExist() {
+    // Arrange
+    var command = new UpdateProfileCommand(99L, "Updated Owner", "premium");
+    when(profileRepository.findById(command.id())).thenReturn(Optional.empty());
 
-        // Act
-        var result = profileCommandService.handle(command);
+    // Act
+    var exception = assertThrows(IllegalArgumentException.class, () -> profileCommandService.handle(command));
 
-        // Assert
-        assertTrue(result.isEmpty());
-        verify(profileRepository, never()).save(any(Profile.class));
-    }
+    // Assert
+    assertEquals("Profile is empty", exception.getMessage());
+    verify(profileRepository, never()).save(any(Profile.class));
+  }
 
-    @Test
-    void handleUpdateProfileCommandShouldWrapUpdateErrors() {
-        // Arrange
-        var command = new UpdateProfileCommand(1L, "Updated Owner", "invalid-plan");
-        var existingProfile = new Profile(
-                new PersonName("Plant Owner"),
-                SubscriptionPlan.BASIC,
-                new UserId(1L),
-                PaymentStatus.PENDING
-        );
-        when(profileRepository.findById(command.id())).thenReturn(Optional.of(existingProfile));
+  @Test
+  void handleUpdateProfileCommandShouldWrapUpdateErrors() {
+    // Arrange
+    var command = new UpdateProfileCommand(1L, "Updated Owner", "invalid-plan");
+    var existingProfile = new Profile(
+        new PersonName("Plant Owner"),
+        SubscriptionPlan.BASIC,
+        new UserId(1L),
+        PaymentStatus.PENDING
+    );
+    when(profileRepository.findById(command.id())).thenReturn(Optional.of(existingProfile));
 
-        // Act
-        var exception = assertThrows(ProfileUpdateException.class, () -> profileCommandService.handle(command));
+    // Act
+    var exception = assertThrows(ProfileUpdateException.class, () -> profileCommandService.handle(command));
 
-        // Assert
-        assertEquals("Error updating profile: No enum constant com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPlan.INVALID-PLAN", exception.getMessage());
-        verify(profileRepository, never()).save(any(Profile.class));
-    }
+    // Assert
+    assertEquals("Error updating profile: No enum constant com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPlan.INVALID-PLAN", exception.getMessage());
+    verify(profileRepository, never()).save(any(Profile.class));
+  }
 }

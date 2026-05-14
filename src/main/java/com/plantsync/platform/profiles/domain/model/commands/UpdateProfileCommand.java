@@ -1,3 +1,7 @@
 package com.plantsync.platform.profiles.domain.model.commands;
 
-public record UpdateProfileCommand(Long id, String personName, String subscriptionPlan) {}
+/**
+ * The type Update profile command.
+ */
+public record UpdateProfileCommand(Long id, String personName, String subscriptionPlan) {
+}

@@ -18,37 +18,39 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RoleCommandServiceImplTest {
 
-    @Mock
-    private RoleRepository roleRepository;
+  @Mock
+  private RoleRepository roleRepository;
 
-    @InjectMocks
-    private RoleCommandServiceImpl roleCommandService;
+  @InjectMocks
+  private RoleCommandServiceImpl roleCommandService;
 
-    @Test
-    void handleSeedRolesCommandShouldSaveMissingRoles() {
-        // Arrange
-        var command = new SeedRolesCommand();
-        when(roleRepository.existsByName(Roles.ROLE_USER)).thenReturn(false);
+  @Test
+  void handleSeedRolesCommandShouldSaveMissingRoles() {
+    // Arrange
+    var command = new SeedRolesCommand();
+    when(roleRepository.existsByName(Roles.ROLE_USER)).thenReturn(false);
+    var roleCaptor = ArgumentCaptor.forClass(Role.class);
 
-        // Act
-        roleCommandService.handle(command);
+    // Act
+    roleCommandService.handle(command);
 
-        // Assert
-        verify(roleRepository).existsByName(Roles.ROLE_USER);
-        verify(roleRepository).save(any(Role.class));
-    }
+    // Assert
+    verify(roleRepository).existsByName(Roles.ROLE_USER);
+    verify(roleRepository).save(roleCaptor.capture());
+    assertEquals(Roles.ROLE_USER, roleCaptor.getValue().getName());
+  }
 
-    @Test
-    void handleSeedRolesCommandShouldNotSaveExistingRoles() {
-        // Arrange
-        var command = new SeedRolesCommand();
-        when(roleRepository.existsByName(Roles.ROLE_USER)).thenReturn(true);
+  @Test
+  void handleSeedRolesCommandShouldNotSaveExistingRoles() {
+    // Arrange
+    var command = new SeedRolesCommand();
+    when(roleRepository.existsByName(Roles.ROLE_USER)).thenReturn(true);
 
-        // Act
-        roleCommandService.handle(command);
+    // Act
+    roleCommandService.handle(command);
 
-        // Assert
-        verify(roleRepository).existsByName(Roles.ROLE_USER);
-        verify(roleRepository, never()).save(any(Role.class));
-    }
+    // Assert
+    verify(roleRepository).existsByName(Roles.ROLE_USER);
+    verify(roleRepository, never()).save(org.mockito.ArgumentMatchers.any(Role.class));
+  }
 }
