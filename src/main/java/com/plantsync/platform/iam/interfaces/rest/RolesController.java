@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.interfaces.rest;
 
-
 import com.plantsync.platform.iam.domain.model.queries.GetAllRolesQuery;
 import com.plantsync.platform.iam.domain.services.RoleQueryService;
 import com.plantsync.platform.iam.interfaces.rest.resources.RoleResource;
@@ -9,17 +8,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
- * Roles Controller.
- * This controller is responsible for handling all the requests related to roles.
+ * REST controller for managing roles.
+ * Provides endpoints to retrieve all available roles in the system.
  */
 @RestController
 @RequestMapping(value = "/api/v1/roles", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,9 +26,9 @@ public class RolesController {
   private final RoleQueryService roleQueryService;
 
   /**
-   * Instantiates a new Roles controller.
+   * Constructor for RolesController.
    *
-   * @param roleQueryService the role query service
+   * @param roleQueryService The role query service.
    */
   public RolesController(RoleQueryService roleQueryService) {
     this.roleQueryService = roleQueryService;
@@ -50,7 +48,9 @@ public class RolesController {
   public ResponseEntity<List<RoleResource>> getAllRoles() {
     var getAllRolesQuery = new GetAllRolesQuery();
     var roles = roleQueryService.handle(getAllRolesQuery);
-    var roleResources = roles.stream().map(RoleResourceFromEntityAssembler::toResourceFromEntity).toList();
+    var roleResources = roles.stream()
+        .map(RoleResourceFromEntityAssembler::toResourceFromEntity)
+        .toList();
     return ResponseEntity.ok(roleResources);
   }
 }

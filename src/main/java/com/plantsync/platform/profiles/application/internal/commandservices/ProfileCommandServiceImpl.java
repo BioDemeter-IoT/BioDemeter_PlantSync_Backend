@@ -8,20 +8,20 @@ import com.plantsync.platform.profiles.domain.model.valueobjects.PersonName;
 import com.plantsync.platform.profiles.domain.model.valueobjects.SubscriptionPlan;
 import com.plantsync.platform.profiles.domain.services.ProfileCommandService;
 import com.plantsync.platform.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
-import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
- * The type Profile command service.
+ * Service implementation for handling profile-related commands.
  */
 @Service
 public class ProfileCommandServiceImpl implements ProfileCommandService {
   private final ProfileRepository profileRepository;
 
   /**
-   * Constructor.
+   * Constructor for ProfileCommandServiceImpl.
    *
-   * @param profileRepository The {@link ProfileRepository} instance
+   * @param profileRepository The {@link ProfileRepository} repository.
    */
   public ProfileCommandServiceImpl(ProfileRepository profileRepository) {
     this.profileRepository = profileRepository;
@@ -30,7 +30,6 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
   // inherited javadoc
   @Override
   public Optional<Profile> handle(CreateProfileCommand command) {
-
     var profile = new Profile(command);
     profileRepository.save(profile);
     return Optional.of(profile);

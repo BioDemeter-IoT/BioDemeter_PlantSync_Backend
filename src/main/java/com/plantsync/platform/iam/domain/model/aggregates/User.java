@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.domain.model.aggregates;
 
-
 import com.plantsync.platform.iam.domain.model.entities.Role;
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.CascadeType;

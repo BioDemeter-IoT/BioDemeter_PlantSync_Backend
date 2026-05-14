@@ -1,15 +1,12 @@
 package com.plantsync.platform.iam.domain.model.commands;
 
-
 /**
- * Sign in command
- * <p>
- * This class represents the command to sign in a user.
- * </p>
+ * Command for signing in a user.
  *
- * @param username the email of the user
- * @param password the password of the user
+ * <p>This record represents the data required to authenticate a user.</p>
  *
+ * @param username The email of the user.
+ * @param password The password of the user.
  */
 public record SignInCommand(String username, String password) {
 }

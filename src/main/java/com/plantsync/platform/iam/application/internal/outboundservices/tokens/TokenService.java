@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.application.internal.outboundservices.tokens;
 
-
 /**
  * TokenService interface.
  * This interface is used to generate and validate tokens.

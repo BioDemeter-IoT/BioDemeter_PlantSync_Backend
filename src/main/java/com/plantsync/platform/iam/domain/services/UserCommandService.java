@@ -4,34 +4,37 @@ import com.plantsync.platform.iam.domain.model.aggregates.User;
 import com.plantsync.platform.iam.domain.model.commands.SignInCommand;
 import com.plantsync.platform.iam.domain.model.commands.SignUpCommand;
 import com.plantsync.platform.iam.domain.model.commands.UpdateUserCommand;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import java.util.Optional;
-
 /**
- * User command service.
- * <p>
- * This interface represents the service to handle user commands.
- * </p>
+ * Service interface for handling user-related commands.
+ *
+ * <p>Provides methods for user authentication, registration, and updates.</p>
  */
 public interface UserCommandService {
   /**
-   * Handle sign in command.
+   * Handles the sign-in process.
    *
-   * @param command the {@link SignInCommand} command
-   * @return an {@link Optional} of {@link ImmutablePair} of {@link User} and
-   * {@link String}
+   * @param command The {@link SignInCommand}.
+   * @return An {@link Optional} containing a pair of {@link User} and JWT token if successful.
    */
   Optional<ImmutablePair<User, String>> handle(SignInCommand command);
 
   /**
-   * Handle sign up command.
+   * Handles the sign-up process.
    *
-   * @param command the {@link SignUpCommand} command
-   * @return an {@link Optional} of {@link User} entity
+   * @param command The {@link SignUpCommand}.
+   * @return An {@link Optional} containing the created {@link User} if successful.
    */
   Optional<User> handle(SignUpCommand command);
 
+  /**
+   * Handles the update of user information.
+   *
+   * @param command The {@link UpdateUserCommand}.
+   * @return An {@link Optional} containing the updated {@link User} if successful.
+   */
   Optional<User> handle(UpdateUserCommand command);
 
 }

@@ -1,10 +1,8 @@
 package com.plantsync.platform.tasks.domain.model.aggregates;
 
-
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.plantsync.platform.tasks.domain.model.commands.CreateTaskCommand;
 import com.plantsync.platform.tasks.domain.model.valueobjects.PlantId;
-
 import com.plantsync.platform.tasks.domain.model.valueobjects.ProfileId;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -12,13 +10,13 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 /**
- * The type Task.
+ * Task aggregate root.
+ * Represents a task associated with a plant and a profile.
  */
 @Getter
 @Setter
@@ -43,16 +41,15 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
   private ProfileId profileId;
 
   /**
-   * Instantiates a new Task.
+   * Default constructor for Task.
    */
   public Task() {
   }
 
-
   /**
-   * Instantiates a new Task.
+   * Constructor for Task from CreateTaskCommand.
    *
-   * @param command the command
+   * @param command The {@link CreateTaskCommand} instance.
    */
   public Task(CreateTaskCommand command) {
     this.date = command.date();
@@ -60,19 +57,17 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
     this.completed = command.completed();
     this.plantId = command.plantId();
     this.profileId = command.profileId();
-
   }
 
-
   /**
-   * Update information task.
+   * Updates the task information.
    *
-   * @param newAction    the new action
-   * @param newDate      the new date
-   * @param newPlantId   the new plant id
-   * @param newProfileId the new profile id
-   * @param newCompleted the new completed
-   * @return the task
+   * @param newAction    The new action description.
+   * @param newDate      The new date for the task.
+   * @param newPlantId   The new {@link PlantId}.
+   * @param newProfileId The new {@link ProfileId}.
+   * @param newCompleted The new completion status.
+   * @return The updated {@link Task} instance.
    */
   public Task updateInformation(
       String newAction,
@@ -89,6 +84,5 @@ public class Task extends AuditableAbstractAggregateRoot<Task> {
 
     return this;
   }
-
 
 }

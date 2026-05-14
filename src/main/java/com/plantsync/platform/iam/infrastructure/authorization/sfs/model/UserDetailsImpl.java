@@ -2,18 +2,16 @@ package com.plantsync.platform.iam.infrastructure.authorization.sfs.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.plantsync.platform.iam.domain.model.aggregates.User;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 /**
- * This class is responsible for providing the user details to the Spring Security framework.
- * It implements the UserDetails interface.
+ * Implementation of the UserDetails interface for Spring Security.
  */
 @Getter
 @EqualsAndHashCode
@@ -29,13 +27,14 @@ public class UserDetailsImpl implements UserDetails {
   private final Collection<? extends GrantedAuthority> authorities;
 
   /**
-   * This constructor initializes the UserDetailsImpl object.
+   * Constructor for UserDetailsImpl.
    *
-   * @param email       The email.
-   * @param password    The password.
-   * @param authorities The authorities.
+   * @param email       The email of the user.
+   * @param password    The password of the user.
+   * @param authorities The collection of granted authorities.
    */
-  public UserDetailsImpl(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+  public UserDetailsImpl(String email, String password,
+                         Collection<? extends GrantedAuthority> authorities) {
     this.email = email;
     this.password = password;
     this.authorities = authorities;
@@ -46,10 +45,10 @@ public class UserDetailsImpl implements UserDetails {
   }
 
   /**
-   * This method is responsible for building the UserDetailsImpl object from the User object.
+   * Builds a UserDetailsImpl object from a User entity.
    *
-   * @param user The user object.
-   * @return The UserDetailsImpl object.
+   * @param user The {@link User} entity.
+   * @return A {@link UserDetailsImpl} instance.
    */
   public static UserDetailsImpl build(User user) {
     var authorities = user.getRoles().stream()

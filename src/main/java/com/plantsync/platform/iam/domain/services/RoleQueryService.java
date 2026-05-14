@@ -3,15 +3,11 @@ package com.plantsync.platform.iam.domain.services;
 import com.plantsync.platform.iam.domain.model.entities.Role;
 import com.plantsync.platform.iam.domain.model.queries.GetAllRolesQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetRoleByNameQuery;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Role query service.
- * <p>
- * This interface represents the service that handles the role queries.
- * </p>
+ * Service interface for handling role-related queries.
  */
 public interface RoleQueryService {
   /**

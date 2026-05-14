@@ -1,8 +1,6 @@
 package com.plantsync.platform.iam.infrastructure.tokens.jwt.services;
 
-
 import com.plantsync.platform.iam.infrastructure.tokens.jwt.BearerTokenService;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +9,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.function.Function;
+import javax.crypto.SecretKey;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.function.Function;
 
 /**
  * Token service implementation for JWT tokens.
@@ -37,8 +34,6 @@ public class TokenServiceImpl implements BearerTokenService {
   private static final String BEARER_TOKEN_PREFIX = "Bearer ";
 
   private static final int TOKEN_BEGIN_INDEX = 7;
-
-
   @Value("${authorization.jwt.secret}")
   private String secret;
 
@@ -175,7 +170,9 @@ public class TokenServiceImpl implements BearerTokenService {
   @Override
   public String getBearerTokenFrom(HttpServletRequest request) {
     String parameter = getAuthorizationParameterFrom(request);
-    if (isTokenPresentIn(parameter) && isBearerTokenIn(parameter)) return extractTokenFrom(parameter);
+    if (isTokenPresentIn(parameter) && isBearerTokenIn(parameter)) {
+      return extractTokenFrom(parameter);
+    }
     return null;
   }
 

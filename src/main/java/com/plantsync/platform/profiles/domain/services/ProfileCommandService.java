@@ -11,18 +11,18 @@ import java.util.Optional;
 public interface ProfileCommandService {
 
   /**
-   * Handle optional.
+   * Handles the creation of a new profile.
    *
-   * @param command the command
-   * @return the optional
+   * @param command The command containing profile data.
+   * @return An {@link Optional} containing the created {@link Profile}.
    */
   Optional<Profile> handle(CreateProfileCommand command);
 
   /**
-   * Handle optional.
+   * Handles the update of an existing profile.
    *
-   * @param command the command
-   * @return the optional
+   * @param command The command containing updated profile data.
+   * @return An {@link Optional} containing the updated {@link Profile}.
    */
   Optional<Profile> handle(UpdateProfileCommand command);
 }

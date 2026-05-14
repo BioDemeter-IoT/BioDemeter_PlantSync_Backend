@@ -8,19 +8,17 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
 
-import java.util.List;
-
 /**
  * Role entity.
- * <p>
- * This entity represents the role of a user in the system.
- * It is used to define the permissions of a user.
- * </p>
+ *
+ * <p>This entity represents the role of a user in the system.
+ * It is used to define the permissions of a user.</p>
  */
 @Entity
 @Data
@@ -36,6 +34,11 @@ public class Role {
   @Column(length = 20)
   private Roles name;
 
+  /**
+   * Constructs a new Role with the specified name.
+   *
+   * @param name The name of the role.
+   */
   public Role(Roles name) {
     this.name = name;
   }
@@ -69,10 +72,9 @@ public class Role {
   }
 
   /**
-   * Validate the role set
-   * <p>
-   * This method validates the role set and returns the default role if the set is empty.
-   * </p>
+   * Validates the role set.
+   *
+   * <p>This method validates the role set and returns the default role if the set is empty.</p>
    *
    * @param roles the role set
    * @return the role set

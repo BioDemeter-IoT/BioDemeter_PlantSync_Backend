@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.application.internal.commandservices;
 
-
 import com.plantsync.platform.iam.application.internal.outboundservices.hashing.HashingService;
 import com.plantsync.platform.iam.application.internal.outboundservices.tokens.TokenService;
 import com.plantsync.platform.iam.domain.exceptions.RoleNotFoundException;
@@ -55,7 +54,8 @@ public class UserCommandServiceImpl implements UserCommandService {
   /**
    * Handle the sign-in command.
    *
-   * <p>This method handles the {@link SignInCommand} command and returns the user and the token.</p>
+   * <p>This method handles the {@link SignInCommand}
+   * command and returns the user and the token.</p>
    *
    * @param command the sign-in command containing the email and password
    * @return and optional containing the user matching the email and the generated token

@@ -6,19 +6,21 @@ import com.plantsync.platform.profiles.domain.model.queries.GetProfileByIdQuery;
 import com.plantsync.platform.profiles.domain.model.queries.GetProfileByUserIdQuery;
 import com.plantsync.platform.profiles.domain.services.ProfileQueryService;
 import com.plantsync.platform.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
+/**
+ * Service implementation for querying profile entities.
+ */
 @Service
 public class ProfileQueryServiceImpl implements ProfileQueryService {
   private final ProfileRepository profileRepository;
 
   /**
-   * Constructor.
+   * Constructor for ProfileQueryServiceImpl.
    *
-   * @param profileRepository The {@link ProfileRepository} instance
+   * @param profileRepository The {@link ProfileRepository} repository.
    */
   public ProfileQueryServiceImpl(ProfileRepository profileRepository) {
     this.profileRepository = profileRepository;
@@ -30,7 +32,6 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
     return profileRepository.findById(query.profileId());
   }
 
-
   // inherited javadoc
   @Override
   public List<Profile> handle(GetAllProfilesQuery query) {
@@ -41,7 +42,5 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
   public Optional<Profile> handle(GetProfileByUserIdQuery query) {
     return profileRepository.findById(query.userId());
   }
-
-
 }
 

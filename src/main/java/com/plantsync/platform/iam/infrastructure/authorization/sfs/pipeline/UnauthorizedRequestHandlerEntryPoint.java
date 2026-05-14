@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.infrastructure.authorization.sfs.pipeline;
 
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,10 +22,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnauthorizedRequestHandlerEntryPoint implements AuthenticationEntryPoint {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(UnauthorizedRequestHandlerEntryPoint.class);
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(UnauthorizedRequestHandlerEntryPoint.class);
 
   /**
-   * This method is called by the Spring Security framework when an unauthorized request is detected.
+   * This method is called by the Spring
+   * Security framework when an unauthorized request is detected.
    *
    * @param request                 The request that caused the exception
    * @param response                The response that will be sent to the client

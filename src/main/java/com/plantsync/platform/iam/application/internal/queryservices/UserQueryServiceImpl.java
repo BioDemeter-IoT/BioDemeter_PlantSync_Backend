@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.application.internal.queryservices;
 
-
 import com.plantsync.platform.iam.domain.model.aggregates.User;
 import com.plantsync.platform.iam.domain.model.queries.GetAllUsersQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetUserByEmailQuery;

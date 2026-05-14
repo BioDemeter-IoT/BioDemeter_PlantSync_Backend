@@ -3,8 +3,17 @@ package com.plantsync.platform.tasks.interfaces.rest.assemblers;
 import com.plantsync.platform.tasks.domain.model.aggregates.Task;
 import com.plantsync.platform.tasks.interfaces.rest.resources.TaskResource;
 
+/**
+ * The type Task resource from entity assembler.
+ */
 public class TaskResourceFromEntityAssembler {
 
+  /**
+   * To resource from entity task resource.
+   *
+   * @param entity the entity
+   * @return the task resource
+   */
   public static TaskResource toResourceFromEntity(Task entity) {
 
     return new TaskResource(

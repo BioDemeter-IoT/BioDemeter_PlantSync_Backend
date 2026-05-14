@@ -1,12 +1,13 @@
 package com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories;
 
-
 import com.plantsync.platform.iam.domain.model.aggregates.User;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
+/**
+ * The interface User repository.
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
   /**

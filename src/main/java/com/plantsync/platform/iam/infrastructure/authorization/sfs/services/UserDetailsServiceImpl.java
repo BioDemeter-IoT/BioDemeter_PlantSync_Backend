@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.infrastructure.authorization.sfs.services;
 
-
 import com.plantsync.platform.iam.infrastructure.authorization.sfs.model.UserDetailsImpl;
 import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +16,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   private final UserRepository userRepository;
 
+  /**
+   * Instantiates a new User details service.
+   *
+   * @param userRepository the user repository
+   */
   public UserDetailsServiceImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
   }

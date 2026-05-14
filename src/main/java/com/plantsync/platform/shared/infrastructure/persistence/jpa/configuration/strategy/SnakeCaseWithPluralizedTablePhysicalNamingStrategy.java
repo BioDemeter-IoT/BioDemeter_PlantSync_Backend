@@ -1,17 +1,16 @@
 
 package com.plantsync.platform.shared.infrastructure.persistence.jpa.configuration.strategy;
 
+import static io.github.encryptorcode.pluralize.Pluralize.pluralize;
+
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
-import static io.github.encryptorcode.pluralize.Pluralize.pluralize;
-
 /**
- * Snake Case With Pluralized Table Physical Naming Strategy.
- * <p>
- * PhysicalNamingStrategy implementation that converts entity names to snake_case and table names to pluralized snake_case.
- * </p>
+ * Physical naming strategy for snake_case and pluralized table names.
+ *
+ * <p>Converts entity names to snake_case and table names to pluralized snake_case.</p>
  */
 public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements PhysicalNamingStrategy {
   @Override

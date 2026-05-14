@@ -1,6 +1,5 @@
 package com.plantsync.platform.iam.interfaces.rest;
 
-
 import com.plantsync.platform.iam.domain.model.queries.GetAllUsersQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetUserByIdQuery;
 import com.plantsync.platform.iam.domain.services.UserCommandService;
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
- * This class is a REST controller that exposes the users resource.
- * It includes the following operations:
- * - GET /api/v1/users: returns all the users
- * - GET /api/v1/users/{userId}: returns the user with the given id
- **/
+ * REST controller for managing users.
+ *
+ * <p>Provides endpoints to retrieve and update user information.</p>
+ */
 @RestController
 @RequestMapping(value = "/api/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Users", description = "Available User Endpoints")
@@ -38,16 +35,21 @@ public class UsersController {
   private final UserQueryService userQueryService;
   private final UserCommandService userCommandService;
 
+  /**
+   * Constructor for UsersController.
+   *
+   * @param userQueryService   The user query service.
+   * @param userCommandService The user command service.
+   */
   public UsersController(UserQueryService userQueryService, UserCommandService userCommandService) {
     this.userQueryService = userQueryService;
     this.userCommandService = userCommandService;
   }
 
   /**
-   * This method returns all the users.
+   * Retrieves all users in the system.
    *
-   * @return a list of user resources
-   * @see UserResource
+   * @return A list of {@link UserResource} objects.
    */
   @GetMapping
   @Operation(summary = "Get all users", description = "Get all the users available in the system.")
@@ -57,17 +59,17 @@ public class UsersController {
   public ResponseEntity<List<UserResource>> getAllUsers() {
     var getAllUsersQuery = new GetAllUsersQuery();
     var users = userQueryService.handle(getAllUsersQuery);
-    var userResources = users.stream().map(UserResourceFromEntityAssembler::toResourceFromEntity).toList();
+    var userResources = users.stream()
+        .map(UserResourceFromEntityAssembler::toResourceFromEntity)
+        .toList();
     return ResponseEntity.ok(userResources);
   }
 
   /**
-   * This method returns the user with the given id.
+   * Retrieves a user by their ID.
    *
-   * @param userId the user id
-   * @return the user resource with the given id
-   * @throws RuntimeException if the user is not found
-   * @see UserResource
+   * @param userId The ID of the user to retrieve.
+   * @return The {@link UserResource} with the given ID.
    */
   @GetMapping(value = "/{userId}")
   @Operation(summary = "Get user by id", description = "Get the user with the given id.")
@@ -85,7 +87,13 @@ public class UsersController {
     return ResponseEntity.ok(userResource);
   }
 
-
+  /**
+   * Updates a user's information by ID.
+   *
+   * @param id       The ID of the user to update.
+   * @param resource The {@link UpdateUserResource} data.
+   * @return The updated {@link UserResource}.
+   */
   @PutMapping("/{id}")
   @Operation(summary = "Update a user by ID")
   @ApiResponses(value = {
@@ -99,7 +107,9 @@ public class UsersController {
     var command = UpdateUserCommandFromResourceAssembler.toCommandFromResource(id, resource);
     var updatedUser = userCommandService.handle(command);
 
-    if (updatedUser.isEmpty()) return ResponseEntity.notFound().build();
+    if (updatedUser.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
 
     var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(updatedUser.get());
     return ResponseEntity.ok(userResource);

@@ -4,34 +4,37 @@ import com.plantsync.platform.iam.domain.model.aggregates.User;
 import com.plantsync.platform.iam.domain.model.queries.GetAllUsersQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetUserByEmailQuery;
 import com.plantsync.platform.iam.domain.model.queries.GetUserByIdQuery;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
- * User query service.
- * <p>
- * This interface represents the service to handle user queries.
- * </p>
+ * Service interface for handling user-related queries.
+ *
+ * <p>Provides methods to retrieve user information by different criteria.</p>
  */
 public interface UserQueryService {
   /**
-   * Handle get all users query.
+   * Handles the retrieval of all users.
    *
-   * @param query the {@link GetAllUsersQuery} query
-   * @return a list of {@link User} entities
+   * @param query The {@link GetAllUsersQuery}.
+   * @return A list of {@link User} entities.
    */
   List<User> handle(GetAllUsersQuery query);
 
   /**
-   * Handle get user by id query.
+   * Handles the retrieval of a user by their ID.
    *
-   * @param query the {@link GetUserByIdQuery} query
-   * @return an {@link Optional} of {@link User} entity
+   * @param query The {@link GetUserByIdQuery}.
+   * @return An {@link Optional} containing the {@link User} if found.
    */
   Optional<User> handle(GetUserByIdQuery query);
 
-
+  /**
+   * Handles the retrieval of a user by their email.
+   *
+   * @param query The {@link GetUserByEmailQuery}.
+   * @return An {@link Optional} containing the {@link User} if found.
+   */
   Optional<User> handle(GetUserByEmailQuery query);
 
 }
