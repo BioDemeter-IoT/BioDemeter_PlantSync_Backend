@@ -1,18 +1,14 @@
 package com.plantsync.platform.tasks.interfaces.rest.resources;
 
-/**
- * The type Task resource.
- */
 public record TaskResource(
-
     Long id,
     String action,
-    String date,
+    String scheduledDate,
+    String completedAt,
     Long plantId,
     Long profileId,
-    Boolean completed
-
+    Integer humidity,
+    String notes,
+    String status
 ) {
-
-
 }

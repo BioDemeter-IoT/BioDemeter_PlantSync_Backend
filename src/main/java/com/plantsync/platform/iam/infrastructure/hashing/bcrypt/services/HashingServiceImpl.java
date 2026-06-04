@@ -1,14 +1,14 @@
 package com.plantsync.platform.iam.infrastructure.hashing.bcrypt.services;
 
-import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BcryptHashingService;
+import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementation of {@link BcryptHashingService} using {@link BCryptPasswordEncoder}.
+ * Implementation of {@link BCryptHashingService} using {@link BCryptPasswordEncoder}.
  */
 @Service
-public class HashingServiceImpl implements BcryptHashingService {
+public class HashingServiceImpl implements BCryptHashingService {
   private final BCryptPasswordEncoder passwordEncoder;
 
   /**

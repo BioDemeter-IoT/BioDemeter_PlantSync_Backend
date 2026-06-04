@@ -3,7 +3,7 @@ package com.plantsync.platform.plantprofiles.domain.model.aggregates;
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantCommand;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
+import com.plantsync.platform.shared.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;

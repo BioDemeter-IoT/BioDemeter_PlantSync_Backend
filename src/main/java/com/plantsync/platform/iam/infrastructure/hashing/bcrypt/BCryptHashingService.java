@@ -7,5 +7,5 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * This interface is a marker interface for the Bcrypt hashing service.
  * It extends the {@link HashingService} and {@link PasswordEncoder} interfaces.
  */
-public interface BcryptHashingService extends HashingService, PasswordEncoder {
+public interface BCryptHashingService extends HashingService, PasswordEncoder {
 }
