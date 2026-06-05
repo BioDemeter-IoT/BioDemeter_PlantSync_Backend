@@ -8,8 +8,7 @@ public class GlobalTelemetryResourceFromEntityAssembler {
   public static GlobalTelemetryResource toResourceFromEntity(GlobalTelemetry entity) {
     return new GlobalTelemetryResource(
         entity.averageSoilHumidity(),
-        entity.averageAirTemperature(),
-        entity.averageAirHumidity()
+        entity.averageAirTemperature()
     );
   }
 }

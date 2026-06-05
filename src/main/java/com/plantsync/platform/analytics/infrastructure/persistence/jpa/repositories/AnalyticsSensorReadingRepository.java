@@ -6,14 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SensorReadingRepository extends JpaRepository<SensorReading, Long> {
+public interface AnalyticsSensorReadingRepository extends JpaRepository<SensorReading, Long> {
 
-  @Query("SELECT AVG(s.soilHumidity) FROM SensorReading s")
+  @Query("SELECT AVG(s.soilHumidity) FROM AnalyticsSensorReading s")
   Double findAverageSoilHumidity();
 
-  @Query("SELECT AVG(s.airTemperature) FROM SensorReading s")
+  @Query("SELECT AVG(s.airTemperature) FROM AnalyticsSensorReading s")
   Double findAverageAirTemperature();
 
-  @Query("SELECT AVG(s.airHumidity) FROM SensorReading s")
-  Double findAverageAirHumidity();
+
 }

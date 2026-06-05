@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IoTNodeRepository extends JpaRepository<IoTNode, Long> {
+public interface AnalyticsIoTNodeRepository extends JpaRepository<IoTNode, Long> {
 
   long countByStatus(NodeStatus status);
 }

@@ -1,5 +1,6 @@
-package com.plantsync.platform.analytics.infrastructure.persistence.jpa.entities;
+package com.plantsync.platform.iot.domain.model.entities;
 
+import com.plantsync.platform.iot.domain.model.commands.CreateReadingCommand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "AnalyticsSensorReading")
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,17 +23,22 @@ public class SensorReading {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(name = "node_id", nullable = false)
+  private Long nodeId;
+
   @Column(name = "soil_humidity")
-  private Double soilHumidity;
+  private Float soilHumidity;
 
   @Column(name = "air_temperature")
-  private Double airTemperature;
+  private Float airTemperature;
 
+  @Column(name = "timestamp", nullable = false)
+  private LocalDateTime timestamp;
 
-
-  @Column(name = "recorded_at")
-  private LocalDateTime recordedAt;
-
-  @Column(name = "node_id")
-  private Long nodeId;
+  public SensorReading(CreateReadingCommand command) {
+    this.nodeId = command.nodeId();
+    this.soilHumidity = command.soilHumidity();
+    this.airTemperature = command.airTemperature();
+    this.timestamp = LocalDateTime.now();
+  }
 }
