@@ -7,9 +7,9 @@ public class DeviceStatusMetricsResourceFromEntityAssembler {
 
   public static DeviceStatusMetricsResource toResourceFromEntity(DeviceStatusMetrics entity) {
     return new DeviceStatusMetricsResource(
-        entity.onlineDevices(),
-        entity.offlineDevices(),
-        entity.errorDevices()
+        entity.onlineCount(),
+        entity.offlineCount(),
+        entity.errorCount()
     );
   }
 }
