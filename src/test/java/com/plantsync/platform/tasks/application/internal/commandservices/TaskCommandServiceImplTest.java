@@ -10,6 +10,7 @@ import com.plantsync.platform.tasks.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.tasks.infrastructure.persistence.jpa.repositories.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

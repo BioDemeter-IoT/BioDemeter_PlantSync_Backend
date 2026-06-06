@@ -1,7 +1,7 @@
 package com.plantsync.platform.iam.infrastructure.authorization.sfs.configuration;
 
 import com.plantsync.platform.iam.infrastructure.authorization.sfs.pipeline.BearerAuthorizationRequestFilter;
-import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BcryptHashingService;
+import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
 import com.plantsync.platform.iam.infrastructure.tokens.jwt.BearerTokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +36,7 @@ public class WebSecurityConfiguration {
 
   private final BearerTokenService tokenService;
 
-  private final BcryptHashingService hashingService;
+  private final BCryptHashingService hashingService;
 
   private final AuthenticationEntryPoint unauthorizedRequestHandler;
 
@@ -137,7 +137,7 @@ public class WebSecurityConfiguration {
    */
   public WebSecurityConfiguration(
       @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
-      BearerTokenService tokenService, BcryptHashingService hashingService,
+      BearerTokenService tokenService, BCryptHashingService hashingService,
       AuthenticationEntryPoint authenticationEntryPoint) {
     this.userDetailsService = userDetailsService;
     this.tokenService = tokenService;
