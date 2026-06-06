@@ -7,5 +7,10 @@ public enum Roles {
   /**
    * Role user roles.
    */
-  ROLE_USER
+  ROLE_USER,
+
+  /**
+   * Role admin roles.
+   */
+  ROLE_ADMIN
 }

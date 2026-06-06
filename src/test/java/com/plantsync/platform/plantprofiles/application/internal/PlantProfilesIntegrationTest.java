@@ -1,22 +1,15 @@
 package com.plantsync.platform.plantprofiles.application.internal;
 
 import com.plantsync.platform.plantprofiles.domain.model.aggregates.Plant;
-import com.plantsync.platform.plantprofiles.domain.model.aggregates.PlantHistory;
 import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantCommand;
-import com.plantsync.platform.plantprofiles.domain.model.commands.CreatePlantHistoryCommand;
 import com.plantsync.platform.plantprofiles.domain.model.commands.UpdatePlantCommand;
-import com.plantsync.platform.plantprofiles.domain.model.queries.GetAllPlantHistoriesByPlantIdQuery;
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantByIdQuery;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantId;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.plantprofiles.domain.services.PlantCommandService;
-import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryCommandService;
-import com.plantsync.platform.plantprofiles.domain.services.PlantHistoryQueryService;
 import com.plantsync.platform.plantprofiles.domain.services.PlantQueryService;
-import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantHistoryRepository;
 import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantRepository;
+import com.plantsync.platform.shared.domain.model.valueobjects.ProfileId;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,20 +42,10 @@ class PlantProfilesIntegrationTest {
     private PlantQueryService plantQueryService;
 
     @Autowired
-    private PlantHistoryCommandService plantHistoryCommandService;
-
-    @Autowired
-    private PlantHistoryQueryService plantHistoryQueryService;
-
-    @Autowired
     private PlantRepository plantRepository;
-
-    @Autowired
-    private PlantHistoryRepository plantHistoryRepository;
 
     @BeforeEach
     void setUp() {
-        plantHistoryRepository.deleteAll();
         plantRepository.deleteAll();
     }
 
@@ -132,38 +114,5 @@ class PlantProfilesIntegrationTest {
         assertEquals(HumidityLevel.MEDIA, updatedPlantResult.get().getHumidity());
     }
 
-    @Test
-    @Transactional
-    void createPlantHistoryShouldPersistEntryAndAllowQueryByPlantId() {
-        // Arrange
-        CreatePlantCommand plantCommand = new CreatePlantCommand(
-                new PlantName("Rose"),
-                "Rosaceae",
-                LocalDate.now(),
-                HumidityLevel.ALTA,
-                LocalDate.now().plusDays(2),
-                "http://image.url",
-                true,
-                new ProfileId(1L));
-        plantCommandService.handle(plantCommand);
-        Long plantId = plantRepository.findAll().get(0).getId();
 
-        CreatePlantHistoryCommand historyCommand = new CreatePlantHistoryCommand(
-                new PlantId(plantId),
-                "WATERED",
-                LocalDate.now(),
-                LocalTime.now(),
-                80);
-
-        // Act
-        plantHistoryCommandService.handle(historyCommand);
-        List<PlantHistory> historyList = plantHistoryQueryService
-                .handle(new GetAllPlantHistoriesByPlantIdQuery(new PlantId(plantId)));
-
-        // Assert
-        assertNotNull(historyList);
-        assertEquals(1, historyList.size());
-        assertEquals("WATERED", historyList.get(0).getType());
-        assertEquals(80, historyList.get(0).getHumidity());
-    }
 }

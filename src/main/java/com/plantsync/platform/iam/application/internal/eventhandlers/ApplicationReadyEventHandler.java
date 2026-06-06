@@ -1,13 +1,20 @@
 package com.plantsync.platform.iam.application.internal.eventhandlers;
 
+import com.plantsync.platform.iam.application.internal.outboundservices.hashing.HashingService;
+import com.plantsync.platform.iam.domain.model.aggregates.User;
 import com.plantsync.platform.iam.domain.model.commands.SeedRolesCommand;
+import com.plantsync.platform.iam.domain.model.valueobjects.Roles;
 import com.plantsync.platform.iam.domain.services.RoleCommandService;
+import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.RoleRepository;
+import com.plantsync.platform.iam.infrastructure.persistence.jpa.respositories.UserRepository;
 import java.sql.Timestamp;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -17,6 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicationReadyEventHandler {
   private final RoleCommandService roleCommandService;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final HashingService hashingService;
   private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationReadyEventHandler.class);
 
   /**
@@ -24,8 +34,14 @@ public class ApplicationReadyEventHandler {
    * This class is used to call command role service.
    * */
 
-  public ApplicationReadyEventHandler(RoleCommandService roleCommandService) {
+  public ApplicationReadyEventHandler(RoleCommandService roleCommandService,
+                                       UserRepository userRepository,
+                                       RoleRepository roleRepository,
+                                       HashingService hashingService) {
     this.roleCommandService = roleCommandService;
+    this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
+    this.hashingService = hashingService;
   }
 
   /**
@@ -35,6 +51,7 @@ public class ApplicationReadyEventHandler {
    * @param event the ApplicationReadyEvent the event to handle
    */
   @EventListener
+  @Transactional
   public void on(ApplicationReadyEvent event) {
     var applicationName = event.getApplicationContext().getId();
     LOGGER.info("Starting to verify if roles seeding is needed for {} at {}",
@@ -43,6 +60,24 @@ public class ApplicationReadyEventHandler {
     roleCommandService.handle(seedRolesCommand);
     LOGGER.info("Roles seeding verification finished for {} at {}",
         applicationName, currentTimestamp());
+
+    LOGGER.info("Starting to verify if admin user seeding is needed for {} at {}",
+        applicationName, currentTimestamp());
+    seedAdminUser();
+    LOGGER.info("Admin user seeding verification finished for {} at {}",
+        applicationName, currentTimestamp());
+  }
+
+  private void seedAdminUser() {
+    if (!userRepository.existsByEmail("admin@plantsync.com")) {
+      var adminRole = roleRepository.findByName(Roles.ROLE_ADMIN)
+          .orElseThrow(() -> new RuntimeException("ROLE_ADMIN not found"));
+      var adminUser = new User("admin@plantsync.com",
+          hashingService.encode("admin123"),
+          List.of(adminRole));
+      userRepository.save(adminUser);
+      LOGGER.info("Default admin user created successfully (admin@plantsync.com)");
+    }
   }
 
   private Timestamp currentTimestamp() {

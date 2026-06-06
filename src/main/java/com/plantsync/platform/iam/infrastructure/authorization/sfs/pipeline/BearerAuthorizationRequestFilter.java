@@ -51,7 +51,8 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
     boolean skip = path.startsWith("/api/v1/authentication/")
         || path.startsWith("/v3/api-docs/")
         || path.startsWith("/swagger-ui/")
-        || path.equals("/swagger-ui.html");
+        || path.equals("/swagger-ui.html")
+        || path.equals("/");
     LOGGER.info("shouldNotFilter path: {} -> skip: {}", path, skip);
     return skip;
   }
