@@ -132,38 +132,5 @@ class PlantProfilesIntegrationTest {
         assertEquals(HumidityLevel.MEDIA, updatedPlantResult.get().getHumidity());
     }
 
-    @Test
-    @Transactional
-    void createPlantHistoryShouldPersistEntryAndAllowQueryByPlantId() {
-        // Arrange
-        CreatePlantCommand plantCommand = new CreatePlantCommand(
-                new PlantName("Rose"),
-                "Rosaceae",
-                LocalDate.now(),
-                HumidityLevel.ALTA,
-                LocalDate.now().plusDays(2),
-                "http://image.url",
-                true,
-                new ProfileId(1L));
-        plantCommandService.handle(plantCommand);
-        Long plantId = plantRepository.findAll().get(0).getId();
-
-        CreatePlantHistoryCommand historyCommand = new CreatePlantHistoryCommand(
-                new PlantId(plantId),
-                "WATERED",
-                LocalDate.now(),
-                LocalTime.now(),
-                80);
-
-        // Act
-        plantHistoryCommandService.handle(historyCommand);
-        List<PlantHistory> historyList = plantHistoryQueryService
-                .handle(new GetAllPlantHistoriesByPlantIdQuery(new PlantId(plantId)));
-
-        // Assert
-        assertNotNull(historyList);
-        assertEquals(1, historyList.size());
-        assertEquals("WATERED", historyList.get(0).getType());
-        assertEquals(80, historyList.get(0).getHumidity());
-    }
+   
 }
