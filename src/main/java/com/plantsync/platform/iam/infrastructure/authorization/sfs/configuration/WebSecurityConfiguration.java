@@ -119,7 +119,8 @@ public class WebSecurityConfiguration {
                 "/swagger-ui/**",
                 "/swagger-resources/**",
                 "/api/payments/create-session",
-                "/webjars/**").permitAll()
+                "/webjars/**",
+                "/").permitAll()
             .anyRequest().authenticated());
     http.authenticationProvider(authenticationProvider());
     http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);

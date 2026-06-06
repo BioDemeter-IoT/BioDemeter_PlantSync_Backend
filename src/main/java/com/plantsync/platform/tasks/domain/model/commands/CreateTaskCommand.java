@@ -1,7 +1,7 @@
 package com.plantsync.platform.tasks.domain.model.commands;
 
-import com.plantsync.platform.tasks.domain.model.valueobjects.PlantId;
-import com.plantsync.platform.tasks.domain.model.valueobjects.ProfileId;
+import com.plantsync.platform.shared.domain.model.valueobjects.PlantId;
+import com.plantsync.platform.shared.domain.model.valueobjects.ProfileId;
 import java.time.LocalDate;
 
 /**
@@ -9,23 +9,24 @@ import java.time.LocalDate;
  */
 public record CreateTaskCommand(
 
-    LocalDate date,
+    LocalDate scheduledDate,
     String action,
-    Boolean completed,
     PlantId plantId,
-    ProfileId profileId
-
+    ProfileId profileId,
+    Integer humidity,
+    String notes
 
 ) {
 
   /**
    * Instantiates a new Create task command.
    *
-   * @param date      the date
-   * @param action    the action
-   * @param completed the completed
-   * @param plantId   the plant id
-   * @param profileId the profile id
+   * @param scheduledDate the scheduled date
+   * @param action        the action
+   * @param plantId       the plant id
+   * @param profileId     the profile id
+   * @param humidity      the humidity
+   * @param notes         the notes
    */
   public CreateTaskCommand {
 

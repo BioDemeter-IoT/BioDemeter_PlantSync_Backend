@@ -1,7 +1,7 @@
 package com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories;
 
 import com.plantsync.platform.plantprofiles.domain.model.aggregates.Plant;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
+import com.plantsync.platform.shared.domain.model.valueobjects.ProfileId;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

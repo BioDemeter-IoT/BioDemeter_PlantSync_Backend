@@ -7,8 +7,7 @@ import com.plantsync.platform.plantprofiles.domain.model.queries.GetAllPlantsQue
 import com.plantsync.platform.plantprofiles.domain.model.queries.GetPlantByIdQuery;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.HumidityLevel;
 import com.plantsync.platform.plantprofiles.domain.model.valueobjects.PlantName;
-import com.plantsync.platform.plantprofiles.domain.model.valueobjects.ProfileId;
-import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantHistoryRepository;
+import com.plantsync.platform.shared.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.plantprofiles.infrastructure.persistence.jpa.repositories.PlantRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,9 +31,6 @@ class PlantQueryServiceImplTest {
 
   @Mock
   private PlantRepository plantRepository;
-
-  @Mock
-  private PlantHistoryRepository plantHistoryRepository;
 
   @InjectMocks
   private PlantQueryServiceImpl plantQueryService;
