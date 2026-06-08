@@ -20,6 +20,7 @@ public class PlantResourceFromEntityAssembler {
         entity.getId(),
         entity.getName().value(),
         entity.getSpecies(),
+        entity.getDescription(),
         entity.getAcquisitionDate().toString(),
         entity.getHumidity().name(),
         entity.getNextWateringDate().toString(),

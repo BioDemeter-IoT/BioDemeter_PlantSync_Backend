@@ -7,6 +7,7 @@ public record UpdatePlantResource(
 
     String name,
     String species,
+    String description,
     String acquisitionDate,
     String humidity,
     String nextWateringDate,
@@ -20,6 +21,7 @@ public record UpdatePlantResource(
    *
    * @param name                 the name
    * @param species              the species
+   * @param description          the description
    * @param acquisitionDate      the acquisition date
    * @param humidity             the humidity
    * @param nextWateringDate     the next watering date

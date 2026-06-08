@@ -14,6 +14,8 @@ public record CreatePlantCommand(
 
     String species,
 
+    String description,
+
     LocalDate acquisitionDate,
 
     HumidityLevel humidity,
