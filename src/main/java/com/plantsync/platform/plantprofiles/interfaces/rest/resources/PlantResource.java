@@ -7,6 +7,7 @@ public record PlantResource(
     Long id,
     String name,
     String species,
+    String description,
     String acquisitionDate,
     String humidity,
     String nextWateringDate,

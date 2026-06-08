@@ -56,6 +56,7 @@ class PlantProfilesIntegrationTest {
         CreatePlantCommand command = new CreatePlantCommand(
                 new PlantName("Monstera Deliciosa"),
                 "Monstera",
+                "Indoor tropical plant",
                 LocalDate.now(),
                 HumidityLevel.MEDIA,
                 LocalDate.now().plusDays(7),
@@ -75,6 +76,7 @@ class PlantProfilesIntegrationTest {
         // Assert
         assertTrue(queriedPlant.isPresent());
         assertEquals("Monstera Deliciosa", queriedPlant.get().getName().value());
+        assertEquals("Indoor tropical plant", queriedPlant.get().getDescription());
         assertEquals(HumidityLevel.MEDIA, queriedPlant.get().getHumidity());
     }
 
@@ -85,6 +87,7 @@ class PlantProfilesIntegrationTest {
         CreatePlantCommand createCommand = new CreatePlantCommand(
                 new PlantName("Cactus"),
                 "Cactaceae",
+                "Low-maintenance desert plant",
                 LocalDate.now(),
                 HumidityLevel.BAJA,
                 LocalDate.now().plusDays(14),
@@ -98,6 +101,7 @@ class PlantProfilesIntegrationTest {
                 savedPlant.getId(),
                 new PlantName("Updated Cactus"),
                 "Cactaceae",
+                "Updated plant description",
                 LocalDate.now(),
                 HumidityLevel.MEDIA,
                 LocalDate.now().plusDays(10),
@@ -111,6 +115,7 @@ class PlantProfilesIntegrationTest {
         // Assert
         assertTrue(updatedPlantResult.isPresent());
         assertEquals("Updated Cactus", updatedPlantResult.get().getName().value());
+        assertEquals("Updated plant description", updatedPlantResult.get().getDescription());
         assertEquals(HumidityLevel.MEDIA, updatedPlantResult.get().getHumidity());
     }
 

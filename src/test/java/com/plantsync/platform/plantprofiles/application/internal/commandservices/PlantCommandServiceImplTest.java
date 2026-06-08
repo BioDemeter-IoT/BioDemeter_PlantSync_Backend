@@ -127,6 +127,7 @@ class PlantCommandServiceImplTest {
         assertSame(existingPlant, result.get());
         assertEquals(command.name(), result.get().getName());
         assertEquals(command.species(), result.get().getSpecies());
+        assertEquals(command.description(), result.get().getDescription());
         assertEquals(command.acquisitionDate(), result.get().getAcquisitionDate());
         assertEquals(command.humidity(), result.get().getHumidity());
         assertEquals(command.nextWateringDate(), result.get().getNextWateringDate());
@@ -170,6 +171,7 @@ class PlantCommandServiceImplTest {
         return new CreatePlantCommand(
                 new PlantName("Monstera"),
                 "Monstera deliciosa",
+                "Indoor tropical plant",
                 LocalDate.of(2026, 1, 10),
                 HumidityLevel.MEDIA,
                 LocalDate.of(2026, 1, 17),
@@ -184,6 +186,7 @@ class PlantCommandServiceImplTest {
                 1L,
                 new PlantName("Updated Monstera"),
                 "Monstera adansonii",
+                "Updated indoor tropical plant",
                 LocalDate.of(2026, 2, 1),
                 HumidityLevel.ALTA,
                 LocalDate.of(2026, 2, 8),

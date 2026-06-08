@@ -12,6 +12,7 @@ public record UpdatePlantCommand(
     Long plantId,
     PlantName name,
     String species,
+    String description,
     LocalDate acquisitionDate,
     HumidityLevel humidity,
     LocalDate nextWateringDate,
@@ -25,6 +26,7 @@ public record UpdatePlantCommand(
    * @param plantId              the plant id
    * @param name                 the name
    * @param species              the species
+   * @param description          the description
    * @param acquisitionDate      the acquisition date
    * @param humidity             the humidity
    * @param nextWateringDate     the next watering date
