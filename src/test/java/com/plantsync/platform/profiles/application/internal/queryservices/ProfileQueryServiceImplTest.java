@@ -69,7 +69,8 @@ class ProfileQueryServiceImplTest {
     // Arrange
     var query = new GetProfileByUserIdQuery(1L);
     var profile = createProfile();
-    when(profileRepository.findById(query.userId())).thenReturn(Optional.of(profile));
+    var userId = new UserId(query.userId());
+    when(profileRepository.findByUserId(userId)).thenReturn(Optional.of(profile));
 
     // Act
     var result = profileQueryService.handle(query);
@@ -77,7 +78,7 @@ class ProfileQueryServiceImplTest {
     // Assert
     assertTrue(result.isPresent());
     assertSame(profile, result.get());
-    verify(profileRepository).findById(query.userId());
+    verify(profileRepository).findByUserId(userId);
   }
 
   private Profile createProfile() {

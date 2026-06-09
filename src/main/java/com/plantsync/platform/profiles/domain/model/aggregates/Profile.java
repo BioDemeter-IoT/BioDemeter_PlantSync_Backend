@@ -12,6 +12,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Lob;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +31,13 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
    */
   @Embedded
   private PersonName personName;
+
+  /**
+   * The user's profile picture encoded as Base64.
+   */
+  @Lob
+  @Column(columnDefinition = "TEXT")
+  private String profilePictureBase64;
 
   /**
    * The current subscription plan of the user (e.g., FREE, PRO).
@@ -91,11 +99,14 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
    *
    * @param newPersonName       the new person name
    * @param newSubscriptionPlan the new subscription plan
+   * @param newProfilePictureBase64 the new profile picture encoded as Base64
    * @return the profile
    */
-  public Profile updateInformation(PersonName newPersonName, SubscriptionPlan newSubscriptionPlan) {
+  public Profile updateInformation(PersonName newPersonName, SubscriptionPlan newSubscriptionPlan,
+                                   String newProfilePictureBase64) {
     this.personName = newPersonName;
     this.subscriptionPlan = newSubscriptionPlan;
+    this.profilePictureBase64 = newProfilePictureBase64;
     return this;
   }
 

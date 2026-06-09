@@ -16,6 +16,10 @@ public class UpdateProfileCommandFromResourceAssembler {
    */
   public static UpdateProfileCommand toCommandFromResource(
       Long id, UpdateProfileResource resource) {
-    return new UpdateProfileCommand(id, resource.personName(), resource.subscriptionPlan());
+    return new UpdateProfileCommand(
+        id,
+        resource.personName(),
+        resource.subscriptionPlan(),
+        resource.profilePictureBase64());
   }
 }
