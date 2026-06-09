@@ -18,6 +18,7 @@ public class ProfileResourceFromEntityAssembler {
     return new ProfileResource(
         entity.getId(),
         entity.getPersonName().name(),
+        entity.getProfilePictureBase64(),
         entity.getSubscriptionPlan().name(),
         entity.getUserId().value());
   }
