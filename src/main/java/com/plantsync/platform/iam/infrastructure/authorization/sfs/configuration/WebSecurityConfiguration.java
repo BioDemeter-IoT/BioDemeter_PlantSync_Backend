@@ -1,6 +1,7 @@
 package com.plantsync.platform.iam.infrastructure.authorization.sfs.configuration;
 
 import com.plantsync.platform.iam.infrastructure.authorization.sfs.pipeline.BearerAuthorizationRequestFilter;
+import com.plantsync.platform.iam.infrastructure.authorization.sfs.pipeline.EdgeApiKeyFilter;
 import com.plantsync.platform.iam.infrastructure.hashing.bcrypt.BCryptHashingService;
 import com.plantsync.platform.iam.infrastructure.tokens.jwt.BearerTokenService;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 /**
@@ -39,6 +41,8 @@ public class WebSecurityConfiguration {
   private final BCryptHashingService hashingService;
 
   private final AuthenticationEntryPoint unauthorizedRequestHandler;
+
+  private final EdgeApiKeyFilter edgeApiKeyFilter;
 
   /**
    * This method creates the Bearer Authorization Request Filter.
@@ -112,6 +116,7 @@ public class WebSecurityConfiguration {
         .sessionManagement(customizer -> customizer
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+            .requestMatchers("/api/v1/iot/edge/**").authenticated()
             .requestMatchers(
                 "/api/v1/authentication/**",
                 "/v3/api-docs/**",
@@ -123,6 +128,7 @@ public class WebSecurityConfiguration {
                 "/").permitAll()
             .anyRequest().authenticated());
     http.authenticationProvider(authenticationProvider());
+    http.addFilterBefore(edgeApiKeyFilter, LogoutFilter.class);
     http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
 
@@ -139,10 +145,11 @@ public class WebSecurityConfiguration {
   public WebSecurityConfiguration(
       @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
       BearerTokenService tokenService, BCryptHashingService hashingService,
-      AuthenticationEntryPoint authenticationEntryPoint) {
+      AuthenticationEntryPoint authenticationEntryPoint, EdgeApiKeyFilter edgeApiKeyFilter) {
     this.userDetailsService = userDetailsService;
     this.tokenService = tokenService;
     this.hashingService = hashingService;
     this.unauthorizedRequestHandler = authenticationEntryPoint;
+    this.edgeApiKeyFilter = edgeApiKeyFilter;
   }
 }

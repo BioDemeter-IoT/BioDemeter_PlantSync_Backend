@@ -53,4 +53,8 @@ public class ActuatorCommand {
     this.status = CommandStatus.PENDING;
     this.issuedAt = LocalDateTime.now();
   }
+
+  public void markAsExecuted() {
+    this.status = CommandStatus.EXECUTED;
+  }
 }
