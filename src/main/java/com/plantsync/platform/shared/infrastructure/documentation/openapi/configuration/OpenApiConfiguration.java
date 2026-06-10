@@ -48,19 +48,26 @@ public class OpenApiConfiguration {
             .description("PlantSync wiki Documentation")
         );
 
-    // Add a security scheme
+    // Add security schemes
 
-    final String securitySchemeName = "bearerAuth";
+    final String bearerSchemeName = "bearerAuth";
+    final String edgeApiKeySchemeName = "EdgeApiKey";
 
-    openApi.addSecurityItem(new SecurityRequirement()
-            .addList(securitySchemeName))
+    openApi
+        .addSecurityItem(new SecurityRequirement().addList(bearerSchemeName))
+        .addSecurityItem(new SecurityRequirement().addList(edgeApiKeySchemeName))
         .components(new Components()
-            .addSecuritySchemes(securitySchemeName,
+            .addSecuritySchemes(bearerSchemeName,
                 new SecurityScheme()
-                    .name(securitySchemeName)
+                    .name(bearerSchemeName)
                     .type(SecurityScheme.Type.HTTP)
                     .scheme("bearer")
-                    .bearerFormat("JWT")));
+                    .bearerFormat("JWT"))
+            .addSecuritySchemes(edgeApiKeySchemeName,
+                new SecurityScheme()
+                    .type(SecurityScheme.Type.APIKEY)
+                    .in(SecurityScheme.In.HEADER)
+                    .name("X-Edge-Api-Key")));
 
     // Return the OpenAPI configuration object with all the settings
 
