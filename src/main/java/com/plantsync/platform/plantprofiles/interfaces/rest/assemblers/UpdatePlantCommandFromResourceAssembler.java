@@ -25,6 +25,7 @@ public class UpdatePlantCommandFromResourceAssembler {
         plantId,
         new PlantName(resource.name()),
         resource.species(),
+        resource.description(),
         LocalDate.parse(resource.acquisitionDate()),
         HumidityLevel.valueOf(resource.humidity().toUpperCase()),
         LocalDate.parse(resource.nextWateringDate()),

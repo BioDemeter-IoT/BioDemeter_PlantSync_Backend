@@ -101,6 +101,7 @@ class PlantQueryServiceImplTest {
     return new Plant(new CreatePlantCommand(
         new PlantName("Monstera"),
         "Monstera deliciosa",
+        "Indoor tropical plant",
         LocalDate.of(2026, 1, 10),
         HumidityLevel.MEDIA,
         LocalDate.of(2026, 1, 17),

@@ -4,6 +4,7 @@ import com.plantsync.platform.profiles.domain.model.aggregates.Profile;
 import com.plantsync.platform.profiles.domain.model.queries.GetAllProfilesQuery;
 import com.plantsync.platform.profiles.domain.model.queries.GetProfileByIdQuery;
 import com.plantsync.platform.profiles.domain.model.queries.GetProfileByUserIdQuery;
+import com.plantsync.platform.profiles.domain.model.valueobjects.UserId;
 import com.plantsync.platform.profiles.domain.services.ProfileQueryService;
 import com.plantsync.platform.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
 
   @Override
   public Optional<Profile> handle(GetProfileByUserIdQuery query) {
-    return profileRepository.findById(query.userId());
+    return profileRepository.findByUserId(new UserId(query.userId()));
   }
 }
 

@@ -37,6 +37,11 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
   private String species;
 
   /**
+   * A description of the plant.
+   */
+  private String description;
+
+  /**
    * The date the plant was acquired.
    */
   private LocalDate acquisitionDate;
@@ -84,6 +89,7 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
   public Plant(CreatePlantCommand command) {
     this.name = command.name();
     this.species = command.species();
+    this.description = command.description();
     this.acquisitionDate = command.acquisitionDate();
     this.humidity = command.humidity();
     this.nextWateringDate = command.nextWateringDate();
@@ -97,6 +103,7 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
    *
    * @param newName                 the new name
    * @param newSpecies              the new species
+   * @param newDescription          the new description
    * @param newAcquisitionDate      the new acquisition date
    * @param newHumidity             the new humidity preference
    * @param newNextWateringDate     the new watering schedule
@@ -107,6 +114,7 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
    */
   public Plant updateInformation(PlantName newName,
                                  String newSpecies,
+                                 String newDescription,
                                  LocalDate newAcquisitionDate,
                                  HumidityLevel newHumidity,
                                  LocalDate newNextWateringDate,
@@ -115,6 +123,7 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
                                  ProfileId newProfileId) {
     this.name = newName;
     this.species = newSpecies;
+    this.description = newDescription;
     this.acquisitionDate = newAcquisitionDate;
     this.humidity = newHumidity;
     this.nextWateringDate = newNextWateringDate;

@@ -62,7 +62,11 @@ class ProfileCommandServiceImplTest {
   @Test
   void handleUpdateProfileCommandShouldUpdateAndReturnProfileWhenItExists() {
     // Arrange
-    var command = new UpdateProfileCommand(1L, "Updated Owner", "premium");
+    var command = new UpdateProfileCommand(
+        1L,
+        "Updated Owner",
+        "premium",
+        "base64-profile-picture");
     var existingProfile = new Profile(
         new PersonName("Plant Owner"),
         SubscriptionPlan.BASIC,
@@ -79,6 +83,7 @@ class ProfileCommandServiceImplTest {
     assertTrue(result.isPresent());
     assertSame(existingProfile, result.get());
     assertEquals(new PersonName(command.personName()), result.get().getPersonName());
+    assertEquals(command.profilePictureBase64(), result.get().getProfilePictureBase64());
     assertEquals(SubscriptionPlan.PREMIUM, result.get().getSubscriptionPlan());
     verify(profileRepository).save(existingProfile);
   }
@@ -86,7 +91,7 @@ class ProfileCommandServiceImplTest {
   @Test
   void handleUpdateProfileCommandShouldThrowWhenProfileDoesNotExist() {
     // Arrange
-    var command = new UpdateProfileCommand(99L, "Updated Owner", "premium");
+    var command = new UpdateProfileCommand(99L, "Updated Owner", "premium", "base64");
     when(profileRepository.findById(command.id())).thenReturn(Optional.empty());
 
     // Act
@@ -100,7 +105,7 @@ class ProfileCommandServiceImplTest {
   @Test
   void handleUpdateProfileCommandShouldWrapUpdateErrors() {
     // Arrange
-    var command = new UpdateProfileCommand(1L, "Updated Owner", "invalid-plan");
+    var command = new UpdateProfileCommand(1L, "Updated Owner", "invalid-plan", "base64");
     var existingProfile = new Profile(
         new PersonName("Plant Owner"),
         SubscriptionPlan.BASIC,

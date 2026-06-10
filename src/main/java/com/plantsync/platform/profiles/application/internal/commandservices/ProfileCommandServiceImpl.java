@@ -48,7 +48,8 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
       var updatedProfile = profileRepository.save(
           profileToUpdate.updateInformation(
               new PersonName(command.personName()),
-              SubscriptionPlan.valueOf(command.subscriptionPlan().toUpperCase())));
+              SubscriptionPlan.valueOf(command.subscriptionPlan().toUpperCase()),
+              command.profilePictureBase64()));
       return Optional.of(updatedProfile);
     } catch (Exception e) {
       throw new ProfileUpdateException(e.getMessage());

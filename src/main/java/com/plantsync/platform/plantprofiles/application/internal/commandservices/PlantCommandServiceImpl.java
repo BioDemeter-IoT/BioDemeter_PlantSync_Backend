@@ -66,6 +66,7 @@ public class PlantCommandServiceImpl implements PlantCommandService {
           plantToUpdate.updateInformation(
               command.name(),
               command.species(),
+              command.description(),
               command.acquisitionDate(),
               command.humidity(),
               command.nextWateringDate(),

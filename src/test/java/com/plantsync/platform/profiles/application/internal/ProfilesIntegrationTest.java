@@ -92,7 +92,8 @@ class ProfilesIntegrationTest {
         UpdateProfileCommand updateCommand = new UpdateProfileCommand(
                 savedProfile.getId(),
                 "Jane Smith",
-                "PRO");
+                "PRO",
+                "base64-profile-picture");
 
         // Act
         Optional<Profile> updatedProfileResult = profileCommandService.handle(updateCommand);
@@ -100,6 +101,7 @@ class ProfilesIntegrationTest {
         // Assert
         assertTrue(updatedProfileResult.isPresent());
         assertEquals("Jane Smith", updatedProfileResult.get().getPersonName().name());
+        assertEquals("base64-profile-picture", updatedProfileResult.get().getProfilePictureBase64());
         assertEquals(SubscriptionPlan.PRO, updatedProfileResult.get().getSubscriptionPlan());
         assertEquals(101L, updatedProfileResult.get().getUserId().value());
     }
