@@ -11,8 +11,7 @@ public class IoTNodeResourceFromEntityAssembler {
         entity.getId(),
         entity.getNodeCode(),
         entity.getStatus().name(),
-        entity.getPlantId().value(),
-        entity.getProfileId().value(),
+        entity.getPlantId() != null ? entity.getPlantId().value() : null,
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             .format(entity.getCreatedAt())
     );

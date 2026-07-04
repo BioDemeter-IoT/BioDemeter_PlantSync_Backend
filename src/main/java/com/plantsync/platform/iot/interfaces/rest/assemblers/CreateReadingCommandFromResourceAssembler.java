@@ -8,7 +8,8 @@ public class CreateReadingCommandFromResourceAssembler {
   public static CreateReadingCommand toCommandFromResource(CreateReadingResource resource) {
     return new CreateReadingCommand(
         resource.nodeId(),
-        resource.soilHumidity(),
+        resource.lightPercent(),
+        resource.gasPercent(),
         resource.airTemperature()
     );
   }

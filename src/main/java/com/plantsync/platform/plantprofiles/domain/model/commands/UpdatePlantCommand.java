@@ -18,6 +18,10 @@ public record UpdatePlantCommand(
     LocalDate nextWateringDate,
     String imageUrl,
     Boolean notificationsEnabled,
+    Float temperatureThresholdMin,
+    Float temperatureThresholdMax,
+    Float lightThresholdMin,
+    Float lightThresholdMax,
     ProfileId profileId
 ) {
   /**

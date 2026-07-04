@@ -1,8 +1,5 @@
 package com.plantsync.platform.plantprofiles.interfaces.rest.resources;
 
-/**
- * The type Plant resource.
- */
 public record PlantResource(
     Long id,
     String name,
@@ -13,6 +10,10 @@ public record PlantResource(
     String nextWateringDate,
     String imageUrl,
     Boolean notificationsEnabled,
+    Float temperatureThresholdMin,
+    Float temperatureThresholdMax,
+    Float lightThresholdMin,
+    Float lightThresholdMax,
     Long profileId
 
 ) {

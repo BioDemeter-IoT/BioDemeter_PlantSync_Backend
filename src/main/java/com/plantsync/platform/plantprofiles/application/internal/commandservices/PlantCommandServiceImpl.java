@@ -72,6 +72,10 @@ public class PlantCommandServiceImpl implements PlantCommandService {
               command.nextWateringDate(),
               command.imageUrl(),
               command.notificationsEnabled(),
+              command.temperatureThresholdMin(),
+              command.temperatureThresholdMax(),
+              command.lightThresholdMin(),
+              command.lightThresholdMax(),
               command.profileId()
           )
       );

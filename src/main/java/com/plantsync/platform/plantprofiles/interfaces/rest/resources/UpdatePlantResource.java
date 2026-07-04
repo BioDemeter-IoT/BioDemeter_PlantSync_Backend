@@ -1,8 +1,5 @@
 package com.plantsync.platform.plantprofiles.interfaces.rest.resources;
 
-/**
- * The type Update plant resource.
- */
 public record UpdatePlantResource(
 
     String name,
@@ -13,24 +10,16 @@ public record UpdatePlantResource(
     String nextWateringDate,
     String imageUrl,
     Boolean notificationsEnabled,
+    Float temperatureThresholdMin,
+    Float temperatureThresholdMax,
+    Float lightThresholdMin,
+    Float lightThresholdMax,
     Long profileId
 
 ) {
-  /**
-   * Validates the resource.
-   *
-   * @param name                 the name
-   * @param species              the species
-   * @param description          the description
-   * @param acquisitionDate      the acquisition date
-   * @param humidity             the humidity
-   * @param nextWateringDate     the next watering date
-   * @param imageUrl             the image url
-   * @param notificationsEnabled the notifications enabled
-   * @param profileId            the profile id
-   * @throws IllegalArgumentException if the title or description is null or blank.
-   */
+
   public UpdatePlantResource {
 
   }
+
 }

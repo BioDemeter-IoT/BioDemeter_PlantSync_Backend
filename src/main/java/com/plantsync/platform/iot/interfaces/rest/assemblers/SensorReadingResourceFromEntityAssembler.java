@@ -9,7 +9,8 @@ public class SensorReadingResourceFromEntityAssembler {
     return new SensorReadingResource(
         entity.getId(),
         entity.getNodeId(),
-        entity.getSoilHumidity(),
+        entity.getLightPercent(),
+        entity.getGasPercent(),
         entity.getAirTemperature(),
         entity.getTimestamp().toString()
     );
