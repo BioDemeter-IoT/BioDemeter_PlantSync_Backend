@@ -68,6 +68,18 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
    */
   private Boolean notificationsEnabled;
 
+  @Column(name = "temperature_threshold_min")
+  private Float temperatureThresholdMin;
+
+  @Column(name = "temperature_threshold_max")
+  private Float temperatureThresholdMax;
+
+  @Column(name = "light_threshold_min")
+  private Float lightThresholdMin;
+
+  @Column(name = "light_threshold_max")
+  private Float lightThresholdMax;
+
   /**
    * The ID of the profile that owns the plant.
    */
@@ -95,6 +107,10 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
     this.nextWateringDate = command.nextWateringDate();
     this.imageUrl = command.imageUrl();
     this.notificationsEnabled = command.notificationsEnabled();
+    this.temperatureThresholdMin = command.temperatureThresholdMin();
+    this.temperatureThresholdMax = command.temperatureThresholdMax();
+    this.lightThresholdMin = command.lightThresholdMin();
+    this.lightThresholdMax = command.lightThresholdMax();
     this.profileId = command.profileId();
   }
 
@@ -113,14 +129,18 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
    * @return the updated plant instance
    */
   public Plant updateInformation(PlantName newName,
-                                 String newSpecies,
-                                 String newDescription,
-                                 LocalDate newAcquisitionDate,
-                                 HumidityLevel newHumidity,
-                                 LocalDate newNextWateringDate,
-                                 String newImageUrl,
-                                 Boolean newNotificationsEnabled,
-                                 ProfileId newProfileId) {
+                                  String newSpecies,
+                                  String newDescription,
+                                  LocalDate newAcquisitionDate,
+                                  HumidityLevel newHumidity,
+                                  LocalDate newNextWateringDate,
+                                  String newImageUrl,
+                                  Boolean newNotificationsEnabled,
+                                  Float newTemperatureThresholdMin,
+                                  Float newTemperatureThresholdMax,
+                                  Float newLightThresholdMin,
+                                  Float newLightThresholdMax,
+                                  ProfileId newProfileId) {
     this.name = newName;
     this.species = newSpecies;
     this.description = newDescription;
@@ -129,6 +149,10 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
     this.nextWateringDate = newNextWateringDate;
     this.imageUrl = newImageUrl;
     this.notificationsEnabled = newNotificationsEnabled;
+    this.temperatureThresholdMin = newTemperatureThresholdMin;
+    this.temperatureThresholdMax = newTemperatureThresholdMax;
+    this.lightThresholdMin = newLightThresholdMin;
+    this.lightThresholdMax = newLightThresholdMax;
     this.profileId = newProfileId;
 
     return this;

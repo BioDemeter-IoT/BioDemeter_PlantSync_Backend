@@ -1,7 +1,7 @@
 package com.plantsync.platform.iot.infrastructure.persistence.jpa.repositories;
 
 import com.plantsync.platform.iot.domain.model.aggregates.IoTNode;
-import java.util.List;
+import com.plantsync.platform.iot.domain.model.valueobjects.NodeStatus;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,5 +11,7 @@ public interface IotNodeRepository extends JpaRepository<IoTNode, Long> {
 
   Optional<IoTNode> findByNodeCode(String nodeCode);
 
-  List<IoTNode> findByProfileIdValue(Long profileId);
+  Optional<IoTNode> findByPlantIdValue(Long plantId);
+
+  long countByStatus(NodeStatus status);
 }

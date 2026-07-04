@@ -26,8 +26,11 @@ public class SensorReading {
   @Column(name = "node_id", nullable = false)
   private Long nodeId;
 
-  @Column(name = "soil_humidity")
-  private Float soilHumidity;
+  @Column(name = "light_percent")
+  private Integer lightPercent;
+
+  @Column(name = "gas_percent")
+  private Integer gasPercent;
 
   @Column(name = "air_temperature")
   private Float airTemperature;
@@ -37,7 +40,8 @@ public class SensorReading {
 
   public SensorReading(CreateReadingCommand command) {
     this.nodeId = command.nodeId();
-    this.soilHumidity = command.soilHumidity();
+    this.lightPercent = command.lightPercent();
+    this.gasPercent = command.gasPercent();
     this.airTemperature = command.airTemperature();
     this.timestamp = LocalDateTime.now();
   }

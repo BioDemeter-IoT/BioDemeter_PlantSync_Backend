@@ -26,6 +26,14 @@ public record CreatePlantCommand(
 
     Boolean notificationsEnabled,
 
+    Float temperatureThresholdMin,
+
+    Float temperatureThresholdMax,
+
+    Float lightThresholdMin,
+
+    Float lightThresholdMax,
+
     ProfileId profileId
 
 

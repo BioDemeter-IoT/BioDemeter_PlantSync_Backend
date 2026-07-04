@@ -7,18 +7,8 @@ import com.plantsync.platform.shared.domain.model.valueobjects.ProfileId;
 import com.plantsync.platform.plantprofiles.interfaces.rest.resources.UpdatePlantResource;
 import java.time.LocalDate;
 
-/**
- * The type Update plant command from resource assembler.
- */
 public class UpdatePlantCommandFromResourceAssembler {
 
-  /**
-   * To command from resource update plant command.
-   *
-   * @param plantId  the plant id
-   * @param resource the resource
-   * @return the update plant command
-   */
   public static UpdatePlantCommand toCommandFromResource(
       Long plantId, UpdatePlantResource resource) {
     return new UpdatePlantCommand(
@@ -31,8 +21,11 @@ public class UpdatePlantCommandFromResourceAssembler {
         LocalDate.parse(resource.nextWateringDate()),
         resource.imageUrl(),
         resource.notificationsEnabled(),
+        resource.temperatureThresholdMin(),
+        resource.temperatureThresholdMax(),
+        resource.lightThresholdMin(),
+        resource.lightThresholdMax(),
         new ProfileId(resource.profileId())
-
 
     );
   }

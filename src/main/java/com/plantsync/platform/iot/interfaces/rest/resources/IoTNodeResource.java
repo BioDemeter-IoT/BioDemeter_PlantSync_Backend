@@ -5,7 +5,6 @@ public record IoTNodeResource(
     String nodeCode,
     String status,
     Long plantId,
-    Long profileId,
     String createdAt
 ) {
 }
