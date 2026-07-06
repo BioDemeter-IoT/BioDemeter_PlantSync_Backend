@@ -29,8 +29,11 @@ public class EdgeThresholdsController {
     this.plantQueryService = plantQueryService;
   }
 
+  @Deprecated
   @GetMapping
-  @Operation(summary = "Get care thresholds for the plant linked to an edge node")
+  @Operation(summary = "Get care thresholds for the plant linked to an edge node",
+      description = "No utilizado por el flujo actual, reemplazado por /sync/config",
+      deprecated = true)
   public ResponseEntity<ThresholdsResource> getThresholds(@PathVariable String nodeCode) {
     var nodeOpt = iotNodeQueryService.handle(new GetNodeByNodeCodeQuery(nodeCode));
     if (nodeOpt.isEmpty() || nodeOpt.get().getPlantId() == null) {

@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface IoTNodeCommandService {
 
   Optional<IoTNode> handle(CreateNodeCommand command);
+
+  Optional<IoTNode> unlinkPlant(String nodeCode);
 }

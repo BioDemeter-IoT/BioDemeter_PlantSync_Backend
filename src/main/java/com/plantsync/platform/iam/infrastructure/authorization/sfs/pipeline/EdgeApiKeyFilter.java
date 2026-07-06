@@ -38,17 +38,14 @@ public class EdgeApiKeyFilter extends OncePerRequestFilter {
                                   @NonNull FilterChain filterChain)
       throws ServletException, IOException {
     var apiKey = request.getHeader(EDGE_API_KEY_HEADER);
-    if (!edgeApiKey.equals(apiKey)) {
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Edge API key");
-      return;
+    if (edgeApiKey.equals(apiKey)) {
+      var authentication = new UsernamePasswordAuthenticationToken(
+          "edge-service",
+          null,
+          List.of(new SimpleGrantedAuthority("ROLE_EDGE_SERVICE")));
+      authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+      SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-
-    var authentication = new UsernamePasswordAuthenticationToken(
-        "edge-service",
-        null,
-        List.of(new SimpleGrantedAuthority("ROLE_EDGE_SERVICE")));
-    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    SecurityContextHolder.getContext().setAuthentication(authentication);
     filterChain.doFilter(request, response);
   }
 }

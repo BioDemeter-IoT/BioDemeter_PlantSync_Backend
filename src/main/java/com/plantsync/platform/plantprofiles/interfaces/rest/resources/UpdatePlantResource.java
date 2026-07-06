@@ -14,6 +14,8 @@ public record UpdatePlantResource(
     Float temperatureThresholdMax,
     Float lightThresholdMin,
     Float lightThresholdMax,
+    Float humidityThresholdMin,
+    Float humidityThresholdMax,
     Long profileId
 
 ) {

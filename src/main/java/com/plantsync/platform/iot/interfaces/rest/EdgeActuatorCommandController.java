@@ -40,8 +40,11 @@ public class EdgeActuatorCommandController {
     this.iotNodeQueryService = iotNodeQueryService;
   }
 
+  @Deprecated
   @GetMapping("/pending")
-  @Operation(summary = "Get pending actuator commands for an Edge node")
+  @Operation(summary = "Get pending actuator commands for an Edge node",
+      description = "No utilizado por el flujo actual, reemplazado por /sync/status y /actuators/desired",
+      deprecated = true)
   public ResponseEntity<List<ActuatorCommandResource>> getPendingCommands(
       @PathVariable String nodeCode) {
     var node = iotNodeQueryService.handle(new GetNodeByNodeCodeQuery(nodeCode));
@@ -56,8 +59,11 @@ public class EdgeActuatorCommandController {
     return ResponseEntity.ok(commands);
   }
 
+  @Deprecated
   @PutMapping("/{commandId}/complete")
-  @Operation(summary = "Mark an actuator command as executed by the Edge node")
+  @Operation(summary = "Mark an actuator command as executed by the Edge node",
+      description = "No utilizado por el flujo actual, reemplazado por /sync/status y /actuators/desired",
+      deprecated = true)
   public ResponseEntity<MessageResource> completeCommand(@PathVariable String nodeCode,
                                                          @PathVariable Long commandId) {
     var node = iotNodeQueryService.handle(new GetNodeByNodeCodeQuery(nodeCode));
