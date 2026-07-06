@@ -44,4 +44,16 @@ public class IoTNodeCommandServiceImpl implements IoTNodeCommandService {
     node.setPlantId(new PlantId(plantId));
     return Optional.of(iotNodeRepository.save(node));
   }
+
+  @Transactional
+  @Override
+  public Optional<IoTNode> unlinkPlant(String nodeCode) {
+    var nodeOpt = iotNodeRepository.findByNodeCode(nodeCode);
+    if (nodeOpt.isEmpty()) {
+      return Optional.empty();
+    }
+    var node = nodeOpt.get();
+    node.setPlantId(null);
+    return Optional.of(iotNodeRepository.save(node));
+  }
 }

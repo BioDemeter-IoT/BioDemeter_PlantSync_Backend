@@ -80,6 +80,12 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
   @Column(name = "light_threshold_max")
   private Float lightThresholdMax;
 
+  @Column(name = "humidity_threshold_min")
+  private Float humidityThresholdMin;
+
+  @Column(name = "humidity_threshold_max")
+  private Float humidityThresholdMax;
+
   /**
    * The ID of the profile that owns the plant.
    */
@@ -111,6 +117,8 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
     this.temperatureThresholdMax = command.temperatureThresholdMax();
     this.lightThresholdMin = command.lightThresholdMin();
     this.lightThresholdMax = command.lightThresholdMax();
+    this.humidityThresholdMin = command.humidityThresholdMin();
+    this.humidityThresholdMax = command.humidityThresholdMax();
     this.profileId = command.profileId();
   }
 
@@ -140,6 +148,8 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
                                   Float newTemperatureThresholdMax,
                                   Float newLightThresholdMin,
                                   Float newLightThresholdMax,
+                                  Float newHumidityThresholdMin,
+                                  Float newHumidityThresholdMax,
                                   ProfileId newProfileId) {
     this.name = newName;
     this.species = newSpecies;
@@ -153,6 +163,8 @@ public class Plant extends AuditableAbstractAggregateRoot<Plant> {
     this.temperatureThresholdMax = newTemperatureThresholdMax;
     this.lightThresholdMin = newLightThresholdMin;
     this.lightThresholdMax = newLightThresholdMax;
+    this.humidityThresholdMin = newHumidityThresholdMin;
+    this.humidityThresholdMax = newHumidityThresholdMax;
     this.profileId = newProfileId;
 
     return this;

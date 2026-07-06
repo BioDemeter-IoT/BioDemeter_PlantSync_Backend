@@ -76,6 +76,8 @@ public class PlantCommandServiceImpl implements PlantCommandService {
               command.temperatureThresholdMax(),
               command.lightThresholdMin(),
               command.lightThresholdMax(),
+              command.humidityThresholdMin(),
+              command.humidityThresholdMax(),
               command.profileId()
           )
       );

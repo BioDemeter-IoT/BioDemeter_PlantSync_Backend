@@ -25,6 +25,8 @@ public class UpdatePlantCommandFromResourceAssembler {
         resource.temperatureThresholdMax(),
         resource.lightThresholdMin(),
         resource.lightThresholdMax(),
+        resource.humidityThresholdMin(),
+        resource.humidityThresholdMax(),
         new ProfileId(resource.profileId())
 
     );

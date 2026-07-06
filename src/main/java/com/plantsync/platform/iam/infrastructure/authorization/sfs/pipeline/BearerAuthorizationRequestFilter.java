@@ -49,7 +49,6 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
   protected boolean shouldNotFilter(HttpServletRequest request) {
     String path = request.getServletPath();
     boolean skip = path.startsWith("/api/v1/authentication/")
-        || path.startsWith("/api/v1/iot/edge/")
         || path.startsWith("/v3/api-docs/")
         || path.startsWith("/swagger-ui/")
         || path.equals("/swagger-ui.html")

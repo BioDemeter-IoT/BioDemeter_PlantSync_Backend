@@ -21,6 +21,8 @@ public class PlantResourceFromEntityAssembler {
         entity.getTemperatureThresholdMax(),
         entity.getLightThresholdMin(),
         entity.getLightThresholdMax(),
+        entity.getHumidityThresholdMin(),
+        entity.getHumidityThresholdMax(),
         entity.getProfileId().value()
     );
   }
