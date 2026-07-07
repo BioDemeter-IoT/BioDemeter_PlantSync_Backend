@@ -115,19 +115,24 @@ public class SensorReadingCommandServiceImpl implements SensorReadingCommandServ
       ));
     }
 
-    // Temperature above max → BUZZER
-    if (command.airTemperature() != null && plant.getTemperatureThresholdMax() != null
-        && command.airTemperature() > plant.getTemperatureThresholdMax()) {
-      var actuatorCommand = new CreateActuatorCommand(
-          command.nodeId(),
-          ActuatorType.BUZZER,
-          ActuatorAction.ACTIVATE);
-      actuatorCommandService.handle(actuatorCommand);
-      node.setDesiredState(new DesiredActuatorState(
-          BuzzerMode.ON,
-          node.getDesiredState().servoMode(),
-          node.getDesiredState().ledMode()
-      ));
+    // Temperature outside range → BUZZER
+    if (command.airTemperature() != null) {
+      boolean belowMin = plant.getTemperatureThresholdMin() != null
+          && command.airTemperature() < plant.getTemperatureThresholdMin();
+      boolean aboveMax = plant.getTemperatureThresholdMax() != null
+          && command.airTemperature() > plant.getTemperatureThresholdMax();
+      if (belowMin || aboveMax) {
+        var actuatorCommand = new CreateActuatorCommand(
+            command.nodeId(),
+            ActuatorType.BUZZER,
+            ActuatorAction.ACTIVATE);
+        actuatorCommandService.handle(actuatorCommand);
+        node.setDesiredState(new DesiredActuatorState(
+            BuzzerMode.ON,
+            node.getDesiredState().servoMode(),
+            node.getDesiredState().ledMode()
+        ));
+      }
     }
 
     iotNodeRepository.save(node);
