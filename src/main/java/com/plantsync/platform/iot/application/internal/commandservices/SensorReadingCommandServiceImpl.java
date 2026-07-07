@@ -8,8 +8,6 @@ import com.plantsync.platform.iot.domain.model.valueobjects.ActuatorAction;
 import com.plantsync.platform.iot.domain.model.valueobjects.ActuatorType;
 import com.plantsync.platform.iot.domain.model.valueobjects.BuzzerMode;
 import com.plantsync.platform.iot.domain.model.valueobjects.DesiredActuatorState;
-import com.plantsync.platform.iot.domain.model.valueobjects.LedMode;
-import com.plantsync.platform.iot.domain.model.valueobjects.ServoMode;
 import com.plantsync.platform.iot.domain.services.ActuatorCommandService;
 import com.plantsync.platform.iot.domain.services.IoTNodeQueryService;
 import com.plantsync.platform.iot.domain.services.SensorReadingCommandService;
@@ -85,35 +83,11 @@ public class SensorReadingCommandServiceImpl implements SensorReadingCommandServ
     }
     var plant = plantOpt.get();
 
-    // Humidity below min → SERVO (watering)
-    if (command.humidityPercent() != null && plant.getHumidityThresholdMin() != null
-        && command.humidityPercent() < plant.getHumidityThresholdMin()) {
-      var actuatorCommand = new CreateActuatorCommand(
-          command.nodeId(),
-          ActuatorType.SERVO,
-          ActuatorAction.ACTIVATE);
-      actuatorCommandService.handle(actuatorCommand);
-      node.setDesiredState(new DesiredActuatorState(
-          node.getDesiredState().buzzerMode(),
-          ServoMode.ON,
-          node.getDesiredState().ledMode()
-      ));
-    }
-
-    // Light below min → UV_LIGHT
-    if (command.lightPercent() != null && plant.getLightThresholdMin() != null
-        && command.lightPercent() < plant.getLightThresholdMin()) {
-      var actuatorCommand = new CreateActuatorCommand(
-          command.nodeId(),
-          ActuatorType.UV_LIGHT,
-          ActuatorAction.ACTIVATE);
-      actuatorCommandService.handle(actuatorCommand);
-      node.setDesiredState(new DesiredActuatorState(
-          node.getDesiredState().buzzerMode(),
-          node.getDesiredState().servoMode(),
-          LedMode.ON
-      ));
-    }
+    // NOTA: el SERVO (riego por humedad) y el LED UV (encendido por poca luz) NO se
+    // automatizan aquí a propósito. El dispositivo (Wokwi/edge) los maneja localmente
+    // en su modo AUTO usando los umbrales que recibe por /sync/config, lo que evita
+    // que el desiredState quede "pegado" en ON y respeta el control manual del front.
+    // El backend solo fija el desiredState de servo/LED por acción manual del usuario.
 
     // Temperature outside range → BUZZER
     if (command.airTemperature() != null) {
