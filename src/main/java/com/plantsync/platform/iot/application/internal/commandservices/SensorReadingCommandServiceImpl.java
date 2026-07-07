@@ -59,6 +59,7 @@ public class SensorReadingCommandServiceImpl implements SensorReadingCommandServ
     }
     var node = nodeOpt.get();
 
+    // Gas above threshold → BUZZER
     if (command.gasPercent() != null && command.gasPercent() > GAS_THRESHOLD) {
       var actuatorCommand = new CreateActuatorCommand(
           command.nodeId(),
@@ -72,11 +73,6 @@ public class SensorReadingCommandServiceImpl implements SensorReadingCommandServ
       ));
     }
 
-    if (command.airTemperature() == null) {
-      iotNodeRepository.save(node);
-      return;
-    }
-
     if (node.getPlantId() == null) {
       iotNodeRepository.save(node);
       return;
@@ -88,8 +84,25 @@ public class SensorReadingCommandServiceImpl implements SensorReadingCommandServ
       return;
     }
     var plant = plantOpt.get();
-    var thresholdMax = plant.getTemperatureThresholdMax();
-    if (thresholdMax != null && command.airTemperature() > thresholdMax) {
+
+    // Humidity below min → SERVO (watering)
+    if (command.humidityPercent() != null && plant.getHumidityThresholdMin() != null
+        && command.humidityPercent() < plant.getHumidityThresholdMin()) {
+      var actuatorCommand = new CreateActuatorCommand(
+          command.nodeId(),
+          ActuatorType.SERVO,
+          ActuatorAction.ACTIVATE);
+      actuatorCommandService.handle(actuatorCommand);
+      node.setDesiredState(new DesiredActuatorState(
+          node.getDesiredState().buzzerMode(),
+          ServoMode.ON,
+          node.getDesiredState().ledMode()
+      ));
+    }
+
+    // Light below min → UV_LIGHT
+    if (command.lightPercent() != null && plant.getLightThresholdMin() != null
+        && command.lightPercent() < plant.getLightThresholdMin()) {
       var actuatorCommand = new CreateActuatorCommand(
           command.nodeId(),
           ActuatorType.UV_LIGHT,
@@ -99,6 +112,21 @@ public class SensorReadingCommandServiceImpl implements SensorReadingCommandServ
           node.getDesiredState().buzzerMode(),
           node.getDesiredState().servoMode(),
           LedMode.ON
+      ));
+    }
+
+    // Temperature above max → BUZZER
+    if (command.airTemperature() != null && plant.getTemperatureThresholdMax() != null
+        && command.airTemperature() > plant.getTemperatureThresholdMax()) {
+      var actuatorCommand = new CreateActuatorCommand(
+          command.nodeId(),
+          ActuatorType.BUZZER,
+          ActuatorAction.ACTIVATE);
+      actuatorCommandService.handle(actuatorCommand);
+      node.setDesiredState(new DesiredActuatorState(
+          BuzzerMode.ON,
+          node.getDesiredState().servoMode(),
+          node.getDesiredState().ledMode()
       ));
     }
 

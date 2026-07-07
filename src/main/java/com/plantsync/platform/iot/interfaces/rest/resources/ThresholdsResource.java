@@ -5,7 +5,6 @@ public record ThresholdsResource(
     Long nodeId,
     Float temperatureThresholdMin,
     Float temperatureThresholdMax,
-    Float lightThresholdMin,
-    Float lightThresholdMax
+    Float lightThresholdMin
 ) {
 }

@@ -6,6 +6,7 @@ public record SensorReadingResource(
     Integer lightPercent,
     Integer gasPercent,
     Float airTemperature,
+    Integer humidityPercent,
     String timestamp
 ) {
 }

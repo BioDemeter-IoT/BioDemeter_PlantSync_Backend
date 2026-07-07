@@ -21,7 +21,6 @@ public record UpdatePlantCommand(
     Float temperatureThresholdMin,
     Float temperatureThresholdMax,
     Float lightThresholdMin,
-    Float lightThresholdMax,
     Float humidityThresholdMin,
     Float humidityThresholdMax,
     ProfileId profileId

@@ -1,7 +1,19 @@
 /**
  * @file PothosCareDevice.ino
- * @brief Sistema IoT para el cuidado de una planta Pothos usando ModestIoT asíncrono.
- *        Comunicación con backend mediante JWT Bearer token (sin Edge API Key).
+ * @brief Sistema IoT para el cuidado de una planta Pothos.
+ *        Framework: ModestIoT + ArduinoJson. Autenticación JWT sin Edge API Key.
+ *        Compatible con Wokwi y prototipo físico real.
+ *
+ * Arquitectura de red (corrige el error "conexión: -1"):
+ *   - TODA la E/S de red (login, sync, telemetría, reporte) ocurre EXCLUSIVAMENTE
+ *     en loop() (tarea principal, stack grande), de forma secuencial. Nunca se
+ *     hacen peticiones HTTPS desde la tarea de muestreo de sensores.
+ *   - El manejador de eventos on() solo actualiza actuadores por GPIO y marca
+ *     banderas; loop() consume esas banderas para enviar los reportes.
+ *   - Se reutiliza un único WiFiClientSecure para reducir handshakes TLS.
+ *
+ * Umbrales: se sincronizan periódicamente desde el backend (/sync/config) y los
+ * actuadores reaccionan cuando las lecturas cruzan esos límites.
  */
 
 #include <Arduino.h>
@@ -9,54 +21,72 @@
 #include <Button.h>
 #include <HTTPClient.h>
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <ArduinoJson.h>
 
-// Variables globales de sesión
-String authToken = "";
+// ---------------------------------------------------------------------------
+// Constantes de identidad y conexión
+// ---------------------------------------------------------------------------
+String nodeCode = "esp32-wokwi-001";
+int nodeId = 0;
 
-// Identificador del nodo (coincide con backend)
-String nodeCode = "wokwi-esp32-002";
-int nodeId = 0; // Se obtiene de GET /sync/config en setup()
-
-// Base URL del backend
-const char* BASE_URL = "https://plantsync-backend-a8c5cbd9c5bggfg3.mexicocentral-01.azurewebsites.net";
-
-// Credenciales de la cuenta Wokwi (usuario real, login por email/password)
+const char* BASE_URL =
+    "https://plantsync-backend-a8c5cbd9c5bggfg3.mexicocentral-01.azurewebsites.net";
 const char* WOKWI_EMAIL = "test@plantsync.io";
 const char* WOKWI_PASSWORD = "Password123!";
 
-// Definición de pines alineada con el diagrama Wokwi
+// ---------------------------------------------------------------------------
+// Definición de pines
+// ---------------------------------------------------------------------------
 static const int DHT_PIN = 4;
 static const int GAS_A0 = 34;
 static const int LDR_PIN = 32;
 static const int RELAY_PIN = 5;
 static const int SERVO_PIN = 18;
 static const int BUZZER_PIN = 19;
-static const int BTN1_PIN = 25; // Botón Buzzer
-static const int BTN2_PIN = 26; // Botón Servo
-static const int BTN3_PIN = 27; // Botón LED/Foco
+static const int BTN1_PIN = 25; // Buzzer
+static const int BTN2_PIN = 26; // Servo
+static const int BTN3_PIN = 27; // LED
 
-static const uint8_t LCD1_I2C_ADDRESS = 0x27; // LCD Sensores
-static const uint8_t LCD2_I2C_ADDRESS = 0x28; // LCD Actuadores
+static const uint8_t LCD1_I2C_ADDRESS = 0x27;
+static const uint8_t LCD2_I2C_ADDRESS = 0x28;
 
+// ---------------------------------------------------------------------------
 // Constantes de configuración
+// ---------------------------------------------------------------------------
 static const unsigned long SERIAL_BAUD_RATE = 115200;
 static const unsigned long SAMPLING_INTERVAL_MS = 15;
 static const unsigned long MAIN_LOOP_DELAY_MS = 500;
 static const int ASYNC_ENGINE_QUEUE_DEPTH = 8;
 static const int TIMER_GROUP_INDEX = 0;
 
-// Intervalos de polling (ms)
 static const unsigned long SYNC_STATUS_INTERVAL_MS = 2000;
-static const unsigned long SYNC_CONFIG_INTERVAL_MS = 60000;
+static const unsigned long SYNC_CONFIG_INTERVAL_MS = 30000;   // umbrales refrescados cada 30 s
 static const unsigned long TELEMETRY_INTERVAL_MS = 10000;
+static const unsigned long HTTP_TIMEOUT_MS = 8000;
 
-// Defaults locales cuando linked == false
-static const float DEFAULT_HUMIDITY_THRESHOLD = 40.0f;
-static const float DEFAULT_LIGHT_THRESHOLD = 50.0f;
-static const float DEFAULT_TEMP_THRESHOLD = 15.0f;
+// Umbrales por defecto (se sobrescriben con /sync/config cuando el nodo está vinculado)
+static const float DEFAULT_TEMP_MIN = 15.0f;
+static const float DEFAULT_TEMP_MAX = 28.0f;
+static const float DEFAULT_HUMIDITY_MIN = 40.0f;
+static const float DEFAULT_HUMIDITY_MAX = 70.0f;
+static const float DEFAULT_LIGHT_MIN = 30.0f;   // debajo de esto se enciende el LED UV
+static const int   GAS_ALERT_PERCENT = 35;      // por encima de esto suena la alarma
+
+static const float INVALID_READING = -999.0f;   // centinela del DHT
+
+// ---------------------------------------------------------------------------
+// Variables globales de sesión
+// ---------------------------------------------------------------------------
+String authToken = "";
+WiFiClientSecure secureClient;   // cliente TLS reutilizado por todas las peticiones
+
+// ---------------------------------------------------------------------------
+// Sensores personalizados
+// ---------------------------------------------------------------------------
 
 /**
- * @brief Clase personalizada LDR (devuelve % de 0 a 100)
+ * @brief Sensor LDR que devuelve porcentaje de luminosidad (0-100).
  */
 class LdrSensor : public Sensor {
 private:
@@ -84,7 +114,7 @@ public:
 };
 
 /**
- * @brief Clase personalizada GasSensor (devuelve % de contaminación de 0 a 100)
+ * @brief Sensor de gas analógico que devuelve porcentaje (0-100).
  */
 class AnalogGasSensor : public Sensor {
 private:
@@ -111,12 +141,14 @@ public:
     int getGasPercent() const { return cachedGasPercent; }
 };
 
-// Forward declaration necesaria para que métodos de PothosCareDevice puedan llamar reLogin()
+// ---------------------------------------------------------------------------
+// Forward declarations
+// ---------------------------------------------------------------------------
 void reLogin();
 
-/**
- * @brief Mediador del Dispositivo de Cuidado Pothos.
- */
+// ---------------------------------------------------------------------------
+// Clase mediadora del dispositivo
+// ---------------------------------------------------------------------------
 class PothosCareDevice : public Device {
 public:
     enum class BuzzerMode { ON, OFF };
@@ -135,41 +167,114 @@ private:
     ServoMotor waterValve;
     Buzzer alarmBuzzer;
 
-    CharacterLcdDisplay statusDisplay1; // Sensores
-    CharacterLcdDisplay statusDisplay2; // Actuadores
+    CharacterLcdDisplay statusDisplay1;
+    CharacterLcdDisplay statusDisplay2;
 
-    // Modos deseados (desde backend o botones locales)
+    // Modos deseados (desde backend o botones)
     BuzzerMode currentBuzzerMode;
     ActuatorMode currentServoMode;
     ActuatorMode currentLedMode;
 
-    // Estado físico real de los actuadores (después de aplicar reglas)
-    bool physicalBuzzerOn;
-    bool physicalServoOn;
-    bool physicalLedOn;
+    // Estado físico real (leído desde loop() para reportar; escrito desde on())
+    volatile bool physicalBuzzerOn;
+    volatile bool physicalServoOn;
+    volatile bool physicalLedOn;
 
-    // Umbrales cacheados desde /sync/config
+    // Bandera de reporte pendiente: on() la activa, loop() la consume y envía el PUT.
+    volatile bool actuatorReportPending;
+
+    // Umbrales cacheados (un único umbral de luz: mínimo)
     float cachedTempMin;
     float cachedTempMax;
     float cachedHumidityMin;
     float cachedHumidityMax;
     float cachedLightMin;
-    float cachedLightMax;
 
-    // Tracking de cambios remotos para no re-evaluar innecesariamente
-    BuzzerMode lastSyncedBuzzerMode;
-    ActuatorMode lastSyncedServoMode;
-    ActuatorMode lastSyncedLedMode;
+    /**
+     * @brief Evalúa reglas de negocio y actualiza actuadores físicos (solo GPIO).
+     *        NO hace red: si hubo cambio físico, marca actuatorReportPending para
+     *        que loop() envíe el reporte. Seguro de llamar desde cualquier tarea.
+     */
+    void evaluateBusinessRules() {
+        float tempC = dhtSensor.getTemperatureInCelsius();
+        float humidity = dhtSensor.getRelativeHumidityInPercentage();
+        int gasPct = gasSensor.getGasPercent();
+        int lightPct = ldrSensor.getLightPercent();
+
+        bool changed = false;
+
+        // ---- Servo / Válvula de agua: riega si la humedad cae por debajo del mínimo ----
+        bool newServo;
+        if (currentServoMode == ActuatorMode::ON) {
+            waterValve.handle(ServoMotor::LOCK_TO_MAXIMUM_LIMIT_COMMAND);
+            newServo = true;
+        } else if (currentServoMode == ActuatorMode::OFF) {
+            waterValve.handle(ServoMotor::LOCK_TO_MINIMUM_LIMIT_COMMAND);
+            newServo = false;
+        } else { // AUTO
+            if (humidity != INVALID_READING && humidity < cachedHumidityMin) {
+                waterValve.handle(ServoMotor::LOCK_TO_MAXIMUM_LIMIT_COMMAND);
+                newServo = true;
+            } else {
+                waterValve.handle(ServoMotor::LOCK_TO_MINIMUM_LIMIT_COMMAND);
+                newServo = false;
+            }
+        }
+        if (newServo != physicalServoOn) { physicalServoOn = newServo; changed = true; }
+
+        // ---- LED UV: se enciende cuando FALTA luz (por debajo del umbral mínimo) ----
+        bool newLed;
+        if (currentLedMode == ActuatorMode::ON) {
+            uvRelay.handle(Led::TURN_ON_COMMAND);
+            newLed = true;
+        } else if (currentLedMode == ActuatorMode::OFF) {
+            uvRelay.handle(Led::TURN_OFF_COMMAND);
+            newLed = false;
+        } else { // AUTO
+            if (lightPct < cachedLightMin) {
+                uvRelay.handle(Led::TURN_ON_COMMAND);
+                newLed = true;
+            } else {
+                uvRelay.handle(Led::TURN_OFF_COMMAND);
+                newLed = false;
+            }
+        }
+        if (newLed != physicalLedOn) { physicalLedOn = newLed; changed = true; }
+
+        // ---- Buzzer: alarma si la temperatura sale del rango o el gas es alto ----
+        bool newBuzzer;
+        if (currentBuzzerMode == BuzzerMode::OFF) {
+            alarmBuzzer.handle(Buzzer::TURN_OFF_COMMAND);
+            newBuzzer = false;
+        } else { // ON (modo alerta)
+            bool tempOutOfRange = (tempC != INVALID_READING) &&
+                                  (tempC < cachedTempMin || tempC > cachedTempMax);
+            bool gasHigh = gasPct > GAS_ALERT_PERCENT;
+            if (tempOutOfRange || gasHigh) {
+                alarmBuzzer.handle(Buzzer::TURN_ON_COMMAND);
+                newBuzzer = true;
+            } else {
+                alarmBuzzer.handle(Buzzer::TURN_OFF_COMMAND);
+                newBuzzer = false;
+            }
+        }
+        if (newBuzzer != physicalBuzzerOn) { physicalBuzzerOn = newBuzzer; changed = true; }
+
+        if (changed) {
+            actuatorReportPending = true;   // loop() enviará el reporte
+        }
+    }
 
     /**
      * @brief Envía PUT /actuators/reported con el estado físico actual.
+     *        SOLO debe llamarse desde loop() (tarea principal).
      */
     void reportActuatorState() {
         if (authToken == "") return;
 
         HTTPClient http;
-        String url = String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/actuators/reported";
-        http.begin(url);
+        http.setTimeout(HTTP_TIMEOUT_MS);
+        http.begin(secureClient, String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/actuators/reported");
         http.addHeader("Content-Type", "application/json");
         http.addHeader("Authorization", "Bearer " + authToken);
 
@@ -177,100 +282,22 @@ private:
         String servoStr = physicalServoOn ? "ON" : "OFF";
         String ledStr = physicalLedOn ? "ON" : "OFF";
 
-        String payload = "{\"buzzerMode\":\"" + buzzerStr + "\",\"servoMode\":\"" + servoStr + "\",\"ledMode\":\"" + ledStr + "\"}";
+        String payload = "{\"buzzerMode\":\"" + buzzerStr
+                       + "\",\"servoMode\":\"" + servoStr
+                       + "\",\"ledMode\":\"" + ledStr + "\"}";
+
         int code = http.PUT(payload);
         if (code == 200) {
             Serial.printf("[Reported] PUT /actuators/reported -> %d\n", code);
         } else if (code == 401) {
-            Serial.println(F("[Auth] Token expirado o inválido en report"));
+            Serial.println(F("[Auth] Token expirado en report"));
             reLogin();
         } else if (code > 0) {
-            Serial.printf("[Reported] Error HTTP: %d\n", code);
+            Serial.printf("[Reported] Error servidor: %d\n", code);
         } else {
-            Serial.printf("[Reported] Error HTTP: %d\n", code);
+            Serial.printf("[Reported] Error conexión: %d\n", code);
         }
         http.end();
-    }
-
-    /**
-     * @brief Evalúa las reglas de negocio y actualiza actuadores físicos.
-     *        Después de aplicar cambios, reporta el estado real al backend.
-     */
-    void evaluateBusinessRules() {
-        float tempC = dhtSensor.getTemperatureInCelsius();
-        float humidity = dhtSensor.getRelativeHumidityInPercentage();
-        int airQualityPercent = gasSensor.getGasPercent();
-        int lightPercent = ldrSensor.getLightPercent();
-
-        bool changed = false;
-
-        // 1. Regla de Humedad (Válvula de agua / servo)
-        bool newServoState;
-        if (currentServoMode == ActuatorMode::ON) {
-            waterValve.handle(ServoMotor::LOCK_TO_MAXIMUM_LIMIT_COMMAND);
-            newServoState = true;
-        } else if (currentServoMode == ActuatorMode::OFF) {
-            waterValve.handle(ServoMotor::LOCK_TO_MINIMUM_LIMIT_COMMAND);
-            newServoState = false;
-        } else { // AUTO
-            if (humidity > 0 && humidity < cachedHumidityMin) {
-                waterValve.handle(ServoMotor::LOCK_TO_MAXIMUM_LIMIT_COMMAND);
-                newServoState = true;
-            } else {
-                waterValve.handle(ServoMotor::LOCK_TO_MINIMUM_LIMIT_COMMAND);
-                newServoState = false;
-            }
-        }
-        if (newServoState != physicalServoOn) {
-            physicalServoOn = newServoState;
-            changed = true;
-        }
-
-        // 2. Regla de Luz (Foco UV / Relay)
-        bool newLedState;
-        if (currentLedMode == ActuatorMode::ON) {
-            uvRelay.handle(Led::TURN_ON_COMMAND);
-            newLedState = true;
-        } else if (currentLedMode == ActuatorMode::OFF) {
-            uvRelay.handle(Led::TURN_OFF_COMMAND);
-            newLedState = false;
-        } else { // AUTO
-            if (lightPercent > cachedLightMax) {
-                uvRelay.handle(Led::TURN_ON_COMMAND);
-                newLedState = true;
-            } else {
-                uvRelay.handle(Led::TURN_OFF_COMMAND);
-                newLedState = false;
-            }
-        }
-        if (newLedState != physicalLedOn) {
-            physicalLedOn = newLedState;
-            changed = true;
-        }
-
-        // 3. Regla de Temperatura y Calidad de Aire (Alarma / Buzzer)
-        // Regla fija: gas > 35 siempre activa la alarma cuando el modo no es OFF
-        bool newBuzzerState;
-        if (currentBuzzerMode == BuzzerMode::OFF) {
-            alarmBuzzer.handle(Buzzer::TURN_OFF_COMMAND);
-            newBuzzerState = false;
-        } else { // ON
-            if ((tempC != -999.0f && tempC < cachedTempMin) || airQualityPercent > 35) {
-                alarmBuzzer.handle(Buzzer::TURN_ON_COMMAND);
-                newBuzzerState = true;
-            } else {
-                alarmBuzzer.handle(Buzzer::TURN_OFF_COMMAND);
-                newBuzzerState = false;
-            }
-        }
-        if (newBuzzerState != physicalBuzzerOn) {
-            physicalBuzzerOn = newBuzzerState;
-            changed = true;
-        }
-
-        if (changed) {
-            reportActuatorState();
-        }
     }
 
 public:
@@ -293,15 +320,12 @@ public:
           physicalBuzzerOn(false),
           physicalServoOn(false),
           physicalLedOn(false),
-          cachedTempMin(DEFAULT_TEMP_THRESHOLD),
-          cachedTempMax(28.0f),
-          cachedHumidityMin(DEFAULT_HUMIDITY_THRESHOLD),
-          cachedHumidityMax(70.0f),
-          cachedLightMin(20.0f),
-          cachedLightMax(DEFAULT_LIGHT_THRESHOLD),
-          lastSyncedBuzzerMode(BuzzerMode::ON),
-          lastSyncedServoMode(ActuatorMode::AUTO),
-          lastSyncedLedMode(ActuatorMode::AUTO)
+          actuatorReportPending(false),
+          cachedTempMin(DEFAULT_TEMP_MIN),
+          cachedTempMax(DEFAULT_TEMP_MAX),
+          cachedHumidityMin(DEFAULT_HUMIDITY_MIN),
+          cachedHumidityMax(DEFAULT_HUMIDITY_MAX),
+          cachedLightMin(DEFAULT_LIGHT_MIN)
     {
         initializeAsynchronousEngine(ASYNC_ENGINE_QUEUE_DEPTH);
 
@@ -324,31 +348,41 @@ public:
         statusDisplay1.handle(CharacterLcdDisplay::UPDATE_TEXT_COMMAND);
     }
 
-    // --- Getters públicos para telemetría ---
+    // -----------------------------------------------------------------------
+    // Getters públicos para telemetría
+    // -----------------------------------------------------------------------
     float getTemperature() const { return dhtSensor.getTemperatureInCelsius(); }
+    float getHumidityRaw() const { return dhtSensor.getRelativeHumidityInPercentage(); }
     int getLightPercent() const { return ldrSensor.getLightPercent(); }
     int getGasPercent() const { return gasSensor.getGasPercent(); }
-    int getHumidity() const { return dhtSensor.getRelativeHumidityInPercentage(); }
 
-    // --- Actualización de umbrales desde /sync/config ---
-    void updateCachedConfig(bool linked, long newId, float tempMin, float tempMax,
-                            float humMin, float humMax, float ltMin, float ltMax) {
+    // -----------------------------------------------------------------------
+    // Actualización de umbrales desde /sync/config
+    // -----------------------------------------------------------------------
+    void updateCachedConfig(bool linked, long newId,
+                            float tempMin, float tempMax,
+                            float humMin, float humMax,
+                            float lightMin) {
         if (linked) {
             nodeId = (int)newId;
             cachedTempMin = tempMin;
             cachedTempMax = tempMax;
             cachedHumidityMin = humMin;
             cachedHumidityMax = humMax;
-            cachedLightMin = ltMin;
-            cachedLightMax = ltMax;
-            Serial.println("[Config] Umbrales actualizados desde backend.");
+            cachedLightMin = lightMin;
+            Serial.println(F("[Config] Umbrales actualizados desde backend."));
+            evaluateBusinessRules();   // reacciona de inmediato a los nuevos límites
         }
-        // Si linked == false, mantener defaults (no se tocan las cached)
     }
 
-    // --- Aplicar estado deseado desde /sync/status ---
-    void applyDesiredState(const String& buzzerMode, const String& servoMode, const String& ledMode) {
+    // -----------------------------------------------------------------------
+    // Aplicar estado deseado desde /sync/status
+    // -----------------------------------------------------------------------
+    void applyDesiredState(const String& buzzerMode,
+                           const String& servoMode,
+                           const String& ledMode) {
         BuzzerMode newBuzzer = (buzzerMode == "ON") ? BuzzerMode::ON : BuzzerMode::OFF;
+
         ActuatorMode newServo = ActuatorMode::AUTO;
         if (servoMode == "ON") newServo = ActuatorMode::ON;
         else if (servoMode == "OFF") newServo = ActuatorMode::OFF;
@@ -357,348 +391,339 @@ public:
         if (ledMode == "ON") newLed = ActuatorMode::ON;
         else if (ledMode == "OFF") newLed = ActuatorMode::OFF;
 
-        bool modeChanged = false;
-        if (newBuzzer != currentBuzzerMode) { currentBuzzerMode = newBuzzer; modeChanged = true; }
-        if (newServo != currentServoMode) { currentServoMode = newServo; modeChanged = true; }
-        if (newLed != currentLedMode) { currentLedMode = newLed; modeChanged = true; }
+        bool changed = false;
+        if (newBuzzer != currentBuzzerMode) { currentBuzzerMode = newBuzzer; changed = true; }
+        if (newServo != currentServoMode) { currentServoMode = newServo; changed = true; }
+        if (newLed != currentLedMode) { currentLedMode = newLed; changed = true; }
 
-        if (modeChanged) {
-            Serial.println("[Sync] Modos actualizados desde backend.");
+        if (changed) {
+            Serial.println(F("[Sync] Modos actualizados desde backend."));
             evaluateBusinessRules();
         }
     }
 
-    /**
-     * @brief Gestión del LCD y Puerto Serie.
-     */
-    void updateDisplays(bool force = false) {
-        static unsigned long lastDisplayUpdate = 0;
-
-        if (force || (millis() - lastDisplayUpdate >= 500)) {
-            lastDisplayUpdate = millis();
-
-            float tempC = dhtSensor.getTemperatureInCelsius();
-            float humidity = dhtSensor.getRelativeHumidityInPercentage();
-            int airQualityPercent = gasSensor.getGasPercent();
-            int lightPercent = ldrSensor.getLightPercent();
-
-            char row1[17];
-            char row2[17];
-            snprintf(row1, sizeof(row1), "T:%.1fC H:%.1f%%", (tempC == -999.0 ? 0.0 : tempC), (humidity == -999.0 ? 0.0 : humidity));
-            snprintf(row2, sizeof(row2), "L:%d%% A:%d%%", lightPercent, airQualityPercent);
-            statusDisplay1.setLineBuffer(0, row1);
-            statusDisplay1.setLineBuffer(1, row2);
-            statusDisplay1.handle(CharacterLcdDisplay::UPDATE_TEXT_COMMAND);
-
-            auto actToStr = [](ActuatorMode m) -> const char* {
-                return m == ActuatorMode::ON ? "ON" : (m == ActuatorMode::OFF ? "OFF" : "AUTO");
-            };
-            const char* bzStr = currentBuzzerMode == BuzzerMode::ON ? "ON" : "OFF";
-
-            char row3[17];
-            char row4[17];
-            snprintf(row3, sizeof(row3), "Bz:%-3s Sv:%-4s", bzStr, actToStr(currentServoMode));
-            snprintf(row4, sizeof(row4), "Ld:%-4s", actToStr(currentLedMode));
-            statusDisplay2.setLineBuffer(0, row3);
-            statusDisplay2.setLineBuffer(1, row4);
-            statusDisplay2.handle(CharacterLcdDisplay::UPDATE_TEXT_COMMAND);
-
-            Serial.printf("[Metricas] T:%.1fC H:%.1f%% L:%d%% Aire:%d%% | Modos-> Bz:%s Sv:%s Ld:%s\n",
-                          tempC, humidity, lightPercent, airQualityPercent, bzStr, actToStr(currentServoMode), actToStr(currentLedMode));
-        }
-    }
-
-    void on(Event event) override {
-        if (event.identifier == Button::BUTTON_PRESSED_EVENT_IDENTIFIER) {
-            bool changed = false;
-            if (event.sourceId == BTN1_PIN) {
-                currentBuzzerMode = (currentBuzzerMode == BuzzerMode::ON) ? BuzzerMode::OFF : BuzzerMode::ON;
-                changed = true;
-            } else if (event.sourceId == BTN2_PIN) {
-                currentServoMode = static_cast<ActuatorMode>((static_cast<int>(currentServoMode) + 1) % 3);
-                changed = true;
-            } else if (event.sourceId == BTN3_PIN) {
-                currentLedMode = static_cast<ActuatorMode>((static_cast<int>(currentLedMode) + 1) % 3);
-                changed = true;
-            }
-            if (changed) {
-                evaluateBusinessRules();
-                updateDisplays(true);
-                // evaluateBusinessRules ya llamó reportActuatorState si hubo cambio físico
-            }
-        }
-        else if (event.identifier == Sensor::DATA_READ_EVENT_IDENTIFIER) {
-            evaluateBusinessRules();
-            updateDisplays(false);
-        }
-    }
-
-    /**
-     * @brief Envía telemetría al backend (POST /edge/sensor-readings/batch).
-     *        Se llama periódicamente desde loop().
-     */
+    // -----------------------------------------------------------------------
+    // Envío de telemetría (llamado solo desde loop())
+    // -----------------------------------------------------------------------
     void sendTelemetry() {
         if (authToken == "" || nodeId == 0) return;
 
         float tempC = dhtSensor.getTemperatureInCelsius();
         float humidity = dhtSensor.getRelativeHumidityInPercentage();
-        int airQualityPercent = gasSensor.getGasPercent();
-        int lightPercent = ldrSensor.getLightPercent();
+        int gasPct = gasSensor.getGasPercent();
+        int lightPct = ldrSensor.getLightPercent();
 
         HTTPClient http;
-        String url = String(BASE_URL) + "/api/v1/iot/edge/sensor-readings/batch";
-        http.begin(url);
+        http.setTimeout(HTTP_TIMEOUT_MS);
+        http.begin(secureClient, String(BASE_URL) + "/api/v1/iot/edge/sensor-readings/batch");
         http.addHeader("Content-Type", "application/json");
         http.addHeader("Authorization", "Bearer " + authToken);
 
-        String payload = "[{\"nodeId\":" + String(nodeId) +
-            ",\"lightPercent\":" + String(lightPercent) +
-            ",\"gasPercent\":" + String(airQualityPercent) +
-            ",\"airTemperature\":" + (tempC == -999.0 ? "null" : String(tempC, 1)) + "}]";
+        String payload = "[{\"nodeId\":" + String(nodeId)
+                       + ",\"lightPercent\":" + String(lightPct)
+                       + ",\"gasPercent\":" + String(gasPct)
+                       + ",\"airTemperature\":" + (tempC == INVALID_READING ? "null" : String(tempC, 1))
+                       + ",\"humidityPercent\":" + (humidity == INVALID_READING ? "null" : String((int)round(humidity)))
+                       + "}]";
 
         int code = http.POST(payload);
         if (code == 201 || code == 200) {
             Serial.printf("[Telemetry] POST /edge/sensor-readings/batch -> %d\n", code);
         } else if (code == 401) {
-            Serial.println(F("[Auth] Token expirado o inválido en telemetría"));
+            Serial.println(F("[Auth] Token expirado en telemetría"));
             reLogin();
         } else {
             Serial.printf("[Telemetry] Error HTTP: %d\n", code);
         }
         http.end();
     }
+
+    // -----------------------------------------------------------------------
+    // Si hay un cambio de actuador pendiente, envía el reporte (desde loop())
+    // -----------------------------------------------------------------------
+    void flushPendingReport() {
+        if (!actuatorReportPending) return;
+        actuatorReportPending = false;
+        reportActuatorState();
+    }
+
+    // -----------------------------------------------------------------------
+    // Actualización de pantallas LCD (llamado solo desde loop(): evita usar el
+    // bus I2C desde dos tareas a la vez)
+    // -----------------------------------------------------------------------
+    void updateDisplays() {
+        float tempC = dhtSensor.getTemperatureInCelsius();
+        float humidity = dhtSensor.getRelativeHumidityInPercentage();
+        int gasPct = gasSensor.getGasPercent();
+        int lightPct = ldrSensor.getLightPercent();
+
+        char row1[17], row2[17];
+        snprintf(row1, sizeof(row1), "T:%.1fC H:%.1f%%",
+                 (tempC == INVALID_READING ? 0.0 : tempC),
+                 (humidity == INVALID_READING ? 0.0 : humidity));
+        snprintf(row2, sizeof(row2), "L:%d%% A:%d%%", lightPct, gasPct);
+        statusDisplay1.setLineBuffer(0, row1);
+        statusDisplay1.setLineBuffer(1, row2);
+        statusDisplay1.handle(CharacterLcdDisplay::UPDATE_TEXT_COMMAND);
+
+        auto modeToStr = [](ActuatorMode m) -> const char* {
+            return m == ActuatorMode::ON  ? "ON" :
+                   m == ActuatorMode::OFF ? "OFF" : "AUTO";
+        };
+        const char* bzStr = currentBuzzerMode == BuzzerMode::ON ? "ON" : "OFF";
+
+        char row3[17], row4[17];
+        snprintf(row3, sizeof(row3), "Bz:%-3s Sv:%-4s", bzStr, modeToStr(currentServoMode));
+        snprintf(row4, sizeof(row4), "Ld:%-4s", modeToStr(currentLedMode));
+        statusDisplay2.setLineBuffer(0, row3);
+        statusDisplay2.setLineBuffer(1, row4);
+        statusDisplay2.handle(CharacterLcdDisplay::UPDATE_TEXT_COMMAND);
+
+        Serial.printf("[Metricas] T:%.1fC H:%.1f%% L:%d%% Aire:%d%% | Bz:%s Sv:%s Ld:%s\n",
+                      tempC, humidity, lightPct, gasPct,
+                      bzStr, modeToStr(currentServoMode), modeToStr(currentLedMode));
+    }
+
+    // -----------------------------------------------------------------------
+    // Manejo de eventos (sensores y botones) — SOLO lógica local, sin red
+    // -----------------------------------------------------------------------
+    void on(Event event) override {
+        if (event.identifier == Button::BUTTON_PRESSED_EVENT_IDENTIFIER) {
+            if (event.sourceId == BTN1_PIN) {
+                currentBuzzerMode = (currentBuzzerMode == BuzzerMode::ON)
+                                        ? BuzzerMode::OFF : BuzzerMode::ON;
+            } else if (event.sourceId == BTN2_PIN) {
+                int raw = (static_cast<int>(currentServoMode) + 1) % 3;
+                currentServoMode = static_cast<ActuatorMode>(raw);
+            } else if (event.sourceId == BTN3_PIN) {
+                int raw = (static_cast<int>(currentLedMode) + 1) % 3;
+                currentLedMode = static_cast<ActuatorMode>(raw);
+            }
+            evaluateBusinessRules();
+        }
+        else if (event.identifier == Sensor::DATA_READ_EVENT_IDENTIFIER) {
+            evaluateBusinessRules();
+        }
+    }
 };
 
+// ---------------------------------------------------------------------------
+// Instancia global del dispositivo
+// ---------------------------------------------------------------------------
 static PothosCareDevice* pothosDevice = nullptr;
 
-
+// ---------------------------------------------------------------------------
+// Re-autenticación JWT (llamada solo desde loop())
+// ---------------------------------------------------------------------------
 void reLogin() {
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println(F("[Auth] No hay conexión WiFi para re-autenticar."));
+        Serial.println(F("[Auth] Sin WiFi para re-autenticar."));
         return;
     }
+
     HTTPClient http;
-    http.begin(String(BASE_URL) + "/api/v1/authentication/sign-in");
+    http.setTimeout(HTTP_TIMEOUT_MS);
+    http.begin(secureClient, String(BASE_URL) + "/api/v1/authentication/sign-in");
     http.addHeader("Content-Type", "application/json");
-    String jsonPayload = "{\"email\":\"" + String(WOKWI_EMAIL) + "\",\"password\":\"" + String(WOKWI_PASSWORD) + "\"}";
+
+    String payload = "{\"email\":\"" + String(WOKWI_EMAIL)
+                   + "\",\"password\":\"" + String(WOKWI_PASSWORD) + "\"}";
     Serial.println(F("[Auth] Re-autenticando..."));
-    int code = http.POST(jsonPayload);
+    int code = http.POST(payload);
+
     if (code > 0) {
         String body = http.getString();
         if (code == 200 || code == 201) {
             JsonDocument doc;
-            DeserializationError error = deserializeJson(doc, body);
-            if (!error) {
+            DeserializationError err = deserializeJson(doc, body);
+            if (!err) {
                 authToken = doc["token"].as<String>();
                 Serial.println(F("[Auth] Re-autenticación exitosa."));
             }
         } else {
-            Serial.printf("[Auth] Error del servidor. Código: %d\n", code);
+            Serial.printf("[Auth] Error servidor: %d\n", code);
         }
     } else {
-        Serial.printf("[Auth] Error en la conexión HTTP. Código: %d\n", code);
+        Serial.printf("[Auth] Error conexión: %d\n", code);
     }
     http.end();
 }
 
+// ---------------------------------------------------------------------------
+// Login inicial
+// ---------------------------------------------------------------------------
+bool doLogin() {
+    HTTPClient http;
+    http.setTimeout(HTTP_TIMEOUT_MS);
+    http.begin(secureClient, String(BASE_URL) + "/api/v1/authentication/sign-in");
+    http.addHeader("Content-Type", "application/json");
 
+    String payload = "{\"email\":\"" + String(WOKWI_EMAIL)
+                   + "\",\"password\":\"" + String(WOKWI_PASSWORD) + "\"}";
+    Serial.println(F("[Auth] Solicitando token..."));
+    int code = http.POST(payload);
+
+    bool ok = false;
+    if (code > 0) {
+        String body = http.getString();
+        if (code == 200 || code == 201) {
+            JsonDocument doc;
+            DeserializationError err = deserializeJson(doc, body);
+            if (!err) {
+                authToken = doc["token"].as<String>();
+                Serial.println(F("[Auth] Token obtenido."));
+                ok = true;
+            } else {
+                Serial.print(F("[Auth] Error JSON: "));
+                Serial.println(err.c_str());
+            }
+        } else {
+            Serial.printf("[Auth] Error %d: %s\n", code, body.c_str());
+        }
+    } else {
+        Serial.printf("[Auth] Error conexión: %d\n", code);
+    }
+    http.end();
+    return ok;
+}
+
+// ---------------------------------------------------------------------------
+// GET /sync/config -> actualiza umbrales del dispositivo
+// ---------------------------------------------------------------------------
+void fetchConfig() {
+    if (authToken == "" || pothosDevice == nullptr) return;
+
+    HTTPClient http;
+    http.setTimeout(HTTP_TIMEOUT_MS);
+    http.begin(secureClient, String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/sync/config");
+    http.addHeader("Authorization", "Bearer " + authToken);
+
+    int code = http.GET();
+    if (code == 200) {
+        String body = http.getString();
+        JsonDocument doc;
+        DeserializationError err = deserializeJson(doc, body);
+        if (!err) {
+            bool linked = doc["linked"];
+            long newId = doc["nodeId"] | 0;
+            float tMin = doc["temperatureThresholdMin"] | DEFAULT_TEMP_MIN;
+            float tMax = doc["temperatureThresholdMax"] | DEFAULT_TEMP_MAX;
+            float hMin = doc["humidityThresholdMin"] | DEFAULT_HUMIDITY_MIN;
+            float hMax = doc["humidityThresholdMax"] | DEFAULT_HUMIDITY_MAX;
+            float lMin = doc["lightThresholdMin"] | DEFAULT_LIGHT_MIN;
+            pothosDevice->updateCachedConfig(linked, newId, tMin, tMax, hMin, hMax, lMin);
+        }
+    } else if (code == 401) {
+        Serial.println(F("[Auth] Token expirado en sync/config"));
+        reLogin();
+    } else if (code > 0) {
+        Serial.printf("[Config] Error servidor: %d\n", code);
+    } else {
+        Serial.printf("[Config] Error conexión: %d\n", code);
+    }
+    http.end();
+}
+
+// ---------------------------------------------------------------------------
+// GET /sync/status -> aplica el estado deseado (modos) desde el backend
+// ---------------------------------------------------------------------------
+void fetchStatus() {
+    if (authToken == "" || pothosDevice == nullptr) return;
+
+    HTTPClient http;
+    http.setTimeout(HTTP_TIMEOUT_MS);
+    http.begin(secureClient, String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/sync/status");
+    http.addHeader("Authorization", "Bearer " + authToken);
+
+    int code = http.GET();
+    if (code == 200) {
+        String body = http.getString();
+        JsonDocument doc;
+        DeserializationError err = deserializeJson(doc, body);
+        if (!err) {
+            String buzzer = doc["desiredState"]["buzzerMode"];
+            String servo  = doc["desiredState"]["servoMode"];
+            String led    = doc["desiredState"]["ledMode"];
+            pothosDevice->applyDesiredState(buzzer, servo, led);
+        }
+    } else if (code == 401) {
+        Serial.println(F("[Auth] Token expirado en sync/status"));
+        reLogin();
+    }
+    http.end();
+}
+
+// ---------------------------------------------------------------------------
+// setup()
+// ---------------------------------------------------------------------------
 void setup() {
     Serial.begin(SERIAL_BAUD_RATE);
     delay(1000);
+    Serial.println(F("[Boot] Inicializando Pothos Care IoT..."));
 
-    Serial.println(F("[System Boot] Inicializando BioDemeter IoT..."));
+    // TLS sin verificación de certificado (suficiente para el prototipo/Wokwi).
+    secureClient.setInsecure();
 
-    // Variables para la configuración obtenida de /sync/config
-    bool configLoaded = false;
-    long configNodeId = 0;
-    float configTempMin = DEFAULT_TEMP_THRESHOLD;
-    float configTempMax = 28.0f;
-    float configHumMin = DEFAULT_HUMIDITY_THRESHOLD;
-    float configHumMax = 70.0f;
-    float configLtMin = 20.0f;
-    float configLtMax = DEFAULT_LIGHT_THRESHOLD;
-
-    // 1. Conexión WiFi
+    // ---- 1. WiFi ----
     WiFi.begin("Wokwi-GUEST", "");
-    Serial.print(F("[Network] Conectando a WiFi..."));
+    Serial.print(F("[Network] Conectando..."));
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
     }
-    Serial.println(F(" Conectado!"));
+    Serial.println(F(" OK"));
 
-    // 2. Autenticación (login por email/password — cuenta de usuario real)
-    if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient http;
-        String url = String(BASE_URL) + "/api/v1/authentication/sign-in";
-        http.begin(url);
-        http.addHeader("Content-Type", "application/json");
+    // ---- 2. Login ----
+    doLogin();
 
-        String jsonPayload = "{\"email\":\"" + String(WOKWI_EMAIL) + "\",\"password\":\"" + String(WOKWI_PASSWORD) + "\"}";
-        Serial.println(F("[Auth] Solicitando token de acceso..."));
-        int httpResponseCode = http.POST(jsonPayload);
-
-        if (httpResponseCode > 0) {
-            String responseBody = http.getString();
-
-            if (httpResponseCode == 200 || httpResponseCode == 201) {
-                JsonDocument doc;
-                DeserializationError error = deserializeJson(doc, responseBody);
-
-                if (!error) {
-                    authToken = doc["token"].as<String>();
-                    Serial.println(F("[Auth] Autenticación Exitosa."));
-                    Serial.println(F("[Auth] Token capturado correctamente."));
-                } else {
-                    Serial.print(F("[Auth] Error procesando JSON: "));
-                    Serial.println(error.c_str());
-                }
-            } else {
-                Serial.printf("[Auth] Error del servidor. Código: %d\n", httpResponseCode);
-                Serial.println(responseBody);
-            }
-        } else {
-            Serial.printf("[Auth] Error en la conexión HTTP. Código: %d\n", httpResponseCode);
-        }
-        http.end();
-
-        // 3. Obtener configuración inicial del nodo (/sync/config)
-        if (authToken != "") {
-            HTTPClient httpConfig;
-            String configUrl = String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/sync/config";
-            httpConfig.begin(configUrl);
-            httpConfig.addHeader("Authorization", "Bearer " + authToken);
-
-            Serial.println(F("[Config] Obteniendo configuración del nodo..."));
-            int configCode = httpConfig.GET();
-
-            if (configCode > 0) {
-                String configBody = httpConfig.getString();
-
-                if (configCode == 200) {
-                    JsonDocument configDoc;
-                    DeserializationError configError = deserializeJson(configDoc, configBody);
-
-                    if (!configError) {
-                        bool linked = configDoc["linked"];
-                        if (linked) {
-                            configNodeId = configDoc["nodeId"];
-                            configTempMin = configDoc["temperatureThresholdMin"];
-                            configTempMax = configDoc["temperatureThresholdMax"];
-                            configHumMin = configDoc["humidityThresholdMin"];
-                            configHumMax = configDoc["humidityThresholdMax"];
-                            configLtMin = configDoc["lightThresholdMin"];
-                            configLtMax = configDoc["lightThresholdMax"];
-                            configLoaded = true;
-
-                            Serial.printf("[Config] Nodo vinculado. nodeId=%ld\n", configNodeId);
-                            Serial.printf("[Config] T:[%.1f-%.1f] H:[%.1f-%.1f] L:[%.1f-%.1f]\n",
-                                          configTempMin, configTempMax, configHumMin, configHumMax, configLtMin, configLtMax);
-                        } else {
-                            Serial.println(F("[Config] Nodo no vinculado a planta. Usando defaults locales."));
-                        }
-                    } else {
-                        Serial.print(F("[Config] Error procesando JSON: "));
-                        Serial.println(configError.c_str());
-                    }
-                } else {
-                    Serial.printf("[Config] Error del servidor. Código: %d\n", configCode);
-                    Serial.println(configBody);
-                }
-            } else {
-                Serial.printf("[Config] Error en la conexión HTTP. Código: %d\n", configCode);
-            }
-            httpConfig.end();
-        }
-    }
-
-    // 4. Iniciar dispositivo principal
+    // ---- 3. Instanciar dispositivo ----
     pothosDevice = new PothosCareDevice();
-    if (configLoaded) {
-        nodeId = (int)configNodeId;
-        pothosDevice->updateCachedConfig(true, configNodeId,
-            configTempMin, configTempMax, configHumMin, configHumMax, configLtMin, configLtMax);
-    }
-    delay(2000);
+
+    // ---- 4. Config inicial (umbrales) ----
+    fetchConfig();
+
+    delay(1000);
 }
 
+// ---------------------------------------------------------------------------
+// loop() — ÚNICO punto donde se hace E/S de red
+// ---------------------------------------------------------------------------
 void loop() {
     static unsigned long lastSyncStatus = 0;
     static unsigned long lastSyncConfig = 0;
     static unsigned long lastTelemetry = 0;
-
+    static unsigned long lastDisplay = 0;
     unsigned long now = millis();
 
     if (pothosDevice != nullptr && authToken != "") {
 
-        // GET /sync/status cada 2000ms (alta frecuencia)
+        // ---- /sync/status (modos deseados) ----
         if (now - lastSyncStatus >= SYNC_STATUS_INTERVAL_MS) {
             lastSyncStatus = now;
-
-            HTTPClient http;
-            String url = String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/sync/status";
-            http.begin(url);
-            http.addHeader("Authorization", "Bearer " + authToken);
-
-            int code = http.GET();
-            if (code == 200) {
-                String body = http.getString();
-                JsonDocument doc;
-                DeserializationError err = deserializeJson(doc, body);
-                if (!err) {
-                    String buzzerMode = doc["desiredState"]["buzzerMode"];
-                    String servoMode = doc["desiredState"]["servoMode"];
-                    String ledMode = doc["desiredState"]["ledMode"];
-                    pothosDevice->applyDesiredState(buzzerMode, servoMode, ledMode);
-                }
-            } else if (code == 401) {
-                Serial.println(F("[Auth] Token expirado o inválido en sync/status"));
-                reLogin();
-            }
-            http.end();
+            fetchStatus();
         }
 
-        // GET /sync/config cada 60000ms (baja frecuencia)
+        // ---- /sync/config (umbrales) ----
         if (now - lastSyncConfig >= SYNC_CONFIG_INTERVAL_MS) {
             lastSyncConfig = now;
-
-            HTTPClient http;
-            String url = String(BASE_URL) + "/api/v1/iot/nodes/" + nodeCode + "/sync/config";
-            http.begin(url);
-            http.addHeader("Authorization", "Bearer " + authToken);
-
-            int code = http.GET();
-            if (code == 200) {
-                String body = http.getString();
-                JsonDocument doc;
-                DeserializationError err = deserializeJson(doc, body);
-                if (!err) {
-                    bool linked = doc["linked"];
-                    long newId = doc["nodeId"] | 0;
-                    float tempMin = doc["temperatureThresholdMin"] | DEFAULT_TEMP_THRESHOLD;
-                    float tempMax = doc["temperatureThresholdMax"] | 28.0f;
-                    float humMin = doc["humidityThresholdMin"] | DEFAULT_HUMIDITY_THRESHOLD;
-                    float humMax = doc["humidityThresholdMax"] | 70.0f;
-                    float ltMin = doc["lightThresholdMin"] | 20.0f;
-                    float ltMax = doc["lightThresholdMax"] | DEFAULT_LIGHT_THRESHOLD;
-                    pothosDevice->updateCachedConfig(linked, newId, tempMin, tempMax, humMin, humMax, ltMin, ltMax);
-                }
-            } else if (code == 401) {
-                Serial.println(F("[Auth] Token expirado o inválido en sync/config"));
-                reLogin();
-            }
-            http.end();
+            fetchConfig();
         }
 
-        // Telemetría cada 10000ms
+        // ---- Telemetría ----
         if (now - lastTelemetry >= TELEMETRY_INTERVAL_MS) {
             lastTelemetry = now;
             pothosDevice->sendTelemetry();
         }
+
+        // ---- Reporte de actuadores pendiente ----
+        pothosDevice->flushPendingReport();
     }
 
-    if (pothosDevice != nullptr) {
-        pothosDevice->updateDisplays(false);
+    // ---- Refresco de pantallas (solo aquí, para no compartir I2C entre tareas) ----
+    if (pothosDevice != nullptr && (now - lastDisplay >= MAIN_LOOP_DELAY_MS)) {
+        lastDisplay = now;
+        pothosDevice->updateDisplays();
     }
+
     vTaskDelay(pdMS_TO_TICKS(MAIN_LOOP_DELAY_MS));
 }

@@ -8,7 +8,6 @@ public record NodeSyncConfigResource(
     Float temperatureThresholdMax,
     Float humidityThresholdMin,
     Float humidityThresholdMax,
-    Float lightThresholdMin,
-    Float lightThresholdMax
+    Float lightThresholdMin
 ) {
 }

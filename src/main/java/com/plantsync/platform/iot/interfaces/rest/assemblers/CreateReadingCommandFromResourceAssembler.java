@@ -10,7 +10,8 @@ public class CreateReadingCommandFromResourceAssembler {
         resource.nodeId(),
         resource.lightPercent(),
         resource.gasPercent(),
-        resource.airTemperature()
+        resource.airTemperature(),
+        resource.humidityPercent()
     );
   }
 }

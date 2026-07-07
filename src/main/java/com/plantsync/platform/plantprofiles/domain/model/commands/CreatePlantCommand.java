@@ -32,8 +32,6 @@ public record CreatePlantCommand(
 
     Float lightThresholdMin,
 
-    Float lightThresholdMax,
-
     Float humidityThresholdMin,
 
     Float humidityThresholdMax,

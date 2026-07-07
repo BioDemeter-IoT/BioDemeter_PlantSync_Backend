@@ -37,12 +37,12 @@ public class EdgeThresholdsController {
   public ResponseEntity<ThresholdsResource> getThresholds(@PathVariable String nodeCode) {
     var nodeOpt = iotNodeQueryService.handle(new GetNodeByNodeCodeQuery(nodeCode));
     if (nodeOpt.isEmpty() || nodeOpt.get().getPlantId() == null) {
-      return ResponseEntity.ok(new ThresholdsResource(false, null, null, null, null, null));
+      return ResponseEntity.ok(new ThresholdsResource(false, null, null, null, null));
     }
 
     var plantOpt = plantQueryService.handle(new GetPlantByIdQuery(nodeOpt.get().getPlantId().value()));
     if (plantOpt.isEmpty()) {
-      return ResponseEntity.ok(new ThresholdsResource(false, null, null, null, null, null));
+      return ResponseEntity.ok(new ThresholdsResource(false, null, null, null, null));
     }
 
     var node = nodeOpt.get();
@@ -52,8 +52,7 @@ public class EdgeThresholdsController {
         node.getId(),
         plant.getTemperatureThresholdMin(),
         plant.getTemperatureThresholdMax(),
-        plant.getLightThresholdMin(),
-        plant.getLightThresholdMax()
+        plant.getLightThresholdMin()
     ));
   }
 }

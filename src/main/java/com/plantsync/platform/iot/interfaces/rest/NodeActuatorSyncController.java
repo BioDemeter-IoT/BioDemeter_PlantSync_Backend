@@ -120,14 +120,14 @@ public class NodeActuatorSyncController {
     var nodeOpt = iotNodeQueryService.handle(new GetNodeByNodeCodeQuery(nodeCode));
     if (nodeOpt.isEmpty() || nodeOpt.get().getPlantId() == null) {
       return ResponseEntity.ok(new NodeSyncConfigResource(
-          false, null, null, null, null, null, null, null, null
+          false, null, null, null, null, null, null, null
       ));
     }
     var node = nodeOpt.get();
     var plantOpt = plantQueryService.handle(new GetPlantByIdQuery(node.getPlantId().value()));
     if (plantOpt.isEmpty()) {
       return ResponseEntity.ok(new NodeSyncConfigResource(
-          false, null, null, null, null, null, null, null, null
+          false, null, null, null, null, null, null, null
       ));
     }
     var plant = plantOpt.get();
@@ -139,8 +139,7 @@ public class NodeActuatorSyncController {
         plant.getTemperatureThresholdMax(),
         plant.getHumidityThresholdMin(),
         plant.getHumidityThresholdMax(),
-        plant.getLightThresholdMin(),
-        plant.getLightThresholdMax()
+        plant.getLightThresholdMin()
     ));
   }
 }

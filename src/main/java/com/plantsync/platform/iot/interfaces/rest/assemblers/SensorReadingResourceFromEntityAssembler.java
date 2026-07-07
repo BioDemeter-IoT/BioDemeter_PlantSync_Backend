@@ -12,6 +12,7 @@ public class SensorReadingResourceFromEntityAssembler {
         entity.getLightPercent(),
         entity.getGasPercent(),
         entity.getAirTemperature(),
+        entity.getHumidityPercent(),
         entity.getTimestamp().toString()
     );
   }

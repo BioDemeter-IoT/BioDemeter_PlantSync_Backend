@@ -35,6 +35,9 @@ public class SensorReading {
   @Column(name = "air_temperature")
   private Float airTemperature;
 
+  @Column(name = "humidity_percent")
+  private Integer humidityPercent;
+
   @Column(name = "timestamp", nullable = false)
   private LocalDateTime timestamp;
 
@@ -43,6 +46,7 @@ public class SensorReading {
     this.lightPercent = command.lightPercent();
     this.gasPercent = command.gasPercent();
     this.airTemperature = command.airTemperature();
+    this.humidityPercent = command.humidityPercent();
     this.timestamp = LocalDateTime.now();
   }
 }
