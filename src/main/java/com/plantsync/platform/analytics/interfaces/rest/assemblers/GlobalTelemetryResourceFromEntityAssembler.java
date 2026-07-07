@@ -8,7 +8,9 @@ public class GlobalTelemetryResourceFromEntityAssembler {
   public static GlobalTelemetryResource toResourceFromEntity(GlobalTelemetry entity) {
     return new GlobalTelemetryResource(
         entity.averageLightPercent(),
-        entity.averageAirTemperature()
+        entity.averageAirTemperature(),
+        entity.averageGasPercent(),
+        entity.averageHumidityPercent()
     );
   }
 }

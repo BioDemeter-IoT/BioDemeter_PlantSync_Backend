@@ -32,7 +32,7 @@ public class AdminAnalyticsController {
   }
 
   @GetMapping("/global-telemetry")
-  @Operation(summary = "Get global telemetry", description = "Get aggregated global telemetry data (average soil humidity, temperature, air humidity)")
+  @Operation(summary = "Get global telemetry", description = "Get aggregated global telemetry data (average light, air temperature, gas and humidity)")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Global telemetry data retrieved"),
       @ApiResponse(responseCode = "403", description = "Forbidden - ADMIN role required")})

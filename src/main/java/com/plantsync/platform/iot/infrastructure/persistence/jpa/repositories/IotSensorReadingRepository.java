@@ -20,4 +20,10 @@ public interface IotSensorReadingRepository extends JpaRepository<SensorReading,
 
   @Query("SELECT AVG(s.airTemperature) FROM SensorReading s")
   Double findAverageAirTemperature();
+
+  @Query("SELECT AVG(s.gasPercent) FROM SensorReading s")
+  Double findAverageGasPercent();
+
+  @Query("SELECT AVG(s.humidityPercent) FROM SensorReading s")
+  Double findAverageHumidityPercent();
 }

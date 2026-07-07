@@ -29,7 +29,11 @@ public class AnalyticsQueryServiceImpl implements AnalyticsQueryService {
         .orElse(0.0);
     var avgAirTemperature = Optional.ofNullable(iotSensorReadingRepository.findAverageAirTemperature())
         .orElse(0.0);
-    return new GlobalTelemetry(avgLightPercent, avgAirTemperature);
+    var avgGasPercent = Optional.ofNullable(iotSensorReadingRepository.findAverageGasPercent())
+        .orElse(0.0);
+    var avgHumidityPercent = Optional.ofNullable(iotSensorReadingRepository.findAverageHumidityPercent())
+        .orElse(0.0);
+    return new GlobalTelemetry(avgLightPercent, avgAirTemperature, avgGasPercent, avgHumidityPercent);
   }
 
   @Override
